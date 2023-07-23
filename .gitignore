@@ -8,8 +8,6 @@
 # npm
 node_modules
 
-out/
-
 # Exclude sourcemaps
 *.map
 
@@ -18,3 +16,6 @@ data.json
 
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
+
+# The output directory/symlink
+out

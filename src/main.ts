@@ -5,6 +5,8 @@ import logger from "./util/logger";
 import AutoAlias from "./scripts/auto-alias";
 import NoteCreate from "./scripts/note-create";
 
+import {NavigationView, VIEW_TYPE_NAVIGATION} from "./views/nav";
+
 
 export default class ObsidianFtvkyo extends Plugin {
     deps: any = {}; // Dependencies (other plugins)
@@ -20,15 +22,23 @@ export default class ObsidianFtvkyo extends Plugin {
         });
     }
 
+    onunload() {
+        this.app.workspace.detachLeavesOfType(VIEW_TYPE_NAVIGATION);
+    }
+
     // Loads everything we actually need
     // including other plugin dependencies.
     // Should be called after all the plugins are loaded.
     // Throws when something goes wrong,
     // in which case this plugin should be unloaded.
     private afterLayoutReady() {
-		// Loading dependencies
+        this.loadPlugins();
+        this.loadScripts();
+        this.loadViews();
+    }
 
-        let lg = logger.info("Loading plugins...").sub();
+    private loadPlugins() {
+        const lg = logger.info("Loading plugins...").sub();
 
         const deps = {
             tp: "templater-obsidian",
@@ -41,10 +51,10 @@ export default class ObsidianFtvkyo extends Plugin {
         }
 
         logger.info("All plugins loaded");
+    }
 
-		// Loading scripts
-
-        lg = logger.info("Loading scripts...").sub();
+    private loadScripts() {
+        const lg = logger.info("Loading scripts...").sub();
 
 		const scripts = [
 			AutoAlias,
@@ -59,6 +69,19 @@ export default class ObsidianFtvkyo extends Plugin {
         logger.info("All scripts loaded");
     }
 
+    private loadViews() {
+        this.registerView(
+            VIEW_TYPE_NAVIGATION,
+            (leaf) => new NavigationView(leaf)
+        );
+
+        this.addCommand({
+            id: "open-navigation",
+            name: "Open Navigation",
+            callback: () => this.activateNavigation(),
+        });
+    }
+
 	// Get a loaded plugin or throw if not loaded
 	private plugin(pluginId: string) {
 		const p = (this.app as any).plugins.plugins[pluginId];
@@ -67,4 +90,17 @@ export default class ObsidianFtvkyo extends Plugin {
 		}
 		return p;
 	}
+
+    async activateNavigation() {
+        this.app.workspace.detachLeavesOfType(VIEW_TYPE_NAVIGATION);
+
+        await this.app.workspace.getLeftLeaf(false).setViewState({
+            type: VIEW_TYPE_NAVIGATION,
+            active: true,
+        });
+
+        this.app.workspace.revealLeaf(
+            this.app.workspace.getLeavesOfType(VIEW_TYPE_NAVIGATION)[0]
+        );
+    }
 }
