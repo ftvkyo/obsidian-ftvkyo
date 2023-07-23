@@ -8,8 +8,18 @@ import NoteCreate from "./scripts/note-create";
 import {NavigationView, VIEW_TYPE_NAVIGATION} from "./views/nav";
 
 
+const dependencies = {
+    "tp": "templater-obsidian",
+    "dv": "dataview",
+};
+
+const scripts = [
+    AutoAlias,
+    NoteCreate,
+];
+
 export default class ObsidianFtvkyo extends Plugin {
-    deps: any = {}; // Dependencies (other plugins)
+    deps: Record<string, any> = {};
 
     onload() {
         this.app.workspace.onLayoutReady(() => {
@@ -40,12 +50,7 @@ export default class ObsidianFtvkyo extends Plugin {
     private loadPlugins() {
         const lg = logger.info("Loading plugins...").sub();
 
-        const deps = {
-            tp: "templater-obsidian",
-            dv: "dataview",
-        };
-
-        for (const [k, v] of Object.entries(deps)) {
+        for (const [k, v] of Object.entries(dependencies)) {
             this.deps[k] = this.plugin(v);
             lg.info(`Ensured plugin '${v}' is present, saved as '${k}'`);
         }
@@ -56,11 +61,6 @@ export default class ObsidianFtvkyo extends Plugin {
     private loadScripts() {
         const lg = logger.info("Loading scripts...").sub();
 
-		const scripts = [
-			AutoAlias,
-			NoteCreate,
-		];
-
 		for (const script of scripts) {
 			script(this);
 			lg.info(`Loaded script '${script.name}'`);
@@ -70,16 +70,23 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     private loadViews() {
-        this.registerView(
-            VIEW_TYPE_NAVIGATION,
-            (leaf) => new NavigationView(leaf)
-        );
+        const lg = logger.info("Loading views...").sub();
 
-        this.addCommand({
-            id: "open-navigation",
-            name: "Open Navigation",
-            callback: () => this.activateNavigation(),
-        });
+        const views = {
+            [VIEW_TYPE_NAVIGATION]: NavigationView,
+        };
+
+        for (const [k, v] of Object.entries(views)) {
+            this.registerView(k, (leaf) => new v(this, leaf));
+            this.addCommand({
+                "id": `activate-${k}`,
+                "name": `Activate ${k}`,
+                "callback": () => v.activateView(this),
+            });
+            lg.info(`Registered view '${k}'`);
+        }
+
+        logger.info("All views loaded");
     }
 
 	// Get a loaded plugin or throw if not loaded
@@ -90,17 +97,4 @@ export default class ObsidianFtvkyo extends Plugin {
 		}
 		return p;
 	}
-
-    async activateNavigation() {
-        this.app.workspace.detachLeavesOfType(VIEW_TYPE_NAVIGATION);
-
-        await this.app.workspace.getLeftLeaf(false).setViewState({
-            type: VIEW_TYPE_NAVIGATION,
-            active: true,
-        });
-
-        this.app.workspace.revealLeaf(
-            this.app.workspace.getLeavesOfType(VIEW_TYPE_NAVIGATION)[0]
-        );
-    }
 }

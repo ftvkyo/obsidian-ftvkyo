@@ -1,6 +1,8 @@
 import { MarkdownRenderChild, Plugin, TFile } from "obsidian";
 
 import logger from "../util/logger";
+import {getTitleByFileName} from "../util/note";
+import ObsidianFtvkyo from "../main";
 
 const lg = logger.sub("auto-alias");
 
@@ -18,7 +20,7 @@ class AliasLink extends MarkdownRenderChild {
     }
 }
 
-export default function AutoAlias(plugin: Plugin) {
+export default function AutoAlias(plugin: ObsidianFtvkyo) {
     plugin.registerMarkdownPostProcessor((element, context) => {
         const fcs = Object.keys((plugin.app.metadataCache as any).fileCache);
 
@@ -41,49 +43,12 @@ export default function AutoAlias(plugin: Plugin) {
                 continue;
             }
 
-            let linkedFile = null;
-            for (const fc of fcs) {
-                // If the file has the same name as the link, use it
-                if (fc.endsWith("/" + filename)) {
-                    linkedFile = fc;
-                    break;
-                }
-            }
+            const title = getTitleByFileName(plugin, filename);
 
-            if (!linkedFile) {
-                llg.info(`Linked file not found`);
+            if (!title) {
+                llg.info(`No title found`);
                 continue;
             }
-
-            const tf = plugin.app.vault.getAbstractFileByPath(linkedFile);
-
-            if (!(tf instanceof TFile)) {
-                llg.info(`Linked file is not a TFile`);
-                continue;
-            }
-
-            if (!tf) {
-                llg.info(`File not found`);
-                // Dead link
-                continue;
-            }
-
-            const cache = plugin.app.metadataCache.getFileCache(tf);
-            const heading0 = cache?.headings ? cache.headings[0] : null;
-
-            if (!heading0) {
-                llg.info(`No headings`);
-                // No headings at all
-                continue;
-            }
-
-            if (heading0.level !== 1) {
-                llg.info(`First heading is not a top-level heading`);
-                // The first heading is not a top-level heading
-                continue;
-            }
-
-            const title = heading0.heading;
 
             llg.info(`Found title "${title}"`);
 

@@ -17,33 +17,27 @@ export class Logger {
 
     constructor(
         readonly prefix: string,
-        readonly style: string = "",
+        readonly style?: string,
     ) {
-        if (!style) {
+        if (!this.style) {
             const color = colors[Logger.colorCounter % colors.length];
-            style = `font-weight: bold; color: black; background-color: ${color};`;
             Logger.colorCounter += 1;
+            this.style = `font-weight: bold; color: black; background-color: ${color};`;
         }
-
-        this.muted(`[logger created]`);
     }
 
     private log(
         text: string,
-        textStyle?: string,
+        textStyle: string = ";",
     ) {
-        const pfx = `%c ${this.prefix} `;
-        if (textStyle) {
-            console.log(`${pfx}%c ${text}`, this.style, textStyle);
-        } else {
-            console.log(pfx, this.style, text);
-        }
+        const pfx = `%c ${this.prefix} %c ${text}`;
+        console.log(pfx, this.style, textStyle);
     }
 
     muted(
         text: string,
     ) {
-        this.log(text, "color: #AAA;");
+        this.log(text, "color: #888888;");
         return this;
     }
 
@@ -60,12 +54,13 @@ export class Logger {
     ) {
         if (prefix) {
             prefix = `${this.prefix} > ${prefix}`;
+            return new Logger(prefix);
         } else {
             prefix = `${this.prefix} ->`;
+            return new Logger(prefix, this.style);
         }
-        return new Logger(prefix, this.style);
     }
 }
 
-const logger = new Logger("obsidian-ftvkyo");
+const logger = new Logger("ftvkyo");
 export default logger;
