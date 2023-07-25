@@ -1,11 +1,11 @@
 import { Plugin } from "obsidian";
 
-import logger from "./util/logger";
+import logger from "@/util/logger";
 
-import AutoAlias from "./scripts/auto-alias";
-import NoteCreate from "./scripts/note-create";
+import AutoAlias from "@/scripts/auto-alias";
+import NoteCreate from "@/scripts/note-create";
 
-import {NavigationView, VIEW_TYPE_NAVIGATION} from "./views/nav";
+import {NavigationView, VIEW_TYPE_NAVIGATION} from "@/ui/views/nav";
 
 
 const dependencies = {

@@ -1,10 +1,9 @@
-import ObsidianFtvkyo from "main";
+import ObsidianFtvkyo from "@/main";
 import {TFile} from "obsidian";
 
 
 export function getTitleByFileName(plugin: ObsidianFtvkyo, name: string) {
     // Keys are filenames
-    const fileCache = Object.keys((plugin.app.metadataCache as any).fileCache);
     const files = plugin.app.vault.getFiles();
 
     // We need to find the best match for the path

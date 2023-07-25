@@ -1,9 +1,9 @@
 import {ItemView, WorkspaceLeaf} from "obsidian";
 
-import type ObsidianFtvkyo from "../main";
-import {getTitleByAbsolutePath, getTitleByFileName} from "../util/note";
+import type ObsidianFtvkyo from "@/main";
+import {getTitleByAbsolutePath} from "@/util/note";
 
-import logger from "../util/logger";
+import logger from "@/util/logger";
 
 const lg = logger.sub("view-nav");
 
@@ -80,7 +80,7 @@ export class NavigationView extends ItemView {
         const allTags = allNotes.file.tags;
 
         const series: Record<string, number> = {};
-        for (let tag of allTags) {
+        for (const tag of allTags) {
             if (tag.startsWith(seriesPrefix)) {
                 const s = tag.substring(3);
                 series[s] = series[s] ? series[s] + 1 : 1;
@@ -89,13 +89,13 @@ export class NavigationView extends ItemView {
         const seriesAlphabetical = Object.entries(series).sort((a, b) => a[0].localeCompare(b[0]));
 
         container.createEl("h2", {text: "By series"});
-        for (let [s, num] of seriesAlphabetical) {
+        for (const [s] of seriesAlphabetical) {
             const links = await this.plist(seriesPrefix + s);
             this.renderDetails(container, s, links);
         }
 
         container.createEl("h2", {text: "With special tags"});
-        for (let [tag, name] of Object.entries(specialTags)) {
+        for (const [tag, name] of Object.entries(specialTags)) {
             const links = await this.plist(tag);
             this.renderDetails(container, name, links);
         }
@@ -151,7 +151,7 @@ export class NavigationView extends ItemView {
         s.appendChild(document.createTextNode(`: ${links.length}`));
 
         const list = d.createEl("ul");
-        for (let link of links) {
+        for (const link of links) {
             const li = list.createEl("li");
             li.appendChild(this.htmlLink(link));
         }

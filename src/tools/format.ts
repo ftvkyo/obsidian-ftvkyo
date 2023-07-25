@@ -6,7 +6,7 @@ function fmtDatePiece(
         return options;
     }
 
-    let formatter = new Intl.DateTimeFormat("en-GB", options);
+    const formatter = new Intl.DateTimeFormat("en-GB", options);
     return formatter.format(date);
 }
 

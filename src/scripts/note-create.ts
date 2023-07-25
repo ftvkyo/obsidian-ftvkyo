@@ -15,13 +15,13 @@ const lg = logger.sub(`note-create`);
 const ROOT = "notes";
 
 // Folders-sections
-let SECTIONS_TEXT = [
+const SECTIONS_TEXT = [
     "1: Journal (date)",
     "2: Static (date+name)",
     "3: Wiki (name)",
     "4: Person (name)",
 ];
-let SECTIONS = [
+const SECTIONS = [
     "journal",
     "static",
     "wiki",
@@ -51,12 +51,12 @@ async function command() {
     */
 
     // Figure out what kind of note we want to create
-    let section = await suggest(this.app, SECTIONS_TEXT, SECTIONS);
+    const section = await suggest(this.app, SECTIONS_TEXT, SECTIONS);
 
     slg.info(`Chosen section "${section}"`);
 
-    let folder = `${ROOT}/${section}/${prefix}`;
-    let tfolder = this.app.vault.getAbstractFileByPath(folder);
+    const folder = `${ROOT}/${section}/${prefix}`;
+    const tfolder = this.app.vault.getAbstractFileByPath(folder);
 
     slg.info(`Resulting path: "${folder}/${name}"`);
 
@@ -68,7 +68,7 @@ async function command() {
         slg.info(`Asked for topic`);
     }
 
-    let title = format.fmtTitle(section, now, topic);
+    const title = format.fmtTitle(section, now, topic);
 
     slg.info(`Resulting title: "${title}"`);
 
@@ -77,7 +77,7 @@ async function command() {
     */
 
     // Define note content
-    let content = `\
+    const content = `\
 # ${title}
 #draft
 

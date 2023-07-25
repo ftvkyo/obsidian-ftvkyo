@@ -1,4 +1,4 @@
-import { MarkdownRenderChild, Plugin, TFile } from "obsidian";
+import { MarkdownRenderChild } from "obsidian";
 
 import logger from "../util/logger";
 import {getTitleByFileName} from "../util/note";
@@ -22,8 +22,6 @@ class AliasLink extends MarkdownRenderChild {
 
 export default function AutoAlias(plugin: ObsidianFtvkyo) {
     plugin.registerMarkdownPostProcessor((element, context) => {
-        const fcs = Object.keys((plugin.app.metadataCache as any).fileCache);
-
         // Find all internal links
         const links = Array.from(element.querySelectorAll<HTMLElement>("a.internal-link"));
 
