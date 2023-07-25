@@ -1,21 +1,10 @@
-# vscode
-.vscode
+# VSCode
+.vscode/
 
-# Intellij
-*.iml
-.idea
-
-# npm
-node_modules
-
-# Exclude sourcemaps
-*.map
-
-# obsidian
-data.json
-
-# Exclude macOS Finder (System Explorer) View States
-.DS_Store
+# Yarn stuff
+.yarn/
+.pnp.*
+yarn-*.log
 
 # The output directory/symlink
 out
