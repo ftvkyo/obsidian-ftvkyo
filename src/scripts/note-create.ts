@@ -1,10 +1,10 @@
-import {Plugin} from "obsidian";
+import { Plugin } from "obsidian";
 
-import * as format from "../tools/format";
-import suggest from "../tools/suggest";
-import prompt from "../tools/prompt";
+import * as format from "@/util/format";
+import suggest from "@/ui/builtin/suggest";
+import prompt from "@/ui/builtin/prompt";
 
-import logger from "../util/logger";
+import logger from "@/util/logger";
 
 const lg = logger.sub(`note-create`);
 

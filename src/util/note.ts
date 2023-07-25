@@ -1,5 +1,6 @@
+import { TFile } from "obsidian";
+
 import ObsidianFtvkyo from "@/main";
-import {TFile} from "obsidian";
 
 
 export function getTitleByFileName(plugin: ObsidianFtvkyo, name: string) {

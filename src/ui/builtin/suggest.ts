@@ -1,6 +1,6 @@
 import { App, FuzzyMatch, FuzzySuggestModal } from "obsidian";
 
-import logger from "../util/logger";
+import logger from "@/util/logger";
 
 
 const lg = logger.sub("suggester");

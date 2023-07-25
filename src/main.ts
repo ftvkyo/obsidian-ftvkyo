@@ -24,6 +24,10 @@ export default class ObsidianFtvkyo extends Plugin {
 
     deps: Record<string, any> = {};
 
+    /* ================= *
+     * Lifecycle methods *
+     * ================= */
+
     onload() {
         logger.big("Loading Obsidian Ftvkyo plugin...");
 
@@ -108,6 +112,10 @@ export default class ObsidianFtvkyo extends Plugin {
         }
     }
 
+    /* ============== *
+     * Helper methods *
+     * ============== */
+
 	// Get a loaded plugin or throw if not loaded
 	private plugin(pluginId: string) {
 		const p = (this.app as any).plugins.plugins[pluginId];
@@ -116,6 +124,10 @@ export default class ObsidianFtvkyo extends Plugin {
 		}
 		return p;
 	}
+
+    /* =============== *
+     * View management *
+     * =============== */
 
     // Add the view to the workspace,
     // and register it to be removed on unload

@@ -4,7 +4,7 @@ import { createRoot, Root } from 'react-dom/client';
 import { View, WorkspaceLeaf } from "obsidian";
 
 import ObsidianFtvkyo from "@/main";
-import { PluginContext } from "./context";
+import { PluginContext } from "@/ui/context";
 
 
 export default class ObsidianFtvkyoView extends View {

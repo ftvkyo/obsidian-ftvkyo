@@ -1,8 +1,8 @@
 import { MarkdownRenderChild } from "obsidian";
 
-import logger from "../util/logger";
-import {getTitleByFileName} from "../util/note";
-import ObsidianFtvkyo from "../main";
+import logger from "@/util/logger";
+import { getTitleByFileName } from "@/util/note";
+import ObsidianFtvkyo from "@/main";
 
 const lg = logger.sub("auto-alias");
 
