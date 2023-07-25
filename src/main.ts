@@ -5,7 +5,8 @@ import logger from "@/util/logger";
 import AutoAlias from "@/scripts/auto-alias";
 import NoteCreate from "@/scripts/note-create";
 
-import {NavigationView, VIEW_TYPE_NAVIGATION} from "@/ui/views/nav";
+import NavView from "@/ui/views/Nav";
+import ObsidianFtvkyoView from "@/ui/views/view";
 
 
 const dependencies = {
@@ -79,19 +80,31 @@ export default class ObsidianFtvkyo extends Plugin {
     private loadViews() {
         const lg = logger.info("Loading views...").sub();
 
-        const views = {
-            [VIEW_TYPE_NAVIGATION]: NavigationView,
-        };
+        const views = [
+            NavView,
+        ];
 
-        for (const [typ, construct] of Object.entries(views)) {
-            this.registerView(typ, (leaf) => new construct(leaf));
-            this.viewPlace(typ);
+        for (const view of views) {
+            const t = view.type;
+            const displayText = view.displayText;
+
+            this.registerView(t, (leaf) => new ObsidianFtvkyoView(
+                leaf,
+                this,
+                t,
+                displayText,
+                view,
+            ));
             this.addCommand({
-                "id": `reveal-${typ}`,
-                "name": `Reveal ${typ}`,
-                "callback": () => this.viewReveal(typ),
+                "id": `reveal-${t}`,
+                "name": `Reveal ${displayText}`,
+                "callback": () => this.viewReveal(t),
             });
-            lg.info(`Registered view '${typ}'`);
+
+            lg.info(`Registered view '${t}'`);
+
+            this.viewPlace(t);
+            lg.info(`Placed view '${t}'`);
         }
     }
 

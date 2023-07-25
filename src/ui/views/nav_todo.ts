@@ -1,13 +1,4 @@
-import { StrictMode } from "react";
-import { createRoot, Root } from 'react-dom/client';
-
-import { View, WorkspaceLeaf } from "obsidian";
-
-import ObsidianFtvkyo from "@/main";
-import NavView from "./impl/Nav";
-
-import logger from "@/util/logger";
-const lg = logger.sub("nav");
+export const u = undefined;
 
 
 //const notesSource = `"notes"`;
@@ -19,42 +10,6 @@ const lg = logger.sub("nav");
 //    "#le": "Loose ends (TODO collect explanation)",
 //};
 
-
-export const VIEW_TYPE_NAVIGATION = "ftvkyo-navigation";
-
-export class NavigationView extends View {
-    root: Root | undefined;
-
-    constructor(
-        leaf: WorkspaceLeaf,
-    ) {
-        super(leaf);
-
-        // This view is not intended to be navigated away.
-        this.navigation = false;
-    }
-
-    getViewType() {
-        return VIEW_TYPE_NAVIGATION;
-    }
-
-    getDisplayText() {
-        return "Navigation";
-    }
-
-    async onOpen() {
-        this.root = createRoot(this.containerEl);
-        this.root.render(
-            <StrictMode>
-                <NavView />
-            </StrictMode>
-        );
-    }
-
-    async onClose() {
-        this.root?.unmount();
-    }
-}
 
 /*
 

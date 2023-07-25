@@ -3,3 +3,6 @@ export default function NavView() {
         This is my navigation view.
     </div>;
 }
+
+NavView.type = "ftvkyo-navigation";
+NavView.displayText = "Ftvkyo Navigation";
