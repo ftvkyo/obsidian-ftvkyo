@@ -29,6 +29,9 @@ export default class ObsidianFtvkyo extends Plugin {
      * ================= */
 
     onload() {
+        console.clear();
+        console.log("@", new Date().toISOString());
+
         logger.big("Loading Obsidian Ftvkyo plugin...");
 
         this.app.workspace.onLayoutReady(() => {
@@ -45,11 +48,6 @@ export default class ObsidianFtvkyo extends Plugin {
         for (const view of this.loadedViews) {
             this.app.workspace.detachLeavesOfType(view);
         }
-
-        // The plugin is probably getting reloaded, so let's ruin
-        // everything else's logs.
-        console.clear();
-        console.log("@", new Date().toISOString());
     }
 
     // Loads everything we actually need
