@@ -19,6 +19,8 @@ const scripts = [
 ];
 
 export default class ObsidianFtvkyo extends Plugin {
+    loadedViews: string[] = [];
+
     deps: Record<string, any> = {};
 
     onload() {
@@ -35,7 +37,14 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     onunload() {
-        this.app.workspace.detachLeavesOfType(VIEW_TYPE_NAVIGATION);
+        for (const view of this.loadedViews) {
+            this.app.workspace.detachLeavesOfType(view);
+        }
+
+        // The plugin is probably getting reloaded, so let's ruin
+        // everything else's logs.
+        console.clear();
+        console.log("@", new Date().toISOString());
     }
 
     // Loads everything we actually need
@@ -50,11 +59,11 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     private loadPlugins() {
-        const lg = logger.info("Loading plugins...").sub();
+        const lg = logger.info("Loading dependencies...").sub();
 
         for (const [k, v] of Object.entries(dependencies)) {
             this.deps[k] = this.plugin(v);
-            lg.info(`Ensured plugin '${v}' is present, saved as '${k}'`);
+            lg.info(`Plugin '${v}' saved as '${k}'`);
         }
     }
 
@@ -74,14 +83,15 @@ export default class ObsidianFtvkyo extends Plugin {
             [VIEW_TYPE_NAVIGATION]: NavigationView,
         };
 
-        for (const [k, v] of Object.entries(views)) {
-            this.registerView(k, (leaf) => new v(leaf));
+        for (const [typ, construct] of Object.entries(views)) {
+            this.registerView(typ, (leaf) => new construct(leaf));
+            this.viewPlace(typ);
             this.addCommand({
-                "id": `activate-${k}`,
-                "name": `Activate ${k}`,
-                "callback": () => v.activateView(this),
+                "id": `reveal-${typ}`,
+                "name": `Reveal ${typ}`,
+                "callback": () => this.viewReveal(typ),
             });
-            lg.info(`Registered view '${k}'`);
+            lg.info(`Registered view '${typ}'`);
         }
     }
 
@@ -93,4 +103,32 @@ export default class ObsidianFtvkyo extends Plugin {
 		}
 		return p;
 	}
+
+    // Add the view to the workspace,
+    // and register it to be removed on unload
+    async viewPlace(view: string) {
+        this.app.workspace.detachLeavesOfType(view);
+        await this.app.workspace.getLeftLeaf(false).setViewState({
+            type: view,
+        });
+
+        if (!this.loadedViews.includes(view)) {
+            this.loadedViews.push(view);
+        }
+    }
+
+    // Get the reference to the view
+    viewGet(view: string) {
+        const instances = this.app.workspace.getLeavesOfType(view);
+
+        if (instances.length !== 1) {
+            throw `Expected exactly one instance of the ${view} view`;
+        }
+        return instances[0];
+    }
+
+    // Reveal the view
+    viewReveal(view: string) {
+        this.app.workspace.revealLeaf(this.viewGet(view));
+    }
 }

@@ -1,3 +1,5 @@
 export default function NavView() {
-    return <h4>This is my navigation view.</h4>;
+    return <div className="view-content">
+        This is my navigation view.
+    </div>;
 }

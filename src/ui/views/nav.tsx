@@ -1,10 +1,13 @@
 import { StrictMode } from "react";
 import { createRoot, Root } from 'react-dom/client';
 
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { View, WorkspaceLeaf } from "obsidian";
 
 import ObsidianFtvkyo from "@/main";
 import NavView from "./impl/Nav";
+
+import logger from "@/util/logger";
+const lg = logger.sub("nav");
 
 
 //const notesSource = `"notes"`;
@@ -19,7 +22,7 @@ import NavView from "./impl/Nav";
 
 export const VIEW_TYPE_NAVIGATION = "ftvkyo-navigation";
 
-export class NavigationView extends ItemView {
+export class NavigationView extends View {
     root: Root | undefined;
 
     constructor(
@@ -40,7 +43,7 @@ export class NavigationView extends ItemView {
     }
 
     async onOpen() {
-        this.root = createRoot(this.containerEl.children[1]);
+        this.root = createRoot(this.containerEl);
         this.root.render(
             <StrictMode>
                 <NavView />
@@ -50,19 +53,6 @@ export class NavigationView extends ItemView {
 
     async onClose() {
         this.root?.unmount();
-    }
-
-    static async activateView(plugin: ObsidianFtvkyo) {
-        plugin.app.workspace.detachLeavesOfType(VIEW_TYPE_NAVIGATION);
-
-        await plugin.app.workspace.getLeftLeaf(false).setViewState({
-            type: VIEW_TYPE_NAVIGATION,
-            active: true,
-        });
-
-        plugin.app.workspace.revealLeaf(
-            plugin.app.workspace.getLeavesOfType(VIEW_TYPE_NAVIGATION)[0]
-        );
     }
 }
 
