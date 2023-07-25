@@ -48,6 +48,13 @@ export class Logger {
         return this;
     }
 
+    big(
+        text: string,
+    ) {
+        this.log(text, "font-size: 1.5em;");
+        return this;
+    }
+
     // Create a sub-logger
     sub(
         prefix: string = ""

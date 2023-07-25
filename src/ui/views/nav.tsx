@@ -1,35 +1,34 @@
-import {ItemView, WorkspaceLeaf} from "obsidian";
+import { StrictMode } from "react";
+import { createRoot, Root } from 'react-dom/client';
 
-import type ObsidianFtvkyo from "@/main";
-import {getTitleByAbsolutePath} from "@/util/note";
+import { ItemView, WorkspaceLeaf } from "obsidian";
 
-import logger from "@/util/logger";
-
-const lg = logger.sub("view-nav");
+import ObsidianFtvkyo from "@/main";
+import NavView from "./impl/Nav";
 
 
-const notesSource = `"notes"`;
-const seriesPrefix = "#s/";
-const specialTags = {
-    "#draft": "Drafts",
-    "#public": "Publications",
-    "#fixme": "Fix these",
-    "#le": "Loose ends (TODO collect explanation)",
-};
+//const notesSource = `"notes"`;
+//const seriesPrefix = "#s/";
+//const specialTags = {
+//    "#draft": "Drafts",
+//    "#public": "Publications",
+//    "#fixme": "Fix these",
+//    "#le": "Loose ends (TODO collect explanation)",
+//};
 
 
 export const VIEW_TYPE_NAVIGATION = "ftvkyo-navigation";
 
 export class NavigationView extends ItemView {
-    dv: any;
+    root: Root | undefined;
 
     constructor(
-        readonly plugin: ObsidianFtvkyo,
         leaf: WorkspaceLeaf,
     ) {
         super(leaf);
 
-        this.dv = plugin.deps.dv;
+        // This view is not intended to be navigated away.
+        this.navigation = false;
     }
 
     getViewType() {
@@ -41,24 +40,19 @@ export class NavigationView extends ItemView {
     }
 
     async onOpen() {
-        lg.info("Opening view...");
-
-        const container = this.containerEl.children[1];
-        container.empty();
-        await this.updateAndRender(container);
-
-        lg.info("View opened");
+        this.root = createRoot(this.containerEl.children[1]);
+        this.root.render(
+            <StrictMode>
+                <NavView />
+            </StrictMode>
+        );
     }
 
     async onClose() {
-        // Nothing to clean up.
+        this.root?.unmount();
     }
 
-    // Activate the view
-
     static async activateView(plugin: ObsidianFtvkyo) {
-        lg.info("Activating view...");
-
         plugin.app.workspace.detachLeavesOfType(VIEW_TYPE_NAVIGATION);
 
         await plugin.app.workspace.getLeftLeaf(false).setViewState({
@@ -69,9 +63,10 @@ export class NavigationView extends ItemView {
         plugin.app.workspace.revealLeaf(
             plugin.app.workspace.getLeavesOfType(VIEW_TYPE_NAVIGATION)[0]
         );
-
-        lg.info("View activated");
     }
+}
+
+/*
 
     // My functions
 
@@ -157,3 +152,5 @@ export class NavigationView extends ItemView {
         }
     }
 }
+
+*/

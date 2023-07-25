@@ -22,6 +22,8 @@ export default class ObsidianFtvkyo extends Plugin {
     deps: Record<string, any> = {};
 
     onload() {
+        logger.big("Loading Obsidian Ftvkyo plugin...");
+
         this.app.workspace.onLayoutReady(() => {
             try {
                 this.afterLayoutReady();
@@ -54,8 +56,6 @@ export default class ObsidianFtvkyo extends Plugin {
             this.deps[k] = this.plugin(v);
             lg.info(`Ensured plugin '${v}' is present, saved as '${k}'`);
         }
-
-        logger.info("All plugins loaded");
     }
 
     private loadScripts() {
@@ -65,8 +65,6 @@ export default class ObsidianFtvkyo extends Plugin {
 			script(this);
 			lg.info(`Loaded script '${script.name}'`);
 		}
-
-        logger.info("All scripts loaded");
     }
 
     private loadViews() {
@@ -77,7 +75,7 @@ export default class ObsidianFtvkyo extends Plugin {
         };
 
         for (const [k, v] of Object.entries(views)) {
-            this.registerView(k, (leaf) => new v(this, leaf));
+            this.registerView(k, (leaf) => new v(leaf));
             this.addCommand({
                 "id": `activate-${k}`,
                 "name": `Activate ${k}`,
@@ -85,8 +83,6 @@ export default class ObsidianFtvkyo extends Plugin {
             });
             lg.info(`Registered view '${k}'`);
         }
-
-        logger.info("All views loaded");
     }
 
 	// Get a loaded plugin or throw if not loaded
