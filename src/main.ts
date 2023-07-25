@@ -26,6 +26,12 @@ export default class ObsidianFtvkyo extends Plugin {
     dv: DataviewApi;
     tp: any;
 
+    /* ====== *
+     * Config *
+     * ====== */
+
+    notesSource = `"notes"`;
+
     /* ================= *
      * Lifecycle methods *
      * ================= */
