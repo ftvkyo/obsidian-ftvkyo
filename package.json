@@ -22,6 +22,7 @@
 		"esbuild-copy-static-files": "^0.1.0",
 		"eslint": "^8.45.0",
 		"obsidian": "latest",
+		"obsidian-dataview": "^0.5.56",
 		"tslib": "2.4.0",
 		"typescript": "4.7.4"
 	},

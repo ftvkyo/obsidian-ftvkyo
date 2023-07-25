@@ -12,6 +12,38 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@codemirror/language@git+https://github.com/lishid/cm-language.git":
+  version: 6.6.0
+  resolution: "@codemirror/language@https://github.com/lishid/cm-language.git#commit=1aadcc247f20ccfda76424a9f853dbb4ee203fdc"
+  dependencies:
+    "@codemirror/state": ^6.0.0
+    "@codemirror/view": ^6.0.0
+    "@lezer/common": ^1.0.0
+    "@lezer/highlight": ^1.0.0
+    "@lezer/lr": ^1.0.0
+    style-mod: ^4.0.0
+  checksum: 5be95b5261010c9f7a75d7fbe387a3ed3610c1be1bd80e5cc1a90ef894b031536b7b8f407074b199970f413106b757d03700a649113f552a06dbcdc4ecab999d
+  languageName: node
+  linkType: hard
+
+"@codemirror/state@npm:^6.0.0, @codemirror/state@npm:^6.0.1, @codemirror/state@npm:^6.1.4":
+  version: 6.2.1
+  resolution: "@codemirror/state@npm:6.2.1"
+  checksum: d12a321d0471b264b9d3259042bff913a8b939e8d28d408ff452004538a71ca9d5329df3f8a1d8a9183f5b42a7ef5b200737bcab1065714f5ae8e0a5ba9d59d3
+  languageName: node
+  linkType: hard
+
+"@codemirror/view@npm:^6.0.0, @codemirror/view@npm:^6.0.1":
+  version: 6.15.3
+  resolution: "@codemirror/view@npm:6.15.3"
+  dependencies:
+    "@codemirror/state": ^6.1.4
+    style-mod: ^4.0.0
+    w3c-keyname: ^2.2.4
+  checksum: 048949b1b493a962904a7f77661a939f7c1893a7381022756a135f5dd8daf667f498be1b81da9c37c0e8de85b078ad987c2f75318385c520ed83c95da6313e95
+  languageName: node
+  linkType: hard
+
 "@esbuild/android-arm64@npm:0.17.3":
   version: 0.17.3
   resolution: "@esbuild/android-arm64@npm:0.17.3"
@@ -233,6 +265,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lezer/common@npm:^1.0.0":
+  version: 1.0.3
+  resolution: "@lezer/common@npm:1.0.3"
+  checksum: cc90dc2f0aeaebeb3fe886cbd27f8b1e8bee817d8c2efff178604807debd68c5db820fd23afb830962780063d21891afbdf564420221faca2822e77bc6327184
+  languageName: node
+  linkType: hard
+
+"@lezer/highlight@npm:^1.0.0":
+  version: 1.1.6
+  resolution: "@lezer/highlight@npm:1.1.6"
+  dependencies:
+    "@lezer/common": ^1.0.0
+  checksum: 411a702394c4c996b7d7f145a38f3a85a8cc698b3918acc7121c629255bb76d4ab383753f69009e011dc415210c6acbbb5b27bde613259ab67e600b29397b03b
+  languageName: node
+  linkType: hard
+
+"@lezer/lr@npm:^1.0.0":
+  version: 1.3.9
+  resolution: "@lezer/lr@npm:1.3.9"
+  dependencies:
+    "@lezer/common": ^1.0.0
+  checksum: d10982bae6c0b2f5a3ab8710a41dc689a4f9e81afafd3d2de4f0bec169f5c3fc9a321c0e90010a51682d41a6755ae90e1f3199134ff194b3ff4058ea5bcdf353
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -266,6 +323,15 @@ __metadata:
   dependencies:
     "@types/tern": "*"
   checksum: 0951282991d004df056451ba04a2ee01ec409be0336c985bd825a5483bf9582f5daaf9ccc89aecbedfda64b9c93cf42e36feb52002f348542cda4bafaf3d28cf
+  languageName: node
+  linkType: hard
+
+"@types/codemirror@npm:5.60.8":
+  version: 5.60.8
+  resolution: "@types/codemirror@npm:5.60.8"
+  dependencies:
+    "@types/tern": "*"
+  checksum: bc3a63eab0308b3ef5ed2ca22afb7f1c0b8acde6477e1d569df7e93f3fe4f78754d28a3e081c72931259fe1bf906a319b54bcdeba74600b989e5558d32478496
   languageName: node
   linkType: hard
 
@@ -635,6 +701,13 @@ __metadata:
   dependencies:
     esutils: ^2.0.2
   checksum: fd7673ca77fe26cd5cba38d816bc72d641f500f1f9b25b83e8ce28827fe2da7ad583a8da26ab6af85f834138cf8dae9f69b0cd6ab925f52ddab1754db44d99ce
+  languageName: node
+  linkType: hard
+
+"emoji-regex@npm:^10.0.0":
+  version: 10.2.1
+  resolution: "emoji-regex@npm:10.2.1"
+  checksum: 1aa2d16881c56531fdfc03d0b36f5c2b6221cc4097499a5665b88b711dc3fb4d5b8804f0ca6f00c56e5dcf89bac75f0487eee85da1da77df3a33accc6ecbe426
   languageName: node
   linkType: hard
 
@@ -1049,6 +1122,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"immediate@npm:~3.0.5":
+  version: 3.0.6
+  resolution: "immediate@npm:3.0.6"
+  checksum: f9b3486477555997657f70318cc8d3416159f208bec4cca3ff3442fd266bc23f50f0c9bd8547e1371a6b5e82b821ec9a7044a4f7b944798b25aa3cc6d5e63e62
+  languageName: node
+  linkType: hard
+
 "import-fresh@npm:^3.2.1":
   version: 3.3.0
   resolution: "import-fresh@npm:3.3.0"
@@ -1162,6 +1242,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lie@npm:3.1.1":
+  version: 3.1.1
+  resolution: "lie@npm:3.1.1"
+  dependencies:
+    immediate: ~3.0.5
+  checksum: 6da9f2121d2dbd15f1eca44c0c7e211e66a99c7b326ec8312645f3648935bc3a658cf0e9fa7b5f10144d9e2641500b4f55bd32754607c3de945b5f443e50ddd1
+  languageName: node
+  linkType: hard
+
+"localforage@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "localforage@npm:1.10.0"
+  dependencies:
+    lie: 3.1.1
+  checksum: f2978b434dafff9bcb0d9498de57d97eba165402419939c944412e179cab1854782830b5ec196212560b22712d1dd03918939f59cf1d4fc1d756fca7950086cf
+  languageName: node
+  linkType: hard
+
 "locate-path@npm:^6.0.0":
   version: 6.0.0
   resolution: "locate-path@npm:6.0.0"
@@ -1195,6 +1293,13 @@ __metadata:
   dependencies:
     yallist: ^4.0.0
   checksum: f97f499f898f23e4585742138a22f22526254fdba6d75d41a1c2526b3b6cc5747ef59c5612ba7375f42aca4f8461950e925ba08c991ead0651b4918b7c978297
+  languageName: node
+  linkType: hard
+
+"luxon@npm:^3.2.0":
+  version: 3.3.0
+  resolution: "luxon@npm:3.3.0"
+  checksum: 50cf17a0dc155c3dcacbeae8c0b7e80db425e0ba97b9cbdf12a7fc142d841ff1ab1560919f033af46240ed44e2f70c49f76e3422524c7fc8bb8d81ca47c66187
   languageName: node
   linkType: hard
 
@@ -1245,6 +1350,47 @@ __metadata:
   languageName: node
   linkType: hard
 
+"obsidian-calendar-ui@npm:^0.3.12":
+  version: 0.3.12
+  resolution: "obsidian-calendar-ui@npm:0.3.12"
+  dependencies:
+    obsidian-daily-notes-interface: 0.8.4
+    svelte: 3.35.0
+    tslib: 2.1.0
+  checksum: a3c2142590abd9f0cf530adf6458f7b0579110f2724a0cd2c41d95aeb84ecca249f8ce1f656f57fae549f263713c30c42eaef2a36f0057f69f40e146d0fec696
+  languageName: node
+  linkType: hard
+
+"obsidian-daily-notes-interface@npm:0.8.4":
+  version: 0.8.4
+  resolution: "obsidian-daily-notes-interface@npm:0.8.4"
+  dependencies:
+    obsidian: "github:obsidianmd/obsidian-api#master"
+    tslib: 2.1.0
+  bin:
+    obsidian-daily-notes-interface: dist/main.js
+  checksum: 71f5049370684b61e1e3ed19ae2d0d02ee126123a55856f3156375f560274409c1b1dd1c5d2dad1b8e2a5db7e5a7a31220808bc40cace6cd21adf52e094a447b
+  languageName: node
+  linkType: hard
+
+"obsidian-dataview@npm:^0.5.56":
+  version: 0.5.56
+  resolution: "obsidian-dataview@npm:0.5.56"
+  dependencies:
+    "@codemirror/language": "git+https://github.com/lishid/cm-language.git"
+    "@codemirror/state": ^6.0.1
+    "@codemirror/view": ^6.0.1
+    emoji-regex: ^10.0.0
+    localforage: ^1.10.0
+    luxon: ^3.2.0
+    obsidian-calendar-ui: ^0.3.12
+    papaparse: ^5.3.1
+    parsimmon: ^1.18.0
+    preact: ^10.6.5
+  checksum: 899859e24adf00f219ac11e2d5b09426794a96b0c85adb8953b43fdf563113d81dd335397e6c1a3e7096cf392477e648d08707dce7994775e081fe8b9ebd3035
+  languageName: node
+  linkType: hard
+
 "obsidian-sample-plugin@workspace:.":
   version: 0.0.0-use.local
   resolution: "obsidian-sample-plugin@workspace:."
@@ -1259,12 +1405,26 @@ __metadata:
     esbuild-copy-static-files: ^0.1.0
     eslint: ^8.45.0
     obsidian: latest
+    obsidian-dataview: ^0.5.56
     react: ^18.2.0
     react-dom: ^18.2.0
     tslib: 2.4.0
     typescript: 4.7.4
   languageName: unknown
   linkType: soft
+
+"obsidian@github:obsidianmd/obsidian-api#master":
+  version: 1.2.8
+  resolution: "obsidian@https://github.com/obsidianmd/obsidian-api.git#commit=971b9e83ca65f0c3655346938167f666a8a868ff"
+  dependencies:
+    "@types/codemirror": 5.60.8
+    moment: 2.29.4
+  peerDependencies:
+    "@codemirror/state": ^6.0.0
+    "@codemirror/view": ^6.0.0
+  checksum: 5f6253ccf5b973aa3a71868579d5e525b59c80cf3ffb2c2b502466e62840c93d3e52b8e8b0621dbc4b70a7b5cf1322b0e8d9eb40332257289abf2276368c494c
+  languageName: node
+  linkType: hard
 
 obsidian@latest:
   version: 1.2.8
@@ -1320,12 +1480,26 @@ obsidian@latest:
   languageName: node
   linkType: hard
 
+"papaparse@npm:^5.3.1":
+  version: 5.4.1
+  resolution: "papaparse@npm:5.4.1"
+  checksum: fc9e52f7158dca3517c229e3309065b1ab5da6c7194572fba4f31ff138bc43e3c91182cc40365cc828f97fe10d0aca416068fd731661058bea0f69ddb84a411a
+  languageName: node
+  linkType: hard
+
 "parent-module@npm:^1.0.0":
   version: 1.0.1
   resolution: "parent-module@npm:1.0.1"
   dependencies:
     callsites: ^3.0.0
   checksum: 6ba8b255145cae9470cf5551eb74be2d22281587af787a2626683a6c20fbb464978784661478dd2a3f1dad74d1e802d403e1b03c1a31fab310259eec8ac560ff
+  languageName: node
+  linkType: hard
+
+"parsimmon@npm:^1.18.0":
+  version: 1.18.1
+  resolution: "parsimmon@npm:1.18.1"
+  checksum: ef6da910fb2bf2630098eed30d9ea7c3cd2dc53087041709e12da5714888a61764dd7082a56e96d9f9c7a67591f017f2d30543e03a50009e46267becc1502402
   languageName: node
   linkType: hard
 
@@ -1361,6 +1535,13 @@ obsidian@latest:
   version: 2.3.1
   resolution: "picomatch@npm:2.3.1"
   checksum: 050c865ce81119c4822c45d3c84f1ced46f93a0126febae20737bd05ca20589c564d6e9226977df859ed5e03dc73f02584a2b0faad36e896936238238b0446cf
+  languageName: node
+  linkType: hard
+
+"preact@npm:^10.6.5":
+  version: 10.16.0
+  resolution: "preact@npm:10.16.0"
+  checksum: 47a91f47d583b68a4afe971a7f992c06547df6d637cadf56eb3b69fee1fb202659b199af37d0e1a90637385144cadd75aa40acdb4e125cc4b3155e2883c24c07
   languageName: node
   linkType: hard
 
@@ -1506,12 +1687,26 @@ obsidian@latest:
   languageName: node
   linkType: hard
 
+"style-mod@npm:^4.0.0":
+  version: 4.0.3
+  resolution: "style-mod@npm:4.0.3"
+  checksum: 934556e720bd29026ff8fef43a1a35b58957813025b91f996d886e9405acf934ddb1934def4400b174bd7784c9263eb9c71f07ae83925af9271b7d921d546854
+  languageName: node
+  linkType: hard
+
 "supports-color@npm:^7.1.0":
   version: 7.2.0
   resolution: "supports-color@npm:7.2.0"
   dependencies:
     has-flag: ^4.0.0
   checksum: 3dda818de06ebbe5b9653e07842d9479f3555ebc77e9a0280caf5a14fb877ffee9ed57007c3b78f5a6324b8dbeec648d9e97a24e2ed9fdb81ddc69ea07100f4a
+  languageName: node
+  linkType: hard
+
+"svelte@npm:3.35.0":
+  version: 3.35.0
+  resolution: "svelte@npm:3.35.0"
+  checksum: 80e0d5da1d23eb6f87aaa668e607536728e1b8c4803569e2314bc93e1b0a4d7ec0a0cf3b54c882c5a69dbda99b4d79583460b1db102d5802bd550b45cd6ff8c5
   languageName: node
   linkType: hard
 
@@ -1528,6 +1723,13 @@ obsidian@latest:
   dependencies:
     is-number: ^7.0.0
   checksum: f76fa01b3d5be85db6a2a143e24df9f60dd047d151062d0ba3df62953f2f697b16fe5dad9b0ac6191c7efc7b1d9dcaa4b768174b7b29da89d4428e64bc0a20ed
+  languageName: node
+  linkType: hard
+
+"tslib@npm:2.1.0":
+  version: 2.1.0
+  resolution: "tslib@npm:2.1.0"
+  checksum: aa189c8179de0427b0906da30926fd53c59d96ec239dff87d6e6bc831f608df0cbd6f77c61dabc074408bd0aa0b9ae4ec35cb2c15f729e32f37274db5730cb78
   languageName: node
   linkType: hard
 
@@ -1598,6 +1800,13 @@ obsidian@latest:
   dependencies:
     punycode: ^2.1.0
   checksum: 7167432de6817fe8e9e0c9684f1d2de2bb688c94388f7569f7dbdb1587c9f4ca2a77962f134ec90be0cc4d004c939ff0d05acc9f34a0db39a3c797dada262633
+  languageName: node
+  linkType: hard
+
+"w3c-keyname@npm:^2.2.4":
+  version: 2.2.8
+  resolution: "w3c-keyname@npm:2.2.8"
+  checksum: 95bafa4c04fa2f685a86ca1000069c1ec43ace1f8776c10f226a73296caeddd83f893db885c2c220ebeb6c52d424e3b54d7c0c1e963bbf204038ff1a944fbb07
   languageName: node
   linkType: hard
 

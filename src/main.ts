@@ -1,4 +1,5 @@
 import { Plugin } from "obsidian";
+import { getAPI as getDataviewAPI, DataviewApi } from "obsidian-dataview";
 
 import logger from "@/util/logger";
 
@@ -22,7 +23,8 @@ const scripts = [
 export default class ObsidianFtvkyo extends Plugin {
     loadedViews: string[] = [];
 
-    deps: Record<string, any> = {};
+    dv: DataviewApi;
+    tp: any;
 
     /* ================= *
      * Lifecycle methods *
@@ -62,12 +64,15 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     private loadPlugins() {
-        const lg = logger.info("Loading dependencies...").sub();
+        logger.info("Loading dependencies...");
 
-        for (const [k, v] of Object.entries(dependencies)) {
-            this.deps[k] = this.plugin(v);
-            lg.info(`Plugin '${v}' saved as '${k}'`);
+        const dv = getDataviewAPI(this.app);
+        if (!dv) {
+            throw new Error("Plugin 'dataview' not found/loaded");
         }
+        this.dv = dv;
+
+        this.tp = this.plugin(dependencies.tp);
     }
 
     private loadScripts() {
@@ -118,7 +123,7 @@ export default class ObsidianFtvkyo extends Plugin {
 	private plugin(pluginId: string) {
 		const p = (this.app as any).plugins.plugins[pluginId];
 		if (!p) {
-			throw new Error(`Plugin ${pluginId} not found/loaded`);
+			throw new Error(`Plugin '${pluginId}' not found/loaded`);
 		}
 		return p;
 	}

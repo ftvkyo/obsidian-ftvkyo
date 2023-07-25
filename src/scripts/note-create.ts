@@ -33,7 +33,7 @@ const SECTIONS = [
 */
 
 async function command() {
-    const { tp } = this.deps;
+    const tp = this.tp;
 
     const slg = lg.info(`Creating a note`).sub();
 
