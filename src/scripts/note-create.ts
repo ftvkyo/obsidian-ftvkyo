@@ -4,6 +4,7 @@ import prompt from "@/ui/builtin/prompt";
 
 import ObsidianFtvkyo from "@/main";
 import Logger from "@/util/logger";
+import { openTFile } from "@/note/open";
 
 
 /*
@@ -92,14 +93,7 @@ async function command(plugin: ObsidianFtvkyo, lg: Logger) {
         false, // We'd rather open manually...
     );
 
-    lg.info(`Checking if there's a current file...`);
-    const current = plugin.app.workspace.getActiveFile();
-
-    lg.info(`Opening the note...`);
-    const leaf = plugin.app.workspace.getLeaf(!!current);
-    await leaf.openFile(note, {
-        state: { mode: "source" },
-    });
+    await openTFile(plugin, note);
 
     lg.info(`Navigating to the next cursor location...`);
     tp.editor_handler.jump_to_next_cursor_location();

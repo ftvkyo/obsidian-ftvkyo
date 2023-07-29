@@ -1,6 +1,6 @@
 import { MarkdownRenderChild } from "obsidian";
 
-import { getTitleByFileName } from "@/util/note";
+import { getTitleByFileName } from "@/note/title";
 import ObsidianFtvkyo from "@/main";
 
 

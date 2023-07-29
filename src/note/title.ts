@@ -1,27 +1,12 @@
 import { TFile } from "obsidian";
 
 import ObsidianFtvkyo from "@/main";
+import { resolveFileName } from "./file";
 
 
 export function getTitleByFileName(plugin: ObsidianFtvkyo, name: string) {
-    // Keys are filenames
-    const files = plugin.app.vault.getFiles();
-
-    // We need to find the best match for the path
-    let linkedFile = null;
-    for (const entry of files) {
-        // If the file has the same name as the link, use it
-        if (entry.name === name) {
-            linkedFile = entry;
-            break;
-        }
-    }
-
-    if (!linkedFile) {
-        return null;
-    }
-
-    return getTitleByAbsolutePath(plugin, linkedFile.path);
+    const tfile = resolveFileName(plugin, name);
+    return tfile ? getTitleOfTFile(plugin, tfile) : null;
 }
 
 
@@ -38,6 +23,11 @@ export function getTitleByAbsolutePath(plugin: ObsidianFtvkyo, path: string) {
         return null;
     }
 
+    return getTitleOfTFile(plugin, tf);
+}
+
+
+export function getTitleOfTFile(plugin: ObsidianFtvkyo, tf: TFile) {
     const cache = plugin.app.metadataCache.getFileCache(tf);
     const heading0 = cache?.headings ? cache.headings[0] : null;
 
