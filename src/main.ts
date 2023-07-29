@@ -100,19 +100,16 @@ export default class ObsidianFtvkyo extends Plugin {
         ];
 
         for (const view of views) {
-            const t = view.type;
-            const displayText = view.displayText;
+            const t = view.viewType;
 
-            this.registerView(t, (leaf) => new ObsidianFtvkyoView(
+            this.registerView(t, (leaf) => ObsidianFtvkyoView.create(
                 leaf,
                 this,
-                t,
-                displayText,
                 view,
             ));
             this.addCommand({
                 "id": `reveal-${t}`,
-                "name": `Reveal ${displayText}`,
+                "name": `Reveal ${view.displayText}`,
                 "callback": () => this.viewReveal(t),
             });
 

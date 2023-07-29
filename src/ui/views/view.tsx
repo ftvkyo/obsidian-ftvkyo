@@ -7,17 +7,42 @@ import ObsidianFtvkyo from "@/main";
 import { PluginContext } from "@/ui/context";
 
 
+export type ViewElement = {
+    Element: () => JSX.Element,
+    viewType: string,
+    displayText: string,
+    icon: string,
+};
+
+
 export default class ObsidianFtvkyoView extends View {
     root: Root | undefined;
 
+    static create(
+        leaf: WorkspaceLeaf,
+        plugin: ObsidianFtvkyo,
+
+        element: ViewElement,
+    ) {
+        return new ObsidianFtvkyoView(
+            leaf,
+            plugin,
+            element.viewType,
+            element.displayText,
+            element.icon,
+            element.Element,
+        );
+    }
+
     constructor(
         leaf: WorkspaceLeaf,
-
         readonly plugin: ObsidianFtvkyo,
 
         readonly viewType: string,
         readonly displayText: string,
-        readonly element: () => JSX.Element,
+        readonly icon: string,
+
+        readonly Element: () => JSX.Element,
     ) {
         super(leaf);
 
@@ -33,12 +58,16 @@ export default class ObsidianFtvkyoView extends View {
         return this.displayText;
     }
 
+    getIcon() {
+        return this.icon;
+    }
+
     async onOpen() {
         this.root = createRoot(this.containerEl);
         this.root.render(
             <StrictMode>
                 <PluginContext.Provider value={this.plugin}>
-                    <this.element />
+                    <this.Element />
                 </PluginContext.Provider>
             </StrictMode>
         );

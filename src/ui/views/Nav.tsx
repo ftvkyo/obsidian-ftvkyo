@@ -1,45 +1,51 @@
+import { useCallback } from "react";
+
 import { openFile } from "@/note/open";
 import { getTitleByFileName } from "@/note/title";
 import { usePlugin } from "@/ui/context";
-import { useCallback } from "react";
+import { type ViewElement } from "./view";
 
-export default function NavView() {
-    const plugin = usePlugin();
-    const { dv, notesSource } = plugin;
+const NavView: ViewElement = {
+    Element: () => {
+        const plugin = usePlugin();
+        const { dv, notesSource } = plugin;
 
-    const pages = dv.pages(notesSource);
+        const pages = dv.pages(notesSource);
 
-    // TODO: Display a warning if there are notes with the same
-    // name in different folders.
+        // TODO: Display a warning if there are notes with the same
+        // name in different folders.
 
-    const openNote = useCallback(async (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        const href = e.currentTarget.getAttribute("href");
-        if (href) {
-            await openFile(plugin, href);
-        }
-    }, []);
+        const openNote = useCallback(async (e: React.MouseEvent<HTMLAnchorElement>) => {
+            e.preventDefault();
+            const href = e.currentTarget.getAttribute("href");
+            if (href) {
+                await openFile(plugin, href);
+            }
+        }, []);
 
-    return <div className="view-content">
-        <ul>
-            {pages.map(page => <li key={page.file.name}>
-                <a
-                    href={page.file.name}
-                    className="internal-link"
-                    target="_blank"
-                    rel="noopener"
-                    aria-label={page.file.name}
-                    data-href={page.file.name}
-                    data-tooltip-position="top"
+        return <div className="view-content">
+            <ul>
+                {pages.map(page => <li key={page.file.name}>
+                    <a
+                        href={page.file.name}
+                        className="internal-link"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label={page.file.name}
+                        data-href={page.file.name}
+                        data-tooltip-position="top"
 
-                    onClick={openNote}
-                >
-                    {getTitleByFileName(plugin, page.file.name)}
-                </a>
-            </li>)}
-        </ul>
-    </div>;
-}
+                        onClick={openNote}
+                    >
+                        {getTitleByFileName(plugin, page.file.name)}
+                    </a>
+                </li>)}
+            </ul>
+        </div>;
+    },
+    viewType: "ftvkyo-navigation",
+    displayText: "Ftvkyo Navigation",
+    icon: "lucide-folder-tree",
+};
 
-NavView.type = "ftvkyo-navigation";
-NavView.displayText = "Ftvkyo Navigation";
+export default NavView;
