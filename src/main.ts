@@ -9,6 +9,8 @@ import NoteCreate from "@/scripts/note-create";
 import NavView from "@/ui/views/Nav";
 import ObsidianFtvkyoView from "@/ui/views/view";
 
+import "./styles.scss";
+
 
 const dependencies = {
     "tp": "templater-obsidian",

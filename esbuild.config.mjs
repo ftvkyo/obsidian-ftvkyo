@@ -1,8 +1,27 @@
+import fs from "fs/promises";
+
 import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
 
-import esbuildCopyStaticFiles from "esbuild-copy-static-files";
+import { sassPlugin } from "esbuild-sass-plugin";
+import { copy } from "esbuild-plugin-copy";
+
+
+const OUT = "./out";
+
+
+const renameCSS = () => ({
+	name: "rename-css",
+	setup(build) {
+		build.onEnd(async () => {
+			// "esbuild-sass-plugin" saves "main.css"
+			// but Obsidian expects "styles.css"
+			await fs.rename(`${OUT}/main.css`, `${OUT}/styles.css`);
+		});
+	},
+});
+
 
 const banner =
 `/*
@@ -18,6 +37,7 @@ const context = await esbuild.context({
 		js: banner,
 	},
 	entryPoints: ["src/main.ts"],
+	outdir: OUT,
 	bundle: true,
 	external: [
 		"obsidian",
@@ -39,12 +59,16 @@ const context = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
-	outfile: "out/main.js",
 	plugins: [
-		esbuildCopyStaticFiles({
-			src: "./static",
-			dest: "./out",
+		copy({
+			assets: {
+				from: "./static/*",
+				to: ".",
+			},
+			watch: !prod,
 		}),
+		sassPlugin(),
+		renameCSS(),
 	],
 });
 
