@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 
 import { openFile } from "@/note/open";
-import { getTitleByFileName } from "@/note/title";
 import { usePlugin } from "@/ui/context";
 import { type ViewElement } from "./view";
+import NoteCard from "../components/NoteCard";
 
 const NavView: ViewElement = {
     Element: () => {
@@ -24,23 +24,13 @@ const NavView: ViewElement = {
         }, []);
 
         return <div className="view-content">
-            <ul>
-                {pages.map(page => <li key={page.file.name}>
-                    <a
-                        href={page.file.name}
-                        className="internal-link"
-                        target="_blank"
-                        rel="noopener"
-                        aria-label={page.file.name}
-                        data-href={page.file.name}
-                        data-tooltip-position="top"
-
-                        onClick={openNote}
-                    >
-                        {getTitleByFileName(plugin, page.file.name)}
-                    </a>
-                </li>)}
-            </ul>
+            {pages.map(page =>
+                <NoteCard
+                    key={page.file.name}
+                    filename={page.file.name}
+                    openNoteCallback={openNote}
+                />
+            )}
         </div>;
     },
     viewType: "ftvkyo-navigation",

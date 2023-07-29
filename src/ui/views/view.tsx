@@ -48,6 +48,8 @@ export default class ObsidianFtvkyoView extends View {
 
         // The view is not intended to be navigated away.
         this.navigation = false;
+
+        this.containerEl.setAttribute("data-type", this.viewType);
     }
 
     getViewType() {

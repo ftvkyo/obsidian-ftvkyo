@@ -1,8 +1,25 @@
-/*
+div[data-type="ftvkyo-navigation"] p,h1,h2,h3,h4,h5,h6 {
+    margin: 0;
+    padding: 0;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+div[data-type="ftvkyo-navigation"] div.view-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
 
-If your plugin does not need CSS, delete this file.
+div[data-type="ftvkyo-navigation"] a.note-card {
+    display: block;
+    width: auto;
 
-*/
+    border: 1px solid #ccc;
+    border-radius: 0.5em;
+
+    padding: 1em;
+}
+
+div[data-type="ftvkyo-navigation"] a.note-card code {
+    opacity: 0.75;
+    font-size: 0.75em;
+}
