@@ -1,4 +1,4 @@
-import * as format from "@/util/format";
+import * as format from "@/util/date";
 import suggest from "@/ui/builtin/suggest";
 import prompt from "@/ui/builtin/prompt";
 

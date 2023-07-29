@@ -64,7 +64,7 @@ const NavView: ViewElement = {
             }
         }, []);
 
-        return <div className="view-content">
+        return <>
             {seriesSelector}
             {notes
                 // Filter series to show.
@@ -82,7 +82,7 @@ const NavView: ViewElement = {
                     />
                 )
             }
-        </div>;
+        </>;
     },
     viewType: "ftvkyo-navigation",
     displayText: "Ftvkyo Navigation",

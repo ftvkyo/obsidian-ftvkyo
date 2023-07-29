@@ -12,6 +12,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.12.5":
+  version: 7.22.6
+  resolution: "@babel/runtime@npm:7.22.6"
+  dependencies:
+    regenerator-runtime: ^0.13.11
+  checksum: e585338287c4514a713babf4fdb8fc2a67adcebab3e7723a739fc62c79cfda875b314c90fd25f827afb150d781af97bc16c85bfdbfa2889f06053879a1ddb597
+  languageName: node
+  linkType: hard
+
 "@codemirror/language@git+https://github.com/lishid/cm-language.git":
   version: 6.6.0
   resolution: "@codemirror/language@https://github.com/lishid/cm-language.git#commit=1aadcc247f20ccfda76424a9f853dbb4ee203fdc"
@@ -2141,6 +2150,7 @@ __metadata:
     obsidian-dataview: ^0.5.56
     react: ^18.2.0
     react-dom: ^18.2.0
+    react-error-boundary: ^4.0.10
     tslib: 2.4.0
     typescript: 4.7.4
   languageName: unknown
@@ -2347,6 +2357,17 @@ obsidian@latest:
   languageName: node
   linkType: hard
 
+"react-error-boundary@npm:^4.0.10":
+  version: 4.0.10
+  resolution: "react-error-boundary@npm:4.0.10"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+  peerDependencies:
+    react: ">=16.13.1"
+  checksum: 4ad4864d2a5fc2264a24d03e83176e6a70d7adbe3c1edbdc5b0bd452a695104bc59456e23b5aea1b9729220672fe46614221daa8b3bd59327968d4aa7eb8bc71
+  languageName: node
+  linkType: hard
+
 "react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
@@ -2373,6 +2394,13 @@ obsidian@latest:
   dependencies:
     picomatch: ^2.2.1
   checksum: 1ced032e6e45670b6d7352d71d21ce7edf7b9b928494dcaba6f11fba63180d9da6cd7061ebc34175ffda6ff529f481818c962952004d273178acd70f7059b320
+  languageName: node
+  linkType: hard
+
+"regenerator-runtime@npm:^0.13.11":
+  version: 0.13.11
+  resolution: "regenerator-runtime@npm:0.13.11"
+  checksum: 27481628d22a1c4e3ff551096a683b424242a216fee44685467307f14d58020af1e19660bf2e26064de946bad7eff28950eae9f8209d55723e2d9351e632bbb4
   languageName: node
   linkType: hard
 

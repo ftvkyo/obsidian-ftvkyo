@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot, Root } from 'react-dom/client';
+import { ErrorBoundary } from "react-error-boundary";
 
 import { EventRef, View, WorkspaceLeaf } from "obsidian";
 
@@ -92,7 +93,18 @@ export default class ObsidianFtvkyoView extends View {
         this.root?.render(
             <StrictMode>
                 <PluginContext.Provider value={this.plugin}>
-                    <this.Element />
+                    <div className="view-content">
+                        <ErrorBoundary
+                            fallbackRender={({ error }) => {
+                                return <div>
+                                    <h1>Something went wrong</h1>
+                                    <pre>{error.message}</pre>
+                                </div>;
+                            }}
+                        >
+                            <this.Element />
+                        </ErrorBoundary>
+                    </div>
                 </PluginContext.Provider>
             </StrictMode>
         );
