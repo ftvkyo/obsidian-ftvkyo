@@ -1,10 +1,7 @@
 import { MarkdownRenderChild } from "obsidian";
 
-import logger from "@/util/logger";
 import { getTitleByFileName } from "@/util/note";
 import ObsidianFtvkyo from "@/main";
-
-const lg = logger.sub("auto-alias");
 
 
 class AliasLink extends MarkdownRenderChild {
@@ -21,6 +18,8 @@ class AliasLink extends MarkdownRenderChild {
 }
 
 export default function AutoAlias(plugin: ObsidianFtvkyo) {
+    const lg = plugin.lg.sub("auto-alias");
+
     plugin.registerMarkdownPostProcessor((element, context) => {
         // Find all internal links
         const links = Array.from(element.querySelectorAll<HTMLElement>("a.internal-link"));

@@ -1,9 +1,10 @@
 import { App, FuzzyMatch, FuzzySuggestModal } from "obsidian";
 
-import logger from "@/util/logger";
+import Logger from "@/util/logger";
+import ObsidianFtvkyo from "@/main";
 
 
-const lg = logger.sub("suggester");
+let lg: undefined | Logger = undefined;
 
 
 type Resolve = (value: string) => void;
@@ -30,6 +31,8 @@ class SuggesterModal extends FuzzySuggestModal<string> {
         resolve: Resolve,
         reject: Reject,
     ) {
+        lg?.info(`Suggesting from ${this.items_text.length} items`);
+
         this.resolve = resolve;
         this.reject = reject;
         this.open();
@@ -46,7 +49,7 @@ class SuggesterModal extends FuzzySuggestModal<string> {
     }
 
     onChooseItem(item: string) {
-        lg.info(`Chosen item "${item}"`);
+        lg?.info(`Chosen item "${item}"`);
         this.resolve(item);
     }
 
@@ -65,7 +68,7 @@ class SuggesterModal extends FuzzySuggestModal<string> {
     // From `Modal`:
 
     onClose() {
-        lg.info(`Closed`);
+        lg?.info(`Closed`);
         if (!this.suppress_reject) {
             this.reject("cancelled");
         }
@@ -73,11 +76,13 @@ class SuggesterModal extends FuzzySuggestModal<string> {
 }
 
 async function suggest(
-    app: App,
+    plugin: ObsidianFtvkyo,
     items_text: string[],
     items: string[],
 ) {
-    lg.info(`Suggesting from ${items_text.length} items`);
+    if (!lg) {
+        lg = plugin.lg.sub("suggester");
+    }
 
     return new Promise((resolve: Resolve, reject: Reject) => {
         const modal = new SuggesterModal(

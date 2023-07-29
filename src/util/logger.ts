@@ -1,73 +1,63 @@
-function generateColors() {
-    const colors = [];
-
-    for (let hue = 0; hue < 20; hue++) {
-        colors.push(`hsl(${hue * 18}deg, 100%, 70%)`);
-    }
-
-    return colors;
-}
+import { getColor } from "@/util/colors";
 
 
-const colors = generateColors();
+export default class Logger {
+    // How many loggers have been created and used
+    private static loggerCounter = 0;
 
-
-export class Logger {
-    static colorCounter = 0;
+    // Color of the current logger
+    private color: number | undefined = undefined;
 
     constructor(
-        readonly prefix: string,
-        readonly style?: string,
-    ) {
-        if (!this.style) {
-            const color = colors[Logger.colorCounter % colors.length];
-            Logger.colorCounter += 1;
-            this.style = `font-weight: bold; color: black; background-color: ${color};`;
+        readonly name: string,
+    ) {}
+
+    // Get the style of the current logger
+    private style() {
+        if (this.color === undefined) {
+            this.color = Logger.loggerCounter++;
         }
+
+        return `font-weight: bold; color: black; background-color: ${getColor(this.color)};`
     }
 
+    // Log a message, optionally using custom style for the message
     private log(
-        text: string,
-        textStyle: string = ";",
+        message: string,
+        messageStyle: string = ";",
     ) {
-        const pfx = `%c ${this.prefix} %c ${text}`;
-        console.log(pfx, this.style, textStyle);
+        const text = `%c ${this.name} %c ${message}`;
+        console.log(text, this.style(), messageStyle);
+        return this;
     }
 
-    muted(
-        text: string,
-    ) {
-        this.log(text, "color: #888888;");
+    clear() {
+        console.clear();
         return this;
     }
 
     info(
         text: string,
     ) {
-        this.log(text);
-        return this;
+        return this.log(text);
+    }
+
+    muted(
+        text: string,
+    ) {
+        return this.log(text, "color: #888888;");
     }
 
     big(
         text: string,
     ) {
-        this.log(text, "font-size: 1.5em;");
-        return this;
+        return this.log(text, "font-size: 1.5em;");
     }
 
     // Create a sub-logger
     sub(
-        prefix: string = ""
+        name: string,
     ) {
-        if (prefix) {
-            prefix = `${this.prefix} > ${prefix}`;
-            return new Logger(prefix);
-        } else {
-            prefix = `${this.prefix} ->`;
-            return new Logger(prefix, this.style);
-        }
+        return new Logger(`${this.name} > ${name}`);
     }
 }
-
-const logger = new Logger("ftvkyo");
-export default logger;

@@ -1,12 +1,10 @@
-import { Plugin } from "obsidian";
-
 import * as format from "@/util/format";
 import suggest from "@/ui/builtin/suggest";
 import prompt from "@/ui/builtin/prompt";
 
-import logger from "@/util/logger";
+import ObsidianFtvkyo from "@/main";
+import Logger from "@/util/logger";
 
-const lg = logger.sub(`note-create`);
 
 /*
     Configuration.
@@ -32,10 +30,8 @@ const SECTIONS = [
     Command.
 */
 
-async function command() {
-    const tp = this.tp;
-
-    const slg = lg.info(`Creating a note`).sub();
+async function command(plugin: ObsidianFtvkyo, lg: Logger) {
+    const tp = plugin.tp;
 
     const now = new Date();
 
@@ -43,34 +39,34 @@ async function command() {
     const name = format.fmtFilename(now);
     const prefix = format.fmtPrefix(now);
 
-    slg.info(`Using name "${name}"`);
-    slg.info(`Using prefix "${prefix}"`);
+    lg.info(`Using name "${name}"`);
+    lg.info(`Using prefix "${prefix}"`);
 
     /*
         Asking the user for the necessary information.
     */
 
     // Figure out what kind of note we want to create
-    const section = await suggest(this.app, SECTIONS_TEXT, SECTIONS);
+    const section = await suggest(plugin, SECTIONS_TEXT, SECTIONS);
 
-    slg.info(`Chosen section "${section}"`);
+    lg.info(`Chosen section "${section}"`);
 
     const folder = `${ROOT}/${section}/${prefix}`;
-    const tfolder = this.app.vault.getAbstractFileByPath(folder);
+    const tfolder = plugin.app.vault.getAbstractFileByPath(folder);
 
-    slg.info(`Resulting path: "${folder}/${name}"`);
+    lg.info(`Resulting path: "${folder}/${name}"`);
 
     // Figure out the title based on the chosen section
     let topic = "";
 
     if (section !== "journal") {
-        topic = await prompt(this.app, "Input note topic");
-        slg.info(`Asked for topic`);
+        topic = await prompt(plugin, "Input note topic");
+        lg.info(`Asked for topic`);
     }
 
     const title = format.fmtTitle(section, now, topic);
 
-    slg.info(`Resulting title: "${title}"`);
+    lg.info(`Resulting title: "${title}"`);
 
     /*
         Prepare note content.
@@ -88,7 +84,7 @@ async function command() {
         Note creation.
     */
 
-    slg.info(`Using Templater to create the note...`);
+        lg.info(`Using Templater to create the note...`);
     const note = await tp.templater.create_new_note_from_template(
         content,
         tfolder,
@@ -96,16 +92,16 @@ async function command() {
         false, // We'd rather open manually...
     );
 
-    slg.info(`Checking if there's a current file...`);
-    const current = this.app.workspace.getActiveFile();
+    lg.info(`Checking if there's a current file...`);
+    const current = plugin.app.workspace.getActiveFile();
 
-    slg.info(`Opening the note...`);
-    const leaf = this.app.workspace.getLeaf(!!current);
+    lg.info(`Opening the note...`);
+    const leaf = plugin.app.workspace.getLeaf(!!current);
     await leaf.openFile(note, {
         state: { mode: "source" },
     });
 
-    slg.info(`Navigating to the next cursor location...`);
+    lg.info(`Navigating to the next cursor location...`);
     tp.editor_handler.jump_to_next_cursor_location();
 
     lg.info(`Note creation completed!`);
@@ -115,8 +111,9 @@ async function command() {
     Loader.
 */
 
-export default function NoteCreate(plugin: Plugin) {
-    const callback = command.bind(plugin);
+export default function NoteCreate(plugin: ObsidianFtvkyo) {
+    const lg = plugin.lg.sub(`note-create`);
+    const callback = () => command(plugin, lg);
     plugin.addCommand({
         id: "note-create",
         name: "Create a note",

@@ -1,13 +1,14 @@
 import { App, Modal, TextComponent } from "obsidian";
 
-import logger from "@/util/logger";
-
-
-const lg = logger.sub("prompter");
+import ObsidianFtvkyo from "@/main";
+import Logger from "@/util/logger";
 
 
 type Resolve = (value: string) => void;
 type Reject = (reason?: any) => void;
+
+
+let lg: Logger | undefined = undefined;
 
 
 class PrompterModal extends Modal {
@@ -28,6 +29,8 @@ class PrompterModal extends Modal {
         resolve: Resolve,
         reject: Reject,
     ) {
+        lg?.info(`Prompting for "${this.prompt}" with initial value "${this.value_initial}"`);
+
         this.resolve = resolve;
         this.reject = reject;
         this.open();
@@ -39,10 +42,10 @@ class PrompterModal extends Modal {
 
             // Resolve if it's not empty
             if (v !== "") {
-                lg.info(`Resolving with "${v}"`);
+                lg?.info(`Resolving with "${v}"`);
                 this.resolve(v);
             } else {
-                lg.info(`Empty value, rejecting`);
+                lg?.info(`Empty value, rejecting`);
                 this.reject("empty");
             }
 
@@ -64,23 +67,24 @@ class PrompterModal extends Modal {
     }
 
     onClose() {
-        lg.info(`Closed`);
+        lg?.info(`Closed`);
         this.contentEl.empty();
         this.reject("cancelled");
     }
 }
 
-
 async function prompt(
-    app: App,
+    plugin: ObsidianFtvkyo,
     prompt: string,
     value_initial?: string,
 ) {
-    lg.info(`Prompting for "${prompt}" with initial value "${value_initial}"`);
+    if (!lg) {
+        lg = plugin.lg.sub("prompter");
+    }
 
     return new Promise((resolve: Resolve, reject: Reject) => {
         const modal = new PrompterModal(
-            app,
+            plugin.app,
             prompt,
             value_initial,
         );

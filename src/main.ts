@@ -1,7 +1,7 @@
 import { Plugin } from "obsidian";
 import { getAPI as getDataviewAPI, DataviewApi } from "obsidian-dataview";
 
-import logger from "@/util/logger";
+import Logger from "@/util/logger";
 
 import AutoAlias from "@/scripts/auto-alias";
 import NoteCreate from "@/scripts/note-create";
@@ -21,6 +21,8 @@ const scripts = [
 ];
 
 export default class ObsidianFtvkyo extends Plugin {
+    lg = new Logger("👁️‍🗨️");
+
     loadedViews: string[] = [];
 
     dv: DataviewApi;
@@ -37,10 +39,10 @@ export default class ObsidianFtvkyo extends Plugin {
      * ================= */
 
     onload() {
-        console.clear();
-        console.log("@", new Date().toISOString());
-
-        logger.big("Loading Obsidian Ftvkyo plugin...");
+        this.lg
+            .clear()
+            .big(new Date().toISOString())
+            .big("obsidian-ftvkyo");
 
         this.app.workspace.onLayoutReady(() => {
             try {
@@ -64,13 +66,13 @@ export default class ObsidianFtvkyo extends Plugin {
     // Throws when something goes wrong,
     // in which case this plugin should be unloaded.
     private afterLayoutReady() {
-        this.loadPlugins();
+        this.loadDependencies();
         this.loadScripts();
         this.loadViews();
     }
 
-    private loadPlugins() {
-        logger.info("Loading dependencies...");
+    private loadDependencies() {
+        this.lg.info("Loading dependencies...");
 
         const dv = getDataviewAPI(this.app);
         if (!dv) {
@@ -78,11 +80,11 @@ export default class ObsidianFtvkyo extends Plugin {
         }
         this.dv = dv;
 
-        this.tp = this.plugin(dependencies.tp);
+        this.tp = this.ensurePlugin(dependencies.tp);
     }
 
     private loadScripts() {
-        const lg = logger.info("Loading scripts...").sub();
+        const lg = this.lg.info("Loading scripts...").sub("load-scripts");
 
 		for (const script of scripts) {
 			script(this);
@@ -91,7 +93,7 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     private loadViews() {
-        const lg = logger.info("Loading views...").sub();
+        const lg = this.lg.info("Loading views...").sub("load-views");
 
         const views = [
             NavView,
@@ -126,7 +128,7 @@ export default class ObsidianFtvkyo extends Plugin {
      * ============== */
 
 	// Get a loaded plugin or throw if not loaded
-	private plugin(pluginId: string) {
+	private ensurePlugin(pluginId: string) {
 		const p = (this.app as any).plugins.plugins[pluginId];
 		if (!p) {
 			throw new Error(`Plugin '${pluginId}' not found/loaded`);
