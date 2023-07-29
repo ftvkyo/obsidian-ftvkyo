@@ -1,25 +1,28 @@
-div[data-type="ftvkyo-navigation"] p,h1,h2,h3,h4,h5,h6 {
-    margin: 0;
-    padding: 0;
-}
+div[data-type="ftvkyo-navigation"] {
+    p,h1,h2,h3,h4,h5,h6 {
+        margin: 0;
+        padding: 0;
+    }
 
-div[data-type="ftvkyo-navigation"] div.view-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-}
+    div.view-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
 
-div[data-type="ftvkyo-navigation"] a.note-card {
-    display: block;
-    width: auto;
+        select {
+            padding: 0.5em 1em;
+        }
+    }
 
-    border: 1px solid #ccc;
-    border-radius: 0.5em;
+    a.note-card {
+        border: 1px solid #ccc;
+        border-radius: 0.5em;
 
-    padding: 1em;
-}
+        padding: 1em;
 
-div[data-type="ftvkyo-navigation"] a.note-card code {
-    opacity: 0.75;
-    font-size: 0.75em;
+        code {
+            opacity: 0.75;
+            font-size: 0.75em;
+        }
+    }
 }

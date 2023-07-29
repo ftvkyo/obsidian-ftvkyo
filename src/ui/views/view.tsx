@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot, Root } from 'react-dom/client';
 
-import { View, WorkspaceLeaf } from "obsidian";
+import { EventRef, View, WorkspaceLeaf } from "obsidian";
 
 import ObsidianFtvkyo from "@/main";
 import { PluginContext } from "@/ui/context";
@@ -49,7 +49,22 @@ export default class ObsidianFtvkyoView extends View {
         // The view is not intended to be navigated away.
         this.navigation = false;
 
+        // TODO: figure out if I can do it in a built-in way.
         this.containerEl.setAttribute("data-type", this.viewType);
+
+        // Register an event to update stuff.
+
+        type MC = typeof plugin.app.metadataCache & {
+            on: (event: "dataview:metadata-change", callback: () => void) => EventRef,
+        }
+
+        const dvEvent = (plugin.app.metadataCache as MC).on(
+            "dataview:metadata-change",
+            () => {
+                this.render();
+            },
+        );
+        plugin.registerEvent(dvEvent);
     }
 
     getViewType() {
@@ -66,16 +81,20 @@ export default class ObsidianFtvkyoView extends View {
 
     async onOpen() {
         this.root = createRoot(this.containerEl);
-        this.root.render(
+        this.render();
+    }
+
+    async onClose() {
+        this.root?.unmount();
+    }
+
+    private render() {
+        this.root?.render(
             <StrictMode>
                 <PluginContext.Provider value={this.plugin}>
                     <this.Element />
                 </PluginContext.Provider>
             </StrictMode>
         );
-    }
-
-    async onClose() {
-        this.root?.unmount();
     }
 }
