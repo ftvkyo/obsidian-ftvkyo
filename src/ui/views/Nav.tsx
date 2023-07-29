@@ -1,4 +1,5 @@
 import { openFile } from "@/note/open";
+import { getTitleByFileName } from "@/note/title";
 import { usePlugin } from "@/ui/context";
 import { useCallback } from "react";
 
@@ -33,7 +34,7 @@ export default function NavView() {
 
                     onClick={openNote}
                 >
-                    {page.file.name}
+                    {getTitleByFileName(plugin, page.file.name)}
                 </a>
             </li>)}
         </ul>
