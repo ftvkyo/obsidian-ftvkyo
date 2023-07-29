@@ -93,7 +93,7 @@ async function command(plugin: ObsidianFtvkyo, lg: Logger) {
         false, // We'd rather open manually...
     );
 
-    await openTFile(plugin, note);
+    await openTFile(plugin, note, "source");
 
     lg.info(`Navigating to the next cursor location...`);
     tp.editor_handler.jump_to_next_cursor_location();

@@ -1,12 +1,23 @@
+import { openFile } from "@/note/open";
 import { usePlugin } from "@/ui/context";
+import { useCallback } from "react";
 
 export default function NavView() {
-    const { dv, notesSource } = usePlugin();
+    const plugin = usePlugin();
+    const { dv, notesSource } = plugin;
 
     const pages = dv.pages(notesSource);
 
     // TODO: Display a warning if there are notes with the same
     // name in different folders.
+
+    const openNote = useCallback(async (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        const href = e.currentTarget.getAttribute("href");
+        if (href) {
+            await openFile(plugin, href);
+        }
+    }, []);
 
     return <div className="view-content">
         <ul>
@@ -19,6 +30,8 @@ export default function NavView() {
                     aria-label={page.file.name}
                     data-href={page.file.name}
                     data-tooltip-position="top"
+
+                    onClick={openNote}
                 >
                     {page.file.name}
                 </a>
