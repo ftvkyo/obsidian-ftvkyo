@@ -145,6 +145,7 @@ export default class ObsidianFtvkyo extends Plugin {
         this.app.workspace.detachLeavesOfType(view);
         await this.app.workspace.getLeftLeaf(false).setViewState({
             type: view,
+            active: true,
         });
 
         if (!this.loadedViews.includes(view)) {
