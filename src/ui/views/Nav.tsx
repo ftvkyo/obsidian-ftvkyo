@@ -96,6 +96,7 @@ const NavView: ViewElement = {
 
         // Create a series selector.
         const seriesSelector = <Selector
+            label="Series"
             options={seriesAbc}
             value={currentSeries}
             onChange={setCurrentSeries}

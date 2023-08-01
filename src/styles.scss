@@ -22,9 +22,22 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
     div.filters {
         grid-row: 1;
 
-        select {
-            width: 100%;
-            padding: $gutter 1em;
+        display: flex;
+        flex-direction: column;
+        gap: $gutter;
+
+        label {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: $gutter;
+
+            select {
+                flex-grow: 1;
+
+                // Make look good
+                padding: $gutter 1em;
+            }
         }
     }
 
