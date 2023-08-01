@@ -13,6 +13,8 @@ import ObsidianFtvkyo from "@/main";
 // TODO: Display a warning if there are notes with the same
 // name in different folders.
 
+// TODO: Filters for sections as toggles rather than a select.
+
 
 function acquireSeries(notes: DataArray<Record<string, any>>) {
     const tags = notes.file.tags;
