@@ -42,11 +42,16 @@ const NavView: ViewElement = {
             })
             .sort((a, b) => a[0].localeCompare(b[0]));
 
+        const seriesWithout = notes.filter(page => {
+            // Only pages that have no series tags.
+            return !page.file.tags.map((tag: string) => tag.startsWith("#s/")).includes(true);
+        });
+
         // Add a "Without series" option.
-        seriesAbc.unshift(["!", "Without series"]);
+        seriesAbc.unshift(["!", `Without series (${seriesWithout.length})`]);
 
         // Add an "All" option.
-        seriesAbc.unshift(["*", "All"]);
+        seriesAbc.unshift(["*", `All (${notes.length})`]);
 
         // Create a series selector.
         const seriesSelector = <Selector
@@ -64,16 +69,17 @@ const NavView: ViewElement = {
             }
         }, []);
 
+        const any = currentSeries === "*";
+        const withoutSeries = currentSeries === "!";
+
+        const notesFiltered =
+            any ? notes
+            : withoutSeries ? seriesWithout
+            : notes.filter(page => page.file.tags.includes(currentSeries));
+
         return <>
             {seriesSelector}
-            {notes
-                // Filter series to show.
-                .filter(page => {
-                    const any = currentSeries === "*";
-                    const withoutSeries = currentSeries === "!" && !page.file.tags.map((tag: string) => tag.startsWith("#s/")).includes(true);
-
-                    return any || withoutSeries || page.file.tags.includes(currentSeries);
-                })
+            {notesFiltered
                 .map(page =>
                     <NoteCard
                         key={page.file.name}
