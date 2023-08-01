@@ -1,24 +1,49 @@
-div[data-type="ftvkyo-navigation"] {
+$gutter: 0.5em;
+
+div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
     p,h1,h2,h3,h4,h5,h6 {
         margin: 0;
-        padding: 0;
+        padding: $gutter 0;
     }
 
+    // Obsidain-provided class
     div.view-content {
-        display: flex;
-        flex-direction: column;
-        gap: 1em;
+        // Padding like in the original sidebars
+        padding: $gutter;
+        padding-bottom: 0;
+
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+
+        gap: $gutter;
+    }
+
+    div.filters {
+        grid-row: 1;
 
         select {
-            padding: 0.5em 1em;
+            width: 100%;
+            padding: $gutter 1em;
         }
+    }
+
+    div.results {
+        grid-row: 2;
+        overflow-y: scroll;
+
+        padding: $gutter;
+
+        display: flex;
+        flex-direction: column;
+        gap: $gutter;
     }
 
     a.note-card {
         border: 1px solid #ccc;
         border-radius: 0.5em;
 
-        padding: 1em;
+        padding: 0.5em 1em;
 
         code {
             opacity: 0.75;

@@ -77,17 +77,22 @@ const NavView: ViewElement = {
             : withoutSeries ? seriesWithout
             : notes.filter(page => page.file.tags.includes(currentSeries));
 
+        const noteCards = notesFiltered
+            .map(page =>
+                <NoteCard
+                    key={page.file.name}
+                    filename={page.file.name}
+                    openNoteCallback={openNote}
+                />
+            );
+
         return <>
-            {seriesSelector}
-            {notesFiltered
-                .map(page =>
-                    <NoteCard
-                        key={page.file.name}
-                        filename={page.file.name}
-                        openNoteCallback={openNote}
-                    />
-                )
-            }
+            <div className="filters">
+                {seriesSelector}
+            </div>
+            <div className="results">
+                {noteCards}
+            </div>
         </>;
     },
     viewType: "ftvkyo-navigation",
