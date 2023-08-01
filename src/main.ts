@@ -141,30 +141,33 @@ export default class ObsidianFtvkyo extends Plugin {
 
     // Add the view to the workspace,
     // and register it to be removed on unload
-    async viewPlace(view: string) {
-        this.app.workspace.detachLeavesOfType(view);
+    async viewPlace(viewType: string) {
+        this.app.workspace.detachLeavesOfType(viewType);
         await this.app.workspace.getLeftLeaf(false).setViewState({
-            type: view,
+            type: viewType,
             active: true,
         });
 
-        if (!this.loadedViews.includes(view)) {
-            this.loadedViews.push(view);
+        if (!this.loadedViews.includes(viewType)) {
+            this.loadedViews.push(viewType);
         }
     }
 
     // Get the reference to the view
-    viewGet(view: string) {
-        const instances = this.app.workspace.getLeavesOfType(view);
+    viewGet(viewType: string) {
+        const instances = this.app.workspace.getLeavesOfType(viewType);
 
         if (instances.length !== 1) {
-            throw `Expected exactly one instance of the ${view} view`;
+            throw `Expected exactly one instance of the ${viewType} view`;
         }
         return instances[0];
     }
 
     // Reveal the view
-    viewReveal(view: string) {
-        this.app.workspace.revealLeaf(this.viewGet(view));
+    viewReveal(viewType: string) {
+        const view = this.viewGet(viewType);
+        if (view) {
+            this.app.workspace.revealLeaf(view);
+        }
     }
 }

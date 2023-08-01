@@ -45,7 +45,7 @@ class SuggesterModal extends FuzzySuggestModal<string> {
     }
 
     getItemText(item: string) {
-        return this.items_text[this.items.indexOf(item)];
+        return this.items_text[this.items.indexOf(item)] ?? "";
     }
 
     onChooseItem(item: string) {
