@@ -75,7 +75,7 @@ async function command(plugin: ObsidianFtvkyo, lg: Logger) {
     // Define note content
     const content = `\
 # ${title}
-#draft
+#${plugin.settings.draftTag}
 
 <% tp.file.cursor(1) %>
 `;

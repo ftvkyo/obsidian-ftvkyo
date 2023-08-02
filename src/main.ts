@@ -17,13 +17,15 @@ import {OFSettingTab} from "./ui/settings";
 
 
 interface Settings {
-    notesSource: string;
+    notesRoot: string;
     defaultNoteType: string;
+    draftTag: string;
 }
 
 const DEFAULT_SETTINGS: Settings = {
-    notesSource: `"text"`,
+    notesRoot: `"text"`,
     defaultNoteType: "note",
+    draftTag: "draft",
 };
 
 

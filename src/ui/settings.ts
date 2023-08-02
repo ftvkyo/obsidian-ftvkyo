@@ -18,9 +18,9 @@ export class OFSettingTab extends PluginSettingTab {
             .setDesc(`Dataview source to query from (e.g. "text" including quotes)`)
             .addText((text) =>
                 text
-                    .setValue(this.plugin.settings.notesSource)
+                    .setValue(this.plugin.settings.notesRoot)
                     .onChange(async (value) => {
-                        this.plugin.settings.notesSource = value;
+                        this.plugin.settings.notesRoot = value;
                         await this.plugin.saveSettings();
                     })
             );
@@ -33,6 +33,18 @@ export class OFSettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.defaultNoteType)
                     .onChange(async (value) => {
                         this.plugin.settings.defaultNoteType = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("Draft tag")
+            .setDesc("Tag to use for draft notes")
+            .addText((text) =>
+                text
+                    .setValue(this.plugin.settings.draftTag)
+                    .onChange(async (value) => {
+                        this.plugin.settings.draftTag = value;
                         await this.plugin.saveSettings();
                     })
             );
