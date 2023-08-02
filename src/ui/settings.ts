@@ -24,5 +24,17 @@ export class OFSettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings();
                     })
             );
+
+        new Setting(containerEl)
+            .setName("Default note type")
+            .setDesc("What note type to assume for notes without a type in frontmatter")
+            .addText((text) =>
+                text
+                    .setValue(this.plugin.settings.defaultNoteType)
+                    .onChange(async (value) => {
+                        this.plugin.settings.defaultNoteType = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
     }
 }

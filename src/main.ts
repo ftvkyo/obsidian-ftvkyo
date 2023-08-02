@@ -18,10 +18,12 @@ import {OFSettingTab} from "./ui/settings";
 
 interface Settings {
     notesSource: string;
+    defaultNoteType: string;
 }
 
 const DEFAULT_SETTINGS: Settings = {
     notesSource: `"text"`,
+    defaultNoteType: "note",
 };
 
 

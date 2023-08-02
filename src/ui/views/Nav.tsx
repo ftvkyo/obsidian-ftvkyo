@@ -17,9 +17,6 @@ import ObsidianFtvkyo from "@/main";
 // TODO: Filter for notes with/without titles.
 
 
-const defaultSection = "journal";
-
-
 function acquireSeries(notes: DataArray<Record<string, any>>) {
     const tags = notes.file.tags;
 
@@ -71,7 +68,7 @@ function filterNotesBySeries(
 }
 
 
-function acquireSections(notes: DataArray<Record<string, any>>) {
+function acquireSections(notes: DataArray<Record<string, any>>, defaultSection: string) {
     // Note section is defined as `type` field in frontmatter
 
     const sections: Record<string /* key */, number> = {};
@@ -102,6 +99,7 @@ function acquireSections(notes: DataArray<Record<string, any>>) {
 function filterNotesBySection(
     notes: DataArray<Record<string, any>>,
     section: string,
+    defaultSection: string,
 ) {
     const includeAnySection = section === "*";
 
@@ -163,8 +161,8 @@ const NavView: ViewElement = {
         />;
 
         // Acquire sections based on current series so we get nice numbers.
-        const sectionsAbc = acquireSections(currentSeriesNotes);
-        const currentSectionNotes = filterNotesBySection(currentSeriesNotes, currentSection);
+        const sectionsAbc = acquireSections(currentSeriesNotes, plugin.settings.defaultNoteType);
+        const currentSectionNotes = filterNotesBySection(currentSeriesNotes, currentSection, plugin.settings.defaultNoteType);
 
         // Create a section selector.
         const sectionSelector = <Selector
