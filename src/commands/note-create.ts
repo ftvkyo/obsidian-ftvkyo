@@ -1,9 +1,14 @@
+import {MarkdownView} from "obsidian";
+
 import * as format from "@/util/date";
 import suggest from "@/ui/builtin/suggest";
 import prompt from "@/ui/builtin/prompt";
 
 import ObsidianFtvkyo from "@/main";
 import Logger from "@/util/logger";
+
+
+// FIXME: this still adds a newline into the current file and moves the cursor?
 
 
 /*
@@ -27,8 +32,6 @@ const TYPES = [
 */
 
 async function command(plugin: ObsidianFtvkyo, lg: Logger) {
-    const tp = plugin.tp;
-
     const now = new Date();
 
     // Generate dynamic part of the path
@@ -81,26 +84,37 @@ type: ${noteType}
         content += `${heading}\n`;
     }
 
-    content += `#${plugin.settings.draftTag}\n\n`;
+    content += `#${plugin.settings.draftTag}\n\n\n`;
 
-    content += `<% tp.file.cursor(1) %>\n`;
+    // Count the lines in the content
+    const lines = content.split("\n").length;
+
+    // Calculate the desired cursor position,
+    // which is the line before the last line
+    const cursor = {
+        line: lines - 2,
+        ch: 0,
+    };
 
     /*
         Note creation.
     */
 
-    lg.info(`Using Templater to create the note...`);
-    const note = await tp.templater.create_new_note_from_template(
-        content,
-        tfolder,
-        name,
-        false, // We'd rather open manually...
-    );
+    lg.info(`Creating the note...`);
+    const note = await plugin.app.vault.create(`${folder}/${name}.md`, content);
 
+    lg.info(`Opening the note...`);
     await plugin.api.note.openTFile(note, "source");
 
-    lg.info(`Navigating to the next cursor location...`);
-    tp.editor_handler.jump_to_next_cursor_location();
+    lg.info(`Moving the cursor...`);
+    const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
+    const editor = view?.editor;
+
+    editor?.transaction({
+        selections: [{
+            from: cursor,
+        }],
+    });
 
     lg.info(`Note creation completed!`);
 }

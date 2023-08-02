@@ -29,11 +29,6 @@ const DEFAULT_SETTINGS: Settings = {
 };
 
 
-const dependencies = {
-    "tp": "templater-obsidian",
-    "dv": "dataview",
-};
-
 const commands = [
     NoteCreate,
 ];
@@ -45,6 +40,7 @@ const markdown = [
 const views = [
     NavView,
 ];
+
 
 export default class ObsidianFtvkyo extends Plugin {
     lg = new Logger("👁️‍🗨️");
@@ -112,7 +108,7 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     private loadDependencies() {
-        this.lg.info("Loading dependencies...");
+        const lg = this.lg.sub("load-dependencies");
 
         const dv = getDataviewAPI(this.app);
         if (!dv) {
@@ -120,11 +116,11 @@ export default class ObsidianFtvkyo extends Plugin {
         }
         this.dv = dv;
 
-        this.tp = this.ensurePlugin(dependencies.tp);
+        lg.info("Loaded dependency 'dataview'");
     }
 
     private loadCommands() {
-        const lg = this.lg.info("Loading commands...").sub("load-commands");
+        const lg = this.lg.sub("load-commands");
 
 		for (const command of commands) {
 			command(this);
@@ -133,7 +129,7 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     private loadMarkdown() {
-        const lg = this.lg.info("Loading custom markdown renderers...").sub("load-markdown");
+        const lg = this.lg.sub("load-markdown");
 
         for (const renderer of markdown) {
             renderer(this);
@@ -142,7 +138,7 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     private loadViews() {
-        const lg = this.lg.info("Loading views...").sub("load-views");
+        const lg = this.lg.sub("load-views");
 
         for (const view of views) {
             const t = view.viewType;
@@ -164,19 +160,6 @@ export default class ObsidianFtvkyo extends Plugin {
             lg.info(`Placed view '${t}'`);
         }
     }
-
-    /* ============== *
-     * Helper methods *
-     * ============== */
-
-	// Get a loaded plugin or throw if not loaded
-	private ensurePlugin(pluginId: string) {
-		const p = (this.app as any).plugins.plugins[pluginId];
-		if (!p) {
-			throw new Error(`Plugin '${pluginId}' not found/loaded`);
-		}
-		return p;
-	}
 
     /* =============== *
      * View management *

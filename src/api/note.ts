@@ -29,6 +29,8 @@ export default class ApiNote {
         await leaf.openFile(tf, {
             state: { mode },
         });
+
+        return leaf;
     }
 
     getTitleByFileName(name: string) {
