@@ -15,6 +15,11 @@ import ObsidianFtvkyo from "@/main";
 
 // TODO: Filters for sections as toggles rather than a select.
 
+// TODO: Filter for notes with/without titles.
+
+
+const defaultSection = "journal";
+
 
 function acquireSeries(notes: DataArray<Record<string, any>>) {
     const tags = notes.file.tags;
@@ -68,27 +73,16 @@ function filterNotesBySeries(
 
 
 function acquireSections(notes: DataArray<Record<string, any>>) {
-    // Currently note sections are determined by note path.
+    // Note section is defined as `type` field in frontmatter
 
     const sections: Record<string /* key */, number> = {};
 
     for (const note of notes) {
-        const path = note.file.path;
-
-        const parts = path.split("/");
-
-        // Expecting the parts to be:
-        // 0. Root note directory
-        // 1. Section
-        // 2. Year
-        // 3. Note identifier (filename)
-
-        // Extract the section:
-        const section = parts[1];
+        const t = note.file.frontmatter["type"] ?? defaultSection;
 
         // Count the number of notes in each section.
-        const count = sections[section] ?? 0;
-        sections[section] = count + 1;
+        const count = sections[t] ?? 0;
+        sections[t] = count + 1;
     }
 
     // Sort the sections by name.
@@ -115,10 +109,8 @@ function filterNotesBySection(
     return includeAnySection
         ? notes
         : notes.filter(page => {
-            const path = page.file.path;
-            const parts = path.split("/");
-            const noteSection = parts[1];
-            return noteSection === section;
+            const t = page.file.frontmatter["type"] ?? defaultSection;
+            return t === section;
         });
 }
 
