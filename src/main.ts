@@ -20,9 +20,16 @@ const dependencies = {
     "dv": "dataview",
 };
 
-const scripts = [
-    AutoAlias,
+const commands = [
     NoteCreate,
+];
+
+const markdown = [
+    AutoAlias,
+];
+
+const views = [
+    NavView,
 ];
 
 export default class ObsidianFtvkyo extends Plugin {
@@ -74,7 +81,8 @@ export default class ObsidianFtvkyo extends Plugin {
     // in which case this plugin should be unloaded.
     private afterLayoutReady() {
         this.loadDependencies();
-        this.loadScripts();
+        this.loadCommands();
+        this.loadMarkdown();
         this.loadViews();
     }
 
@@ -90,21 +98,26 @@ export default class ObsidianFtvkyo extends Plugin {
         this.tp = this.ensurePlugin(dependencies.tp);
     }
 
-    private loadScripts() {
-        const lg = this.lg.info("Loading scripts...").sub("load-scripts");
+    private loadCommands() {
+        const lg = this.lg.info("Loading commands...").sub("load-commands");
 
-		for (const script of scripts) {
-			script(this);
-			lg.info(`Loaded script '${script.name}'`);
+		for (const command of commands) {
+			command(this);
+			lg.info(`Loaded command '${command.name}'`);
 		}
+    }
+
+    private loadMarkdown() {
+        const lg = this.lg.info("Loading custom markdown renderers...").sub("load-markdown");
+
+        for (const renderer of markdown) {
+            renderer(this);
+            lg.info(`Loaded markdown renderer '${renderer.name}'`);
+        }
     }
 
     private loadViews() {
         const lg = this.lg.info("Loading views...").sub("load-views");
-
-        const views = [
-            NavView,
-        ];
 
         for (const view of views) {
             const t = view.viewType;
