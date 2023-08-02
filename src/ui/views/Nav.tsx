@@ -139,7 +139,7 @@ async function openNoteCallback(this: ObsidianFtvkyo, e: React.MouseEvent<HTMLAn
 const NavView: ViewElement = {
     Element: () => {
         const plugin = usePlugin();
-        const {dv, notesSource} = plugin;
+        const {dv, settings} = plugin;
 
         const [currentSeries, setCurrentSeries] = useState<string>("*" /* all */);
         const [currentSection, setCurrentSection] = useState<string>("*" /* all */);
@@ -147,7 +147,7 @@ const NavView: ViewElement = {
         // Create a universal note opener to avoid making one for every note.
         const openNote = useCallback(openNoteCallback.bind(plugin), []);
 
-        const notes = dv.pages(notesSource);
+        const notes = dv.pages(settings.notesSource);
 
         // Acquire series tags for building a selector.
         const {seriesAbc, seriesWithout} = acquireSeries(notes);

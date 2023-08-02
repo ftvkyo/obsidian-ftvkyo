@@ -13,6 +13,16 @@ import ObsidianFtvkyoView from "@/ui/views/view";
 import NavView from "@/ui/views/Nav";
 
 import "./styles.scss";
+import {OFSettingTab} from "./ui/settings";
+
+
+interface Settings {
+    notesSource: string;
+}
+
+const DEFAULT_SETTINGS: Settings = {
+    notesSource: `"text"`,
+};
 
 
 const dependencies = {
@@ -42,21 +52,24 @@ export default class ObsidianFtvkyo extends Plugin {
 
     api = new Api(this);
 
-    /* ====== *
-     * Config *
-     * ====== */
+    /* ======== *
+     * Settings *
+     * ======== */
 
-    notesSource = `"text"`;
+    settings: Settings;
 
     /* ================= *
      * Lifecycle methods *
      * ================= */
 
-    onload() {
+    async onload() {
         this.lg
             .clear()
             .big(new Date().toISOString())
             .big("obsidian-ftvkyo");
+
+        await this.loadSettings();
+        this.addSettingTab(new OFSettingTab(this));
 
         this.app.workspace.onLayoutReady(() => {
             try {
@@ -72,6 +85,14 @@ export default class ObsidianFtvkyo extends Plugin {
         for (const view of this.loadedViews) {
             this.app.workspace.detachLeavesOfType(view);
         }
+    }
+
+    private async loadSettings() {
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    }
+
+    async saveSettings() {
+        await this.saveData(this.settings);
     }
 
     // Loads everything we actually need
