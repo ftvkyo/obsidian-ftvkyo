@@ -108,7 +108,7 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     private loadDependencies() {
-        const lg = this.lg.sub("load-dependencies");
+        const lg = this.lg.sub("dependencies");
 
         const dv = getDataviewAPI(this.app);
         if (!dv) {
@@ -116,31 +116,35 @@ export default class ObsidianFtvkyo extends Plugin {
         }
         this.dv = dv;
 
-        lg.info("Loaded dependency 'dataview'");
+        lg.info("Loaded 'dataview'");
     }
 
     private loadCommands() {
-        const lg = this.lg.sub("load-commands");
+        const lg = this.lg.sub("commands");
 
 		for (const command of commands) {
+            // TODO: do this properly, not with a callback
 			command(this);
-			lg.info(`Loaded command '${command.name}'`);
+			lg.info(`Loaded '${command.name}'`);
 		}
     }
 
     private loadMarkdown() {
-        const lg = this.lg.sub("load-markdown");
+        const lg = this.lg.sub("markdown");
 
         for (const renderer of markdown) {
+            // TODO: do this properly, not with a callback
             renderer(this);
-            lg.info(`Loaded markdown renderer '${renderer.name}'`);
+            lg.info(`Loaded renderer '${renderer.name}'`);
         }
     }
 
     private loadViews() {
-        const lg = this.lg.sub("load-views");
+        const lg = this.lg.sub("views");
 
         for (const view of views) {
+            const slg = lg.subSame(view.short);
+
             const t = view.viewType;
 
             this.registerView(t, (leaf) => ObsidianFtvkyoView.create(
@@ -148,16 +152,17 @@ export default class ObsidianFtvkyo extends Plugin {
                 this,
                 view,
             ));
+            slg.info(`Registered`);
+
             this.addCommand({
                 "id": `reveal-${t}`,
                 "name": `Reveal ${view.displayText}`,
                 "callback": () => this.viewReveal(t),
             });
-
-            lg.info(`Registered view '${t}'`);
+            slg.info(`Added reveal command`);
 
             this.viewPlace(t);
-            lg.info(`Placed view '${t}'`);
+            slg.info(`Placed`);
         }
     }
 

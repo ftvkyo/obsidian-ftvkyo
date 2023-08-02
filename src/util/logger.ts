@@ -6,18 +6,17 @@ export default class Logger {
     private static loggerCounter = 0;
 
     // Color of the current logger
-    private color: number | undefined = undefined;
+    private color: number;
 
     constructor(
         readonly name: string,
-    ) {}
+        color?: number,
+    ) {
+        this.color = color ?? Logger.loggerCounter++;
+    }
 
     // Get the style of the current logger
     private style() {
-        if (this.color === undefined) {
-            this.color = Logger.loggerCounter++;
-        }
-
         return `font-weight: bold; color: black; background-color: ${getColor(this.color)};`
     }
 
@@ -59,5 +58,12 @@ export default class Logger {
         name: string,
     ) {
         return new Logger(`${this.name} > ${name}`);
+    }
+
+    // Create a sub-logger of the same color
+    subSame(
+        name: string,
+    ) {
+        return new Logger(`${this.name} > ${name}`, this.color);
     }
 }

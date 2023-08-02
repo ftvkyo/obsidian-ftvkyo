@@ -9,7 +9,13 @@ import { PluginContext } from "@/ui/context";
 
 
 export type ViewElement = {
+    // Short name
+    short: string,
+
+    // JSX
     Element: () => JSX.Element,
+
+    // Obsidian-required stuff
     viewType: string,
     displayText: string,
     icon: string,

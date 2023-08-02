@@ -187,6 +187,7 @@ const NavView: ViewElement = {
             </div>
         </>;
     },
+    short: "nav",
     viewType: "ftvkyo-navigation",
     displayText: "Ftvkyo Navigation",
     icon: "lucide-folder-tree",
