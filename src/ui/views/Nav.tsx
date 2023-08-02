@@ -145,7 +145,7 @@ const NavView: ViewElement = {
         // Create a universal note opener to avoid making one for every note.
         const openNote = useCallback(openNoteCallback.bind(plugin), []);
 
-        const notes = dv.pages(settings.notesRoot);
+        const notes = dv.pages(`"${settings.notesRoot}"`);
 
         // Acquire series tags for building a selector.
         const {seriesAbc, seriesWithout} = acquireSeries(notes);

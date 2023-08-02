@@ -14,8 +14,8 @@ export class OFSettingTab extends PluginSettingTab {
         containerEl.empty();
 
         new Setting(containerEl)
-            .setName("Notes source")
-            .setDesc(`Dataview source to query from (e.g. "text" including quotes)`)
+            .setName("Notes root")
+            .setDesc("Directory where to find the notes")
             .addText((text) =>
                 text
                     .setValue(this.plugin.settings.notesRoot)

@@ -23,7 +23,7 @@ interface Settings {
 }
 
 const DEFAULT_SETTINGS: Settings = {
-    notesRoot: `"text"`,
+    notesRoot: "text",
     defaultNoteType: "note",
     draftTag: "draft",
 };

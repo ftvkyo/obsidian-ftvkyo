@@ -10,20 +10,16 @@ import Logger from "@/util/logger";
     Configuration.
 */
 
-const ROOT = "notes";
-
-// Folders-sections
-const SECTIONS_TEXT = [
-    "1: Journal (date)",
-    "2: Static (date+name)",
-    "3: Wiki (name)",
-    "4: Person (name)",
+// Note types
+const TYPES_TEXT = [
+    "1: Default",
+    "2: Wiki (name)",
+    "3: Person (name)",
 ];
-const SECTIONS = [
-    "journal",
-    "static",
+const TYPES = [
+    "default",
     "wiki",
-    "people",
+    "person",
 ];
 
 /*
@@ -47,44 +43,53 @@ async function command(plugin: ObsidianFtvkyo, lg: Logger) {
     */
 
     // Figure out what kind of note we want to create
-    const section = await suggest(plugin, SECTIONS_TEXT, SECTIONS);
+    const noteType = await suggest(plugin, TYPES_TEXT, TYPES);
 
-    lg.info(`Chosen section "${section}"`);
+    lg.info(`Chosen note type "${noteType}"`);
 
-    const folder = `${ROOT}/${section}/${prefix}`;
-    const tfolder = plugin.app.vault.getAbstractFileByPath(folder);
-
+    const folder = `${plugin.settings.notesRoot}/${prefix}`;
     lg.info(`Resulting path: "${folder}/${name}"`);
 
-    // Figure out the title based on the chosen section
-    let topic = "";
-
-    if (section !== "journal") {
-        topic = await prompt(plugin, "Input note topic");
-        lg.info(`Asked for topic`);
+    let tfolder = plugin.app.vault.getAbstractFileByPath(folder);
+    if (!tfolder) {
+        lg.info(`Folder "${folder}" does not exist, creating`);
+        await plugin.app.vault.createFolder(folder);
+        tfolder = plugin.app.vault.getAbstractFileByPath(folder);
     }
 
-    const title = format.fmtTitle(section, now, topic);
+    // Try to ask for the title
+    const title = await prompt(plugin, "Input note title (optional)", undefined, true);
+    const heading = title ? `# ${title}` : "";
 
-    lg.info(`Resulting title: "${title}"`);
+    lg.info(`Resulting heading: "${heading}"`);
 
     /*
         Prepare note content.
     */
 
-    // Define note content
-    const content = `\
-# ${title}
-#${plugin.settings.draftTag}
+    let content = "";
 
-<% tp.file.cursor(1) %>
+    if (noteType !== "default") {
+        content += `\
+---
+type: ${noteType}
+---
 `;
+    }
+
+    if (heading) {
+        content += `${heading}\n`;
+    }
+
+    content += `#${plugin.settings.draftTag}\n\n`;
+
+    content += `<% tp.file.cursor(1) %>\n`;
 
     /*
         Note creation.
     */
 
-        lg.info(`Using Templater to create the note...`);
+    lg.info(`Using Templater to create the note...`);
     const note = await tp.templater.create_new_note_from_template(
         content,
         tfolder,

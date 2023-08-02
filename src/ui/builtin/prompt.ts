@@ -21,6 +21,7 @@ class PrompterModal extends Modal {
         readonly app: App,
         readonly prompt: string = "",
         readonly value_initial: string = "",
+        readonly allow_empty: boolean = false,
     ) {
         super(app);
     }
@@ -41,7 +42,7 @@ class PrompterModal extends Modal {
             const v = (e.target! as HTMLInputElement).value;
 
             // Resolve if it's not empty
-            if (v !== "") {
+            if (v !== "" || this.allow_empty) {
                 lg?.info(`Resolving with "${v}"`);
                 this.resolve(v);
             } else {
@@ -77,6 +78,7 @@ async function prompt(
     plugin: ObsidianFtvkyo,
     prompt: string,
     value_initial?: string,
+    allow_empty?: boolean,
 ) {
     if (!lg) {
         lg = plugin.lg.sub("prompter");
@@ -87,6 +89,7 @@ async function prompt(
             plugin.app,
             prompt,
             value_initial,
+            allow_empty,
         );
 
         modal.work(resolve, reject);
