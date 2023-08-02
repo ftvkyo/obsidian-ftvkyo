@@ -1,96 +1,75 @@
+type DatePiece = {
+    d: "year" | "month" | "day" | "hour" | "minute" | "second";
+};
+
+type DatePieceOrLiteral = DatePiece | { l: string };
+
+type DateFormat = readonly DatePieceOrLiteral[];
+
+
+function extractDatePiece(
+    date: Date,
+    piece: DatePiece,
+): [number /* value */, number /* padding */] {
+    switch (piece.d) {
+        case "year":
+            return [date.getFullYear(), 4];
+        case "month":
+            return [date.getMonth() + 1, 2];
+        case "day":
+            return [date.getDate(), 2];
+        case "hour":
+            return [date.getHours(), 2];
+        case "minute":
+            return [date.getMinutes(), 2];
+        case "second":
+            return [date.getSeconds(), 2];
+    }
+}
+
 function fmtDatePiece(
     date: Date,
-    options: Intl.DateTimeFormatOptions,
+    piece: DatePieceOrLiteral,
 ) {
-    if (typeof options === "string") {
-        return options;
+    if ("l" in piece) {
+        return piece.l;
     }
 
-    const formatter = new Intl.DateTimeFormat("en-GB", options);
-    return formatter.format(date);
+    const [value, padding] = extractDatePiece(date, piece);
+    return value.toString().padStart(padding, "0");
 }
 
 function fmtDate(
     date: Date,
-    options: any[],
+    fmt: DateFormat,
 ) {
-    return options.map((o) => fmtDatePiece(date, o)).join("");
+    return fmt.map((f) => fmtDatePiece(date, f)).join("");
 }
 
 export function fmtFilename(
     date: Date,
 ) {
-    const options = [
-        {year: "numeric"},
-        {month: "2-digit"},
-        {day: "2-digit"},
-        "-",
-        {hour: "2-digit"},
-        {minute: "2-digit"},
-        {second: "2-digit"},
-    ];
+    const fmt = [
+        {d: "year"},
+        {d: "month"},
+        {d: "day"},
+        {l: "-"},
+        {d: "hour"},
+        {d: "minute"},
+        {d: "second"},
+    ] as const;
 
-    return fmtDate(date, options);
+    return fmtDate(date, fmt);
 }
 
 export function fmtPrefix(
     date: Date,
 ) {
-    const options = [
-        {year: "numeric"},
-    ];
+    const fmt = [
+        {d: "year"},
+    ] as const;
 
-    return fmtDate(date, options);
-}
-
-export function fmtTitle(
-    kind: "journal" | "static" | string,
-    date: Date,
-    topic: string,
-) {
-    if (typeof topic !== "string") {
-        throw new Error("Topic must be a string");
-    }
-
-    if (kind === "journal") {
-        if (topic) {
-            throw new Error("Journal notes don't have topics");
-        }
-
-        const options = [
-            {year: "numeric"},
-            ".",
-            {month: "2-digit"},
-            ".",
-            {day: "2-digit"},
-            ", ",
-            {weekday: "long"},
-            ", ",
-            {hour: "2-digit"},
-            ":",
-            {minute: "2-digit"},
-            ":",
-            {second: "2-digit"},
-        ];
-
-        return fmtDate(date, options);
-    }
-
-    if (kind === "static") {
-        const options = [
-            {year: "numeric"},
-            ".",
-            {month: "2-digit"},
-            ".",
-            {day: "2-digit"},
-            ": ",
-            topic
-        ];
-
-        return fmtDate(date, options);
-    }
-
-    return topic;
+    return fmtDate(date, fmt);
 }
 
 export function filenameToPretty(filename: string) {
