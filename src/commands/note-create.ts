@@ -4,7 +4,6 @@ import prompt from "@/ui/builtin/prompt";
 
 import ObsidianFtvkyo from "@/main";
 import Logger from "@/util/logger";
-import { openTFile } from "@/note/open";
 
 
 /*
@@ -93,7 +92,7 @@ async function command(plugin: ObsidianFtvkyo, lg: Logger) {
         false, // We'd rather open manually...
     );
 
-    await openTFile(plugin, note, "source");
+    await plugin.api.note.openTFile(note, "source");
 
     lg.info(`Navigating to the next cursor location...`);
     tp.editor_handler.jump_to_next_cursor_location();

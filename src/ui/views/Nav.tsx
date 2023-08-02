@@ -2,7 +2,6 @@ import {useCallback, useState} from "react";
 
 import {DataArray} from "obsidian-dataview";
 
-import {openFile} from "@/note/open";
 import {usePlugin} from "@/ui/context";
 import {type ViewElement} from "./view";
 import NoteCard from "../components/NoteCard";
@@ -132,7 +131,7 @@ async function openNoteCallback(this: ObsidianFtvkyo, e: React.MouseEvent<HTMLAn
     e.preventDefault();
     const href = e.currentTarget.getAttribute("href");
     if (href) {
-        await openFile(this, href);
+        await this.api.note.openFile(href);
     }
 }
 

@@ -1,4 +1,3 @@
-import { getTitleByFileName } from "@/note/title";
 import {filenameToPretty} from "@/util/date";
 import {useMemo} from "react";
 import { usePlugin } from "../context";
@@ -12,7 +11,7 @@ export default function NoteCard({
     openNoteCallback: (e: React.MouseEvent<HTMLAnchorElement>) => Promise<void>,
 }) {
     const plugin = usePlugin();
-    const title = getTitleByFileName(plugin, filename) ?? filename;
+    const title = plugin.api.note.getTitleByFileName(filename) ?? filename;
 
     const date = useMemo(() => filenameToPretty(filename), [filename]);
 

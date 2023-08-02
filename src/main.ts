@@ -3,11 +3,14 @@ import { getAPI as getDataviewAPI, DataviewApi } from "obsidian-dataview";
 
 import Logger from "@/util/logger";
 
-import AutoAlias from "@/scripts/auto-alias";
-import NoteCreate from "@/scripts/note-create";
+import Api from "@/api/api";
 
-import NavView from "@/ui/views/Nav";
+import NoteCreate from "@/commands/note-create";
+
+import AutoAlias from "@/ui/markdown/auto-alias";
+
 import ObsidianFtvkyoView from "@/ui/views/view";
+import NavView from "@/ui/views/Nav";
 
 import "./styles.scss";
 
@@ -29,6 +32,8 @@ export default class ObsidianFtvkyo extends Plugin {
 
     dv: DataviewApi;
     tp: any;
+
+    api = new Api(this);
 
     /* ====== *
      * Config *
