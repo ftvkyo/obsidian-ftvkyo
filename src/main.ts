@@ -34,7 +34,7 @@ export default class ObsidianFtvkyo extends Plugin {
      * Config *
      * ====== */
 
-    notesSource = `"notes"`;
+    notesSource = `"text"`;
 
     /* ================= *
      * Lifecycle methods *
