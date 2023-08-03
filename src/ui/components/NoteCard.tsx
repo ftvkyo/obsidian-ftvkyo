@@ -11,7 +11,7 @@ export default function NoteCard({
     openNoteCallback: (e: React.MouseEvent<HTMLAnchorElement>) => Promise<void>,
 }) {
     const plugin = usePlugin();
-    const title = plugin.api.note.getTitleByFileName(filename) ?? filename;
+    const title = plugin.api.note.getTitle(filename) ?? filename;
 
     const date = useMemo(() => filenameToPretty(filename), [filename]);
 

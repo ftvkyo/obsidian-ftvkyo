@@ -7,36 +7,30 @@ export default class ApiNote {
         public readonly plugin: ObsidianFtvkyo,
     ) {}
 
-    resolveFileName(
-        name: string,
+    resolve(
+        partialPath: string,
         from: string = ""
     ) {
-        return app.metadataCache.getFirstLinkpathDest(name, from);
+        return app.metadataCache.getFirstLinkpathDest(partialPath, from);
     }
 
-    getTitleByFileName(name: string) {
-        const tfile = this.resolveFileName(name);
-        return tfile ? this.getTitleOfTFile(tfile) : null;
-    }
+    getTitle(file: TFile | string | null) {
+        if (typeof file === "string") {
+            // We got a partial path.
+            file = this.resolve(file);
+        }
 
-    getTitleByAbsolutePath(path: string) {
-        const tf = app.vault.getAbstractFileByPath(path);
-
-        if (!(tf instanceof TFile)) {
-            // Not a file
+        if (!file) {
+            // Not found.
             return null;
         }
 
-        if (!tf) {
-            // Dead link
-            return null;
+        if (!(file instanceof TFile)) {
+            // Not a file.
+            throw new Error(`Expected TFile, got ${file}`);
         }
 
-        return this.getTitleOfTFile(tf);
-    }
-
-    getTitleOfTFile(tf: TFile) {
-        const cache = app.metadataCache.getFileCache(tf);
+        const cache = app.metadataCache.getFileCache(file);
         const heading0 = cache?.headings ? cache.headings[0] : null;
 
         if (!heading0) {

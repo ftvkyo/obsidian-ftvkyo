@@ -37,7 +37,7 @@ export default function AutoAlias(plugin: ObsidianFtvkyo) {
                 continue;
             }
 
-            const title = plugin.api.note.getTitleByFileName(filename);
+            const title = plugin.api.note.getTitle(filename);
 
             if (!title) {
                 lg.info(`No title found`);

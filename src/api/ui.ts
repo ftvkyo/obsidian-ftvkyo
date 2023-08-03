@@ -12,7 +12,7 @@ export default class ApiUi {
         name: string,
         mode: "source" | "preview" = "preview"
     ) {
-        const tf = this.plugin.api.note.resolveFileName(name);
+        const tf = this.plugin.api.note.resolve(name);
         if (tf) {
             await this.openTFile(tf, mode);
         }
