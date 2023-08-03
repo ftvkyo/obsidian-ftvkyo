@@ -1,13 +1,14 @@
 import {useState} from "react";
 
-import {DataArray} from "obsidian-dataview";
-
-import {usePlugin} from "@/ui/context";
 import {type ViewElement} from "./view";
 import NoteCard from "../components/NoteCard";
 import Selector from "../components/Selector";
-import ApiNote from "@/api/note";
 import Toggle from "../components/Toggle";
+import ApiNoteList from "@/api/note-list";
+import Logger from "@/util/logger";
+
+
+let lg: Logger | undefined = undefined;
 
 
 // TODO: Display a warning if there are notes with the same
@@ -15,114 +16,19 @@ import Toggle from "../components/Toggle";
 
 // TODO: Filters for sections as toggles rather than a select.
 
-// TODO: Filter for notes with/without titles.
-
-
-function acquireSeries(notes: DataArray<ApiNote>) {
-    // Count the number of occurences of each series.
-    const seriesCounted: Record<string /* key */, number> = {};
-    for (const s of notes.series) {
-        const count = seriesCounted[s] ?? 0;
-        seriesCounted[s] = count + 1;
-    }
-
-    // Sort the series by name.
-    const seriesAbc: [string, string][] = Object.entries(seriesCounted)
-        .map(([name, value]) => {
-            const record: [string, string] = [name, `${name} (${value})`];
-            return record;
-        })
-        .sort((a, b) => a[0].localeCompare(b[0]));
-
-    const notesWithoutSeries = notes.filter(note => {
-        // Only pages that have no series tags.
-        return note.series.length === 0;
-    });
-
-    // Add a "Without series" option.
-    seriesAbc.unshift(["!", `Without series (${notesWithoutSeries.length})`]);
-
-    // Add an "All" option.
-    seriesAbc.unshift(["*", `All (${notes.length})`]);
-
-    return {seriesAbc, notesWithoutSeries};
-}
-
-
-function filterNotesBySeries(
-    notes: DataArray<ApiNote>,
-    series: string,
-    notesWithoutSeries: DataArray<ApiNote>,
-) {
-    const includeAnySeries = series === "*";
-    const onlyWithoutSeries = series === "!";
-
-    const notesFiltered = includeAnySeries ? notes
-        : onlyWithoutSeries ? notesWithoutSeries
-        : notes.filter(page => page.series.includes(series));
-
-    return notesFiltered;
-}
-
-
-function acquireSections(notes: DataArray<ApiNote>) {
-    // Note section is defined as `type` field in frontmatter
-
-    const sections: Record<string /* key */, number> = {};
-
-    for (const note of notes) {
-        if (note.type === null) {
-            continue;
-        }
-
-        // Count the number of notes in each section.
-        const count = sections[note.type] ?? 0;
-        sections[note.type] = count + 1;
-    }
-
-    // Sort the sections by name.
-    const sectionsAbc: [string, string][] = Object.entries(sections)
-        .map(([key, value]) => {
-            const record: [string, string] = [key, `${key} (${value})`];
-            return record;
-        })
-        .sort((a, b) => a[0].localeCompare(b[0]));
-
-    const notesWithoutSection = notes.filter(note => {
-        // Only pages that have no series tags.
-        return note.type === null;
-    });
-
-    // Add a "Without section" option.
-    sectionsAbc.unshift(["!", `Without section (${notesWithoutSection.length})`]);
-
-    // Add an "All" option.
-    sectionsAbc.unshift(["*", `All (${notes.length})`]);
-
-    return {sectionsAbc, notesWithoutSection};
-}
-
-
-function filterNotesBySection(
-    notes: DataArray<ApiNote>,
-    section: string,
-    notesWithoutSection: DataArray<ApiNote>,
-) {
-    const includeAnySection = section === "*";
-    const onlyWithoutSection = section === "!";
-
-    const notesFiltered = includeAnySection ? notes
-        : onlyWithoutSection ? notesWithoutSection
-        : notes.filter(note => note.type === section);
-
-    return notesFiltered;
-}
+// TODO: Logic to count the notes in dropdowns based on the
+// current search?
+// It's tricky because we have to make it so:
+// - The selected series does not affect its own dropdown, as
+//   we can only select 1.
+// - Other stuff :)
 
 
 function generateNoteCards(
-    notes: DataArray<ApiNote>,
+    notes: ApiNoteList,
 ) {
     return notes
+        .notes
         .map(note => <NoteCard
             key={note.base}
             note={note}
@@ -130,70 +36,74 @@ function generateNoteCards(
 }
 
 
+function countedOptions([name, count]: [string, number]): [string, string] {
+    const key = name;
+
+    if (name === "") {
+        name = "Any";
+    }
+    if (name === "!") {
+        name = "None";
+    }
+    if (name === "?") {
+        name = "Some";
+    }
+
+    return [key, `${name} (${count})`];
+}
+
+
 const NavView: ViewElement = {
     Element: () => {
-        const plugin = usePlugin();
-        const {dv, settings} = plugin;
+        if (!lg) {
+            lg = ftvkyo.lg.sub("nav");
+        }
 
-        const [currentSeries, setCurrentSeries] = useState<string>("*" /* all */);
-        const [currentSection, setCurrentSection] = useState<string>("*" /* all */);
+        const [filter, setFilter] = useState({
+            series: "",
+            types: [""],
+            requireH1: false,
+        });
 
-        const [onlyWithH1, setOnlyWithH1] = useState<boolean>(false);
+        const notes = ApiNoteList.all();
 
-        const notes = dv.pages(`"${settings.notesRoot}"`)
-            .map(ApiNote.fromDv)
-            .filter(n => n !== null) as DataArray<ApiNote>;
-
-        // Acquire series tags for building a selector.
-        const {seriesAbc, notesWithoutSeries} = acquireSeries(notes);
-
-        const currentSeriesNotes = filterNotesBySeries(notes, currentSeries, notesWithoutSeries);
+        const series = notes.seriesCountedAbc.map(countedOptions);
+        const types = notes.typesCountedAbc.map(countedOptions);
 
         // Create a series selector.
         const seriesSelector = <Selector
             label="Series"
-            options={seriesAbc}
-            value={currentSeries}
-            onChange={setCurrentSeries}
+            options={series}
+            value={filter.series}
+            onChange={(v) => setFilter({...filter, series: v})}
         />;
 
-        // Acquire sections based on current series so we get nice numbers.
-        const {sectionsAbc, notesWithoutSection} = acquireSections(currentSeriesNotes);
-
-        const currentSectionNotes = filterNotesBySection(currentSeriesNotes, currentSection, notesWithoutSection);
-
-        // Create a section selector.
-        const sectionSelector = <Selector
-            label="Section"
-            options={sectionsAbc}
-            value={currentSection}
-            onChange={setCurrentSection}
+        // Create a type selector.
+        const typeSelector = <Selector
+            label="Type"
+            options={types}
+            value={filter.types[0] ?? ""}
+            onChange={(v) => setFilter({...filter, types: [v]})}
         />;
-
-        const onlyWithH1Notes = onlyWithH1
-            ? currentSectionNotes.filter(note => {
-                return note.h1 !== null;
-            })
-            : currentSectionNotes;
 
         // Create a checkbox for filtering notes with/without titles.
-        const onlyWithTitleCheckbox = <Toggle
-            label="Only notes with level-1 headings"
-            checked={onlyWithH1}
-            onChange={setOnlyWithH1}
+        const requireH1Checkbox = <Toggle
+            label="Require H1 headings"
+            checked={filter.requireH1}
+            onChange={(v) => setFilter({...filter, requireH1: v})}
         />;
 
-        const noteCards = generateNoteCards(
-            onlyWithH1Notes,
-        );
+        const notesFiltered = notes.where(filter);
+        const noteCards = generateNoteCards(notesFiltered);
 
         return <>
             <div className="filters">
                 {seriesSelector}
-                {sectionSelector}
-                {onlyWithTitleCheckbox}
+                {typeSelector}
+                {requireH1Checkbox}
             </div>
             <div className="results">
+                <p>Found {notesFiltered.length} results.</p>
                 {noteCards}
             </div>
         </>;

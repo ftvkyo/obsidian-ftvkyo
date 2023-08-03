@@ -5,7 +5,6 @@ import { ErrorBoundary } from "react-error-boundary";
 import { EventRef, View, WorkspaceLeaf } from "obsidian";
 
 import ObsidianFtvkyo from "@/main";
-import { PluginContext } from "@/ui/context";
 
 
 export type ViewElement = {
@@ -101,20 +100,18 @@ export default class ObsidianFtvkyoView extends View {
     private render() {
         this.root?.render(
             <StrictMode>
-                <PluginContext.Provider value={ftvkyo}>
-                    <div className="view-content">
-                        <ErrorBoundary
-                            fallbackRender={({ error }) => {
-                                return <div>
-                                    <h1>Something went wrong</h1>
-                                    <pre>{error.message}</pre>
-                                </div>;
-                            }}
-                        >
-                            <this.Element />
-                        </ErrorBoundary>
-                    </div>
-                </PluginContext.Provider>
+                <div className="view-content">
+                    <ErrorBoundary
+                        fallbackRender={({ error }) => {
+                            return <div>
+                                <h1>Something went wrong</h1>
+                                <pre>{error.message}</pre>
+                            </div>;
+                        }}
+                    >
+                        <this.Element />
+                    </ErrorBoundary>
+                </div>
             </StrictMode>
         );
     }
