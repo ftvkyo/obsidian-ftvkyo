@@ -104,7 +104,7 @@ type: ${noteType}
     const note = await plugin.app.vault.create(`${folder}/${name}.md`, content);
 
     lg.info(`Opening the note...`);
-    await plugin.api.note.openTFile(note, "source");
+    await plugin.api.ui.openTFile(note, "source");
 
     lg.info(`Moving the cursor...`);
     const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);

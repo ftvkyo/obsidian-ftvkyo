@@ -129,7 +129,7 @@ async function openNoteCallback(this: ObsidianFtvkyo, e: React.MouseEvent<HTMLAn
     e.preventDefault();
     const href = e.currentTarget.getAttribute("href");
     if (href) {
-        await this.api.note.openFile(href);
+        await this.api.ui.openFile(href);
     }
 }
 

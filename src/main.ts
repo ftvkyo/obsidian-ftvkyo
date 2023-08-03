@@ -156,48 +156,12 @@ export default class ObsidianFtvkyo extends Plugin {
             this.addCommand({
                 "id": `reveal-${t}`,
                 "name": `Reveal ${view.displayText}`,
-                "callback": () => this.viewReveal(t),
+                "callback": () => this.api.ui.viewReveal(t),
             });
             slg.info(`Added reveal command`);
 
-            this.viewPlace(t);
+            this.api.ui.viewPlace(t);
             slg.info(`Placed`);
-        }
-    }
-
-    /* =============== *
-     * View management *
-     * =============== */
-
-    // Add the view to the workspace,
-    // and register it to be removed on unload
-    async viewPlace(viewType: string) {
-        this.app.workspace.detachLeavesOfType(viewType);
-        await this.app.workspace.getLeftLeaf(false).setViewState({
-            type: viewType,
-            active: true,
-        });
-
-        if (!this.loadedViews.includes(viewType)) {
-            this.loadedViews.push(viewType);
-        }
-    }
-
-    // Get the reference to the view
-    viewGet(viewType: string) {
-        const instances = this.app.workspace.getLeavesOfType(viewType);
-
-        if (instances.length !== 1) {
-            throw `Expected exactly one instance of the ${viewType} view`;
-        }
-        return instances[0];
-    }
-
-    // Reveal the view
-    viewReveal(viewType: string) {
-        const view = this.viewGet(viewType);
-        if (view) {
-            this.app.workspace.revealLeaf(view);
         }
     }
 }
