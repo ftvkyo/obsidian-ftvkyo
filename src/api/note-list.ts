@@ -137,14 +137,18 @@ export default class ApiNoteList {
     where({
         series = "",
         type = "",
+        tag = "",
         requireH1 = false,
     }: {
         // What series to match.
-        // - Unset and "" matches all notes.
+        // - Uses special ""/"!"/"?" syntax.
         series?: string,
         // What type to match.
-        // - Unset and "" matches all notes.
+        // - Uses special ""/"!"/"?" syntax.
         type?: string,
+        // What tag to match.
+        // - Mathches all notes when undefined.
+        tag?: string,
         // Whether to include only notes with a single H1.
         // - Iff True => only notes with a single H1.
         requireH1?: boolean,
@@ -178,6 +182,12 @@ export default class ApiNoteList {
                     return note.type !== null;
                 }
                 return note.type === type;
+            });
+        }
+
+        if (tag) {
+            notes = notes.filter(note => {
+                return note.tags.includes(tag);
             });
         }
 

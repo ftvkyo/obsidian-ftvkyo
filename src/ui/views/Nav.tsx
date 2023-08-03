@@ -63,6 +63,7 @@ const NavView: ViewElement = {
         const [filter, setFilter] = useState({
             series: "",
             type: "",
+            tag: "",
             requireH1: false,
         });
 
@@ -89,9 +90,15 @@ const NavView: ViewElement = {
 
         // Create a checkbox for filtering notes with/without titles.
         const requireH1Checkbox = <Toggle
-            label="Require H1 headings"
+            label="Only with H1 headings"
             checked={filter.requireH1}
             onChange={(v) => setFilter({...filter, requireH1: v})}
+        />;
+
+        const onlyDraftsCheckbox = <Toggle
+            label="Only drafts"
+            checked={filter.tag === "draft"}
+            onChange={(v) => setFilter({...filter, tag: v ? "draft" : ""})}
         />;
 
         const notesFiltered = notes.where(filter);
@@ -103,6 +110,7 @@ const NavView: ViewElement = {
                 {seriesSelector}
                 {typeRadio}
                 {requireH1Checkbox}
+                {onlyDraftsCheckbox}
             </div>
             <div className="results">
                 <p>Found {notesFiltered.length} results.</p>
