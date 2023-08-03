@@ -1,20 +1,19 @@
 import {MarkdownView} from "obsidian";
 
+import Logger from "@/util/logger";
+
 import * as format from "@/util/date";
 import suggest from "@/ui/builtin/suggest";
 import prompt from "@/ui/builtin/prompt";
 
-import ObsidianFtvkyo from "@/main";
-import Logger from "@/util/logger";
 import ApiNote from "@/api/note";
 
 
 // FIXME: this still adds a newline into the current file and moves the cursor?
 
 
-/*
-    Configuration.
-*/
+let lg: Logger | undefined = undefined;
+
 
 // Note types
 const TYPES_TEXT = [
@@ -22,115 +21,109 @@ const TYPES_TEXT = [
     "2: Wiki (name)",
     "3: Person (name)",
 ];
+
 const TYPES = [
     "default",
     "wiki",
     "person",
 ];
 
-/*
-    Command.
-*/
 
-async function command(plugin: ObsidianFtvkyo, lg: Logger) {
-    const now = new Date();
+const NoteCreate = {
+    id: "note-create",
+    name: "Create a note",
+    callback: async () => {
+        if (!lg) {
+            lg = ftvkyo.lg.sub("note-create");
+        }
 
-    // Generate dynamic part of the path
-    const name = format.fmtFilename(now);
-    const prefix = format.fmtPrefix(now);
+        const now = new Date();
 
-    lg.info(`Using name "${name}"`);
-    lg.info(`Using prefix "${prefix}"`);
+        // Generate dynamic part of the path
+        const name = format.fmtFilename(now);
+        const prefix = format.fmtPrefix(now);
 
-    /*
-        Asking the user for the necessary information.
-    */
+        lg.info(`Using name "${name}"`);
+        lg.info(`Using prefix "${prefix}"`);
 
-    // Figure out what kind of note we want to create
-    const noteType = await suggest(plugin, TYPES_TEXT, TYPES);
+        /*
+            Asking the user for the necessary information.
+        */
 
-    lg.info(`Chosen note type "${noteType}"`);
+        // Figure out what kind of note we want to create
+        const noteType = await suggest(TYPES_TEXT, TYPES);
 
-    const folder = `${plugin.settings.notesRoot}/${prefix}`;
-    lg.info(`Resulting path: "${folder}/${name}"`);
+        lg.info(`Chosen note type "${noteType}"`);
 
-    let tfolder = app.vault.getAbstractFileByPath(folder);
-    if (!tfolder) {
-        lg.info(`Folder "${folder}" does not exist, creating`);
-        await app.vault.createFolder(folder);
-        tfolder = app.vault.getAbstractFileByPath(folder);
-    }
+        const folder = `${ftvkyo.settings.notesRoot}/${prefix}`;
+        lg.info(`Resulting path: "${folder}/${name}"`);
 
-    // Try to ask for the title
-    const title = await prompt(plugin, "Input note title (optional)", undefined, true);
-    const heading = title ? `# ${title}` : "";
+        let tfolder = app.vault.getAbstractFileByPath(folder);
+        if (!tfolder) {
+            lg.info(`Folder "${folder}" does not exist, creating`);
+            await app.vault.createFolder(folder);
+            tfolder = app.vault.getAbstractFileByPath(folder);
+        }
 
-    lg.info(`Resulting heading: "${heading}"`);
+        // Try to ask for the title
+        const title = await prompt("Input note title (optional)", undefined, true);
+        const heading = title ? `# ${title}` : "";
 
-    /*
-        Prepare note content.
-    */
+        lg.info(`Resulting heading: "${heading}"`);
 
-    let content = "";
+        /*
+            Prepare note content.
+        */
 
-    if (noteType !== "default") {
-        content += `\
+        let content = "";
+
+        if (noteType !== "default") {
+            content += `\
 ---
 type: ${noteType}
 ---
 `;
+        }
+
+        if (heading) {
+            content += `${heading}\n`;
+        }
+
+        content += `#${ftvkyo.settings.draftTag}\n\n\n`;
+
+        // Count the lines in the content
+        const lines = content.split("\n").length;
+
+        // Calculate the desired cursor position,
+        // which is the line before the last line
+        const cursor = {
+            line: lines - 2,
+            ch: 0,
+        };
+
+        /*
+            Note creation.
+        */
+
+        lg.info(`Creating the note...`);
+        const noteTF = await app.vault.create(`${folder}/${name}.md`, content);
+        const note = ApiNote.from(noteTF);
+
+        lg.info(`Opening the note...`);
+        await note.reveal({ mode: "source"});
+
+        lg.info(`Moving the cursor...`);
+        const view = app.workspace.getActiveViewOfType(MarkdownView);
+        const editor = view?.editor;
+
+        editor?.transaction({
+            selections: [{
+                from: cursor,
+            }],
+        });
+
+        lg.info(`Note creation completed!`);
     }
-
-    if (heading) {
-        content += `${heading}\n`;
-    }
-
-    content += `#${plugin.settings.draftTag}\n\n\n`;
-
-    // Count the lines in the content
-    const lines = content.split("\n").length;
-
-    // Calculate the desired cursor position,
-    // which is the line before the last line
-    const cursor = {
-        line: lines - 2,
-        ch: 0,
-    };
-
-    /*
-        Note creation.
-    */
-
-    lg.info(`Creating the note...`);
-    const noteTF = await app.vault.create(`${folder}/${name}.md`, content);
-    const note = ApiNote.from(noteTF);
-
-    lg.info(`Opening the note...`);
-    await note.reveal({ mode: "source"});
-
-    lg.info(`Moving the cursor...`);
-    const view = app.workspace.getActiveViewOfType(MarkdownView);
-    const editor = view?.editor;
-
-    editor?.transaction({
-        selections: [{
-            from: cursor,
-        }],
-    });
-
-    lg.info(`Note creation completed!`);
 }
 
-/*
-    Loader.
-*/
-
-export default function NoteCreate(plugin: ObsidianFtvkyo) {
-    const lg = plugin.lg.sub(`note-create`);
-    const callback = () => command(plugin, lg);
-    plugin.addCommand({
-        id: "note-create",
-        name: "Create a note",
-        callback,
-    });
-}
+export default NoteCreate;

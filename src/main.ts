@@ -128,8 +128,7 @@ export default class ObsidianFtvkyo extends Plugin {
         const lg = this.lg.sub("commands");
 
 		for (const command of commands) {
-            // TODO: do this properly, not with a callback
-			command(this);
+            this.addCommand(command);
 			lg.info(`Loaded '${command.name}'`);
 		}
     }
@@ -138,8 +137,7 @@ export default class ObsidianFtvkyo extends Plugin {
         const lg = this.lg.sub("markdown");
 
         for (const renderer of markdown) {
-            // TODO: do this properly, not with a callback
-            renderer(this);
+            this.registerMarkdownPostProcessor(renderer);
             lg.info(`Loaded renderer '${renderer.name}'`);
         }
     }

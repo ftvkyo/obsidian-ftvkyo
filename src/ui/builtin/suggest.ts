@@ -1,7 +1,6 @@
 import { App, FuzzyMatch, FuzzySuggestModal } from "obsidian";
 
 import Logger from "@/util/logger";
-import ObsidianFtvkyo from "@/main";
 
 
 let lg: undefined | Logger = undefined;
@@ -76,12 +75,11 @@ class SuggesterModal extends FuzzySuggestModal<string> {
 }
 
 async function suggest(
-    plugin: ObsidianFtvkyo,
     items_text: string[],
     items: string[],
 ) {
     if (!lg) {
-        lg = plugin.lg.sub("suggester");
+        lg = ftvkyo.lg.sub("suggester");
     }
 
     return new Promise((resolve: Resolve, reject: Reject) => {

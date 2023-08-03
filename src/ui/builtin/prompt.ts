@@ -1,6 +1,5 @@
 import { App, Modal, TextComponent } from "obsidian";
 
-import ObsidianFtvkyo from "@/main";
 import Logger from "@/util/logger";
 
 
@@ -75,13 +74,12 @@ class PrompterModal extends Modal {
 }
 
 async function prompt(
-    plugin: ObsidianFtvkyo,
     prompt: string,
     value_initial?: string,
     allow_empty?: boolean,
 ) {
     if (!lg) {
-        lg = plugin.lg.sub("prompter");
+        lg = ftvkyo.lg.sub("prompter");
     }
 
     return new Promise((resolve: Resolve, reject: Reject) => {

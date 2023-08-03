@@ -1,7 +1,11 @@
-import { MarkdownRenderChild } from "obsidian";
+import { MarkdownPostProcessorContext, MarkdownRenderChild } from "obsidian";
 
-import ObsidianFtvkyo from "@/main";
+import Logger from "@/util/logger";
+
 import ApiNote from "@/api/note";
+
+
+let lg: Logger | undefined = undefined;
 
 
 class AliasLink extends MarkdownRenderChild {
@@ -17,42 +21,45 @@ class AliasLink extends MarkdownRenderChild {
     }
 }
 
-export default function AutoAlias(plugin: ObsidianFtvkyo) {
-    const lg = plugin.lg.sub("auto-alias");
+export default function AutoAlias(
+    element: HTMLElement,
+    context: MarkdownPostProcessorContext,
+) {
+    if (!lg) {
+        lg = ftvkyo.lg.sub("auto-alias");
+    }
 
-    plugin.registerMarkdownPostProcessor((element, context) => {
-        // Find all internal links
-        const links = Array.from(element.querySelectorAll<HTMLElement>("a.internal-link"));
+    // Find all internal links
+    const links = Array.from(element.querySelectorAll<HTMLElement>("a.internal-link"));
 
-        if (links.length > 0) {
-            lg.info(`Found ${links.length} internal links.`);
+    if (links.length > 0) {
+        lg.info(`Found ${links.length} internal links.`);
+    }
+
+    for (const link of links) {
+        const href = link.getAttribute("href");
+        const filename = href + ".md";
+
+        // Only process links that have the same alias as href
+        if (link.innerText !== href) {
+            lg.info(`Link has an alias already`);
+            continue;
         }
 
-        for (const link of links) {
-            const href = link.getAttribute("href");
-            const filename = href + ".md";
+        const note = ApiNote.fromPath(filename);
 
-            // Only process links that have the same alias as href
-            if (link.innerText !== href) {
-                lg.info(`Link has an alias already`);
-                continue;
-            }
-
-            const note = ApiNote.fromPath(filename);
-
-            if (!note) {
-                lg.info(`Note not found`);
-                continue;
-            }
-
-            if (!note.h1) {
-                lg.info(`No h1 found`);
-                continue;
-            }
-
-            lg.info(`Found h1 "${note.h1}"`);
-
-            context.addChild(new AliasLink(link, note.h1));
+        if (!note) {
+            lg.info(`Note not found`);
+            continue;
         }
-    });
+
+        if (!note.h1) {
+            lg.info(`No h1 found`);
+            continue;
+        }
+
+        lg.info(`Found h1 "${note.h1}"`);
+
+        context.addChild(new AliasLink(link, note.h1));
+    }
 }
