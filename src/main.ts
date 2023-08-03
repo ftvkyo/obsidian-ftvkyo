@@ -48,7 +48,6 @@ export default class ObsidianFtvkyo extends Plugin {
     loadedViews: string[] = [];
 
     dv: DataviewApi;
-    tp: any;
 
     api = new Api(this);
 
