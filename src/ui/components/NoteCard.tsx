@@ -1,5 +1,5 @@
-import {filenameToPretty} from "@/util/date";
-import {useMemo} from "react";
+import { useMemo } from "react";
+
 import { usePlugin } from "../context";
 
 
@@ -13,7 +13,7 @@ export default function NoteCard({
     const plugin = usePlugin();
     const title = plugin.api.note.getTitle(filename) ?? filename;
 
-    const date = useMemo(() => filenameToPretty(filename), [filename]);
+    const date = useMemo(() => plugin.api.note.getDateInfo(filename) ?? "", [filename]);
 
     return <a
         className="note-card internal-link"

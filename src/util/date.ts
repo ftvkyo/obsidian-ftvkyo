@@ -71,31 +71,3 @@ export function fmtPrefix(
 
     return fmtDate(date, fmt);
 }
-
-export function filenameToPretty(filename: string) {
-    const parts = filename.split(/[-.]/);
-    const date = parts[0];
-    const time: string | undefined = parts[1];
-
-    if (!date || date.length !== 8) {
-        throw new Error(`Invalid date in filename ${filename}`);
-    }
-
-    const y = date.substring(0, 4);
-    const m = date.substring(4, 6);
-    const d = date.substring(6, 8);
-
-    if (!time) {
-        return `${y}/${m}/${d}`;
-    }
-
-    if (time.length !== 6) {
-        throw new Error(`Invalid time in filename ${filename}`);
-    }
-
-    const h = time.substring(0, 2);
-    const min = time.substring(2, 4);
-    const s = time.substring(4, 6);
-
-    return `${y}/${m}/${d} ${h}:${min}:${s}`;
-}
