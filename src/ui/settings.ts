@@ -5,7 +5,7 @@ export class OFSettingTab extends PluginSettingTab {
     constructor(
         readonly plugin: ObsidianFtvkyo
     ) {
-        super(plugin.app, plugin);
+        super(app, plugin);
     }
 
     display(): void {

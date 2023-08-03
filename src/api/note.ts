@@ -11,7 +11,7 @@ export default class ApiNote {
         name: string,
         from: string = ""
     ) {
-        return this.plugin.app.metadataCache.getFirstLinkpathDest(name, from);
+        return app.metadataCache.getFirstLinkpathDest(name, from);
     }
 
     getTitleByFileName(name: string) {
@@ -20,7 +20,7 @@ export default class ApiNote {
     }
 
     getTitleByAbsolutePath(path: string) {
-        const tf = this.plugin.app.vault.getAbstractFileByPath(path);
+        const tf = app.vault.getAbstractFileByPath(path);
 
         if (!(tf instanceof TFile)) {
             // Not a file
@@ -36,7 +36,7 @@ export default class ApiNote {
     }
 
     getTitleOfTFile(tf: TFile) {
-        const cache = this.plugin.app.metadataCache.getFileCache(tf);
+        const cache = app.metadataCache.getFileCache(tf);
         const heading0 = cache?.headings ? cache.headings[0] : null;
 
         if (!heading0) {

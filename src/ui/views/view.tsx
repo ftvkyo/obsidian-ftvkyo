@@ -64,11 +64,11 @@ export default class ObsidianFtvkyoView extends View {
 
         // Register an event to update stuff.
 
-        type MC = typeof plugin.app.metadataCache & {
+        type MC = typeof app.metadataCache & {
             on: (event: "dataview:metadata-change", callback: () => void) => EventRef,
         }
 
-        const dvEvent = (plugin.app.metadataCache as MC).on(
+        const dvEvent = (app.metadataCache as MC).on(
             "dataview:metadata-change",
             () => {
                 this.render();

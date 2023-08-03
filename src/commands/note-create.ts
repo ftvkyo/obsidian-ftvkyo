@@ -53,11 +53,11 @@ async function command(plugin: ObsidianFtvkyo, lg: Logger) {
     const folder = `${plugin.settings.notesRoot}/${prefix}`;
     lg.info(`Resulting path: "${folder}/${name}"`);
 
-    let tfolder = plugin.app.vault.getAbstractFileByPath(folder);
+    let tfolder = app.vault.getAbstractFileByPath(folder);
     if (!tfolder) {
         lg.info(`Folder "${folder}" does not exist, creating`);
-        await plugin.app.vault.createFolder(folder);
-        tfolder = plugin.app.vault.getAbstractFileByPath(folder);
+        await app.vault.createFolder(folder);
+        tfolder = app.vault.getAbstractFileByPath(folder);
     }
 
     // Try to ask for the title
@@ -101,13 +101,13 @@ type: ${noteType}
     */
 
     lg.info(`Creating the note...`);
-    const note = await plugin.app.vault.create(`${folder}/${name}.md`, content);
+    const note = await app.vault.create(`${folder}/${name}.md`, content);
 
     lg.info(`Opening the note...`);
     await plugin.api.ui.openTFile(note, "source");
 
     lg.info(`Moving the cursor...`);
-    const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
+    const view = app.workspace.getActiveViewOfType(MarkdownView);
     const editor = view?.editor;
 
     editor?.transaction({
