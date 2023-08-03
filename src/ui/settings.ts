@@ -21,18 +21,6 @@ export class OFSettingTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName("Default note type")
-            .setDesc("What note type to assume for notes without a type in frontmatter")
-            .addText((text) =>
-                text
-                    .setValue(ftvkyo.settings.defaultNoteType)
-                    .onChange(async (value) => {
-                        ftvkyo.settings.defaultNoteType = value;
-                        await ftvkyo.saveSettings();
-                    })
-            );
-
-        new Setting(containerEl)
             .setName("Draft tag")
             .setDesc("Tag to use for draft notes")
             .addText((text) =>

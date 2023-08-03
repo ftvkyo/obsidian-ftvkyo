@@ -52,30 +52,32 @@ function acquireSeries(notes: DataArray<ApiNote>) {
 function filterNotesBySeries(
     notes: DataArray<ApiNote>,
     series: string,
-    withoutSeries: DataArray<ApiNote>,
+    notesWithoutSeries: DataArray<ApiNote>,
 ) {
     const includeAnySeries = series === "*";
     const onlyWithoutSeries = series === "!";
 
     const notesFiltered = includeAnySeries ? notes
-        : onlyWithoutSeries ? withoutSeries
+        : onlyWithoutSeries ? notesWithoutSeries
         : notes.filter(page => page.series.includes(series));
 
     return notesFiltered;
 }
 
 
-function acquireSections(notes: DataArray<ApiNote>, defaultSection: string) {
+function acquireSections(notes: DataArray<ApiNote>) {
     // Note section is defined as `type` field in frontmatter
 
     const sections: Record<string /* key */, number> = {};
 
     for (const note of notes) {
-        const t = note.type ?? defaultSection;
+        if (note.type === null) {
+            continue;
+        }
 
         // Count the number of notes in each section.
-        const count = sections[t] ?? 0;
-        sections[t] = count + 1;
+        const count = sections[note.type] ?? 0;
+        sections[note.type] = count + 1;
     }
 
     // Sort the sections by name.
@@ -86,26 +88,34 @@ function acquireSections(notes: DataArray<ApiNote>, defaultSection: string) {
         })
         .sort((a, b) => a[0].localeCompare(b[0]));
 
+    const notesWithoutSection = notes.filter(note => {
+        // Only pages that have no series tags.
+        return note.type === null;
+    });
+
+    // Add a "Without section" option.
+    sectionsAbc.unshift(["!", `Without section (${notesWithoutSection.length})`]);
+
     // Add an "All" option.
     sectionsAbc.unshift(["*", `All (${notes.length})`]);
 
-    return sectionsAbc;
+    return {sectionsAbc, notesWithoutSection};
 }
 
 
 function filterNotesBySection(
     notes: DataArray<ApiNote>,
     section: string,
-    defaultSection: string,
+    notesWithoutSection: DataArray<ApiNote>,
 ) {
     const includeAnySection = section === "*";
+    const onlyWithoutSection = section === "!";
 
-    return includeAnySection
-        ? notes
-        : notes.filter(note => {
-            const t = note.type ?? defaultSection;
-            return t === section;
-        });
+    const notesFiltered = includeAnySection ? notes
+        : onlyWithoutSection ? notesWithoutSection
+        : notes.filter(note => note.type === section);
+
+    return notesFiltered;
 }
 
 
@@ -148,8 +158,9 @@ const NavView: ViewElement = {
         />;
 
         // Acquire sections based on current series so we get nice numbers.
-        const sectionsAbc = acquireSections(currentSeriesNotes, plugin.settings.defaultNoteType);
-        const currentSectionNotes = filterNotesBySection(currentSeriesNotes, currentSection, plugin.settings.defaultNoteType);
+        const {sectionsAbc, notesWithoutSection} = acquireSections(currentSeriesNotes);
+
+        const currentSectionNotes = filterNotesBySection(currentSeriesNotes, currentSection, notesWithoutSection);
 
         // Create a section selector.
         const sectionSelector = <Selector

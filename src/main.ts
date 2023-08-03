@@ -25,13 +25,11 @@ declare global {
 
 interface Settings {
     notesRoot: string;
-    defaultNoteType: string;
     draftTag: string;
 }
 
 const DEFAULT_SETTINGS: Settings = {
     notesRoot: "text",
-    defaultNoteType: "note",
     draftTag: "draft",
 };
 
