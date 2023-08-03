@@ -1,32 +1,17 @@
-import {TFile} from "obsidian";
-
-import ObsidianFtvkyo from "@/main";
+import ApiNote from "./note";
 
 
 export default class ApiUi {
-    constructor(
-        public readonly plugin: ObsidianFtvkyo,
-    ) {}
-
-    async openFile(
-        name: string,
-        mode: "source" | "preview" = "preview"
-    ) {
-        const tf = this.plugin.api.note.resolve(name);
-        if (tf) {
-            await this.openTFile(tf, mode);
-        }
-    }
 
     // Open file in the current tab if it's a new tab, otherwise, create a new tab.
-    async openTFile(
-        tf: TFile,
+    async noteReveal(
+        note: ApiNote,
         mode: "source" | "preview" = "preview"
     ) {
         const current = app.workspace.getActiveFile();
 
         const leaf = app.workspace.getLeaf(!!current);
-        await leaf.openFile(tf, {
+        await leaf.openFile(note.tf, {
             state: { mode },
         });
 
@@ -37,6 +22,9 @@ export default class ApiUi {
      * View management *
      * =============== */
 
+    // List of views that have been loaded.
+    loadedViews: string[] = [];
+
     // Add the view to the workspace,
     // and register it to be removed on unload
     async viewPlace(viewType: string) {
@@ -46,8 +34,8 @@ export default class ApiUi {
             active: true,
         });
 
-        if (!this.plugin.loadedViews.includes(viewType)) {
-            this.plugin.loadedViews.push(viewType);
+        if (!this.loadedViews.includes(viewType)) {
+            this.loadedViews.push(viewType);
         }
     }
 
@@ -66,6 +54,13 @@ export default class ApiUi {
         const view = this.viewGet(viewType);
         if (view) {
             app.workspace.revealLeaf(view);
+        }
+    }
+
+    // Detach all views
+    viewDetachAll() {
+        for (const view of this.loadedViews) {
+            app.workspace.detachLeavesOfType(view);
         }
     }
 }

@@ -16,6 +16,13 @@ import "./styles.scss";
 import {OFSettingTab} from "./ui/settings";
 
 
+declare global {
+    // Using let or const would not make this work.
+    // eslint-disable-next-line no-var
+    var ftvkyo: ObsidianFtvkyo;
+}
+
+
 interface Settings {
     notesRoot: string;
     defaultNoteType: string;
@@ -45,11 +52,9 @@ const views = [
 export default class ObsidianFtvkyo extends Plugin {
     lg = new Logger("👁️‍🗨️");
 
-    loadedViews: string[] = [];
-
     dv: DataviewApi;
 
-    api = new Api(this);
+    api = new Api();
 
     /* ======== *
      * Settings *
@@ -62,13 +67,16 @@ export default class ObsidianFtvkyo extends Plugin {
      * ================= */
 
     async onload() {
+        // Make the plugin available globally
+        globalThis.ftvkyo = this;
+
         this.lg
             .clear()
             .big(new Date().toISOString())
             .big("obsidian-ftvkyo");
 
         await this.loadSettings();
-        this.addSettingTab(new OFSettingTab(this));
+        this.addSettingTab(new OFSettingTab(app, this));
 
         this.app.workspace.onLayoutReady(() => {
             try {
@@ -81,9 +89,7 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     onunload() {
-        for (const view of this.loadedViews) {
-            this.app.workspace.detachLeavesOfType(view);
-        }
+        this.api.ui.viewDetachAll();
     }
 
     private async loadSettings() {

@@ -1,12 +1,7 @@
-import ObsidianFtvkyo from "@/main";
 import { PluginSettingTab, Setting } from "obsidian";
 
+
 export class OFSettingTab extends PluginSettingTab {
-    constructor(
-        readonly plugin: ObsidianFtvkyo
-    ) {
-        super(app, plugin);
-    }
 
     display(): void {
         const { containerEl } = this;
@@ -18,10 +13,10 @@ export class OFSettingTab extends PluginSettingTab {
             .setDesc("Directory where to find the notes")
             .addText((text) =>
                 text
-                    .setValue(this.plugin.settings.notesRoot)
+                    .setValue(ftvkyo.settings.notesRoot)
                     .onChange(async (value) => {
-                        this.plugin.settings.notesRoot = value;
-                        await this.plugin.saveSettings();
+                        ftvkyo.settings.notesRoot = value;
+                        await ftvkyo.saveSettings();
                     })
             );
 
@@ -30,10 +25,10 @@ export class OFSettingTab extends PluginSettingTab {
             .setDesc("What note type to assume for notes without a type in frontmatter")
             .addText((text) =>
                 text
-                    .setValue(this.plugin.settings.defaultNoteType)
+                    .setValue(ftvkyo.settings.defaultNoteType)
                     .onChange(async (value) => {
-                        this.plugin.settings.defaultNoteType = value;
-                        await this.plugin.saveSettings();
+                        ftvkyo.settings.defaultNoteType = value;
+                        await ftvkyo.saveSettings();
                     })
             );
 
@@ -42,10 +37,10 @@ export class OFSettingTab extends PluginSettingTab {
             .setDesc("Tag to use for draft notes")
             .addText((text) =>
                 text
-                    .setValue(this.plugin.settings.draftTag)
+                    .setValue(ftvkyo.settings.draftTag)
                     .onChange(async (value) => {
-                        this.plugin.settings.draftTag = value;
-                        await this.plugin.saveSettings();
+                        ftvkyo.settings.draftTag = value;
+                        await ftvkyo.saveSettings();
                     })
             );
     }

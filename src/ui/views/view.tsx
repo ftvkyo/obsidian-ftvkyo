@@ -101,7 +101,7 @@ export default class ObsidianFtvkyoView extends View {
     private render() {
         this.root?.render(
             <StrictMode>
-                <PluginContext.Provider value={this.plugin}>
+                <PluginContext.Provider value={ftvkyo}>
                     <div className="view-content">
                         <ErrorBoundary
                             fallbackRender={({ error }) => {

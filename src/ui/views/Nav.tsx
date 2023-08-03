@@ -1,4 +1,4 @@
-import {useCallback, useState} from "react";
+import {useState} from "react";
 
 import {DataArray} from "obsidian-dataview";
 
@@ -6,7 +6,7 @@ import {usePlugin} from "@/ui/context";
 import {type ViewElement} from "./view";
 import NoteCard from "../components/NoteCard";
 import Selector from "../components/Selector";
-import ObsidianFtvkyo from "@/main";
+import ApiNote from "@/api/note";
 
 
 // TODO: Display a warning if there are notes with the same
@@ -17,64 +17,60 @@ import ObsidianFtvkyo from "@/main";
 // TODO: Filter for notes with/without titles.
 
 
-function acquireSeries(notes: DataArray<Record<string, any>>) {
-    const tags = notes.file.tags;
-
-    // Count the number of notes in each series.
-    const series: Record<string /* key */, number> = {};
-    for (const tag of tags) {
-        if (tag.startsWith("#s/")) {
-            const count = series[tag] ?? 0;
-            series[tag] = count + 1;
-        }
+function acquireSeries(notes: DataArray<ApiNote>) {
+    // Count the number of occurences of each series.
+    const seriesCounted: Record<string /* key */, number> = {};
+    for (const s of notes.series) {
+        const count = seriesCounted[s] ?? 0;
+        seriesCounted[s] = count + 1;
     }
 
     // Sort the series by name.
-    const seriesAbc: [string, string][] = Object.entries(series)
-        .map(([key, value]) => {
-            const name = key.substring(3);
-            const record: [string, string] = [key, `${name} (${value})`];
+    const seriesAbc: [string, string][] = Object.entries(seriesCounted)
+        .map(([name, value]) => {
+            const record: [string, string] = [name, `${name} (${value})`];
             return record;
         })
         .sort((a, b) => a[0].localeCompare(b[0]));
 
-    const seriesWithout = notes.filter(page => {
+    const notesWithoutSeries = notes.filter(note => {
         // Only pages that have no series tags.
-        return !page.file.tags.map((tag: string) => tag.startsWith("#s/")).includes(true);
+        return note.series.length === 0;
     });
 
     // Add a "Without series" option.
-    seriesAbc.unshift(["!", `Without series (${seriesWithout.length})`]);
+    seriesAbc.unshift(["!", `Without series (${notesWithoutSeries.length})`]);
 
     // Add an "All" option.
     seriesAbc.unshift(["*", `All (${notes.length})`]);
-    return {seriesAbc, seriesWithout};
+
+    return {seriesAbc, notesWithoutSeries};
 }
 
 
 function filterNotesBySeries(
-    notes: DataArray<Record<string, any>>,
+    notes: DataArray<ApiNote>,
     series: string,
-    withoutSeries: DataArray<Record<string, any>>,
+    withoutSeries: DataArray<ApiNote>,
 ) {
     const includeAnySeries = series === "*";
     const onlyWithoutSeries = series === "!";
 
     const notesFiltered = includeAnySeries ? notes
         : onlyWithoutSeries ? withoutSeries
-        : notes.filter(page => page.file.tags.includes(series));
+        : notes.filter(page => page.series.includes(series));
 
     return notesFiltered;
 }
 
 
-function acquireSections(notes: DataArray<Record<string, any>>, defaultSection: string) {
+function acquireSections(notes: DataArray<ApiNote>, defaultSection: string) {
     // Note section is defined as `type` field in frontmatter
 
     const sections: Record<string /* key */, number> = {};
 
     for (const note of notes) {
-        const t = note.file.frontmatter["type"] ?? defaultSection;
+        const t = note.type ?? defaultSection;
 
         // Count the number of notes in each section.
         const count = sections[t] ?? 0;
@@ -97,7 +93,7 @@ function acquireSections(notes: DataArray<Record<string, any>>, defaultSection: 
 
 
 function filterNotesBySection(
-    notes: DataArray<Record<string, any>>,
+    notes: DataArray<ApiNote>,
     section: string,
     defaultSection: string,
 ) {
@@ -105,32 +101,21 @@ function filterNotesBySection(
 
     return includeAnySection
         ? notes
-        : notes.filter(page => {
-            const t = page.file.frontmatter["type"] ?? defaultSection;
+        : notes.filter(note => {
+            const t = note.type ?? defaultSection;
             return t === section;
         });
 }
 
 
 function generateNoteCards(
-    notes: DataArray<Record<string, any>>,
-    openNote: (e: React.MouseEvent<HTMLAnchorElement>) => Promise<void>,
+    notes: DataArray<ApiNote>,
 ) {
     return notes
-        .map(page => <NoteCard
-            key={page.file.name}
-            filename={page.file.name}
-            openNoteCallback={openNote} />
-        );
-}
-
-
-async function openNoteCallback(this: ObsidianFtvkyo, e: React.MouseEvent<HTMLAnchorElement>) {
-    e.preventDefault();
-    const href = e.currentTarget.getAttribute("href");
-    if (href) {
-        await this.api.ui.openFile(href);
-    }
+        .map(note => <NoteCard
+            key={note.base}
+            note={note}
+        />);
 }
 
 
@@ -142,17 +127,16 @@ const NavView: ViewElement = {
         const [currentSeries, setCurrentSeries] = useState<string>("*" /* all */);
         const [currentSection, setCurrentSection] = useState<string>("*" /* all */);
 
-        const [onlyWithTitle, setOnlyWithTitle] = useState<boolean>(false);
+        const [onlyWithH1, setOnlyWithH1] = useState<boolean>(false);
 
-        // Create a universal note opener to avoid making one for every note.
-        const openNote = useCallback(openNoteCallback.bind(plugin), []);
-
-        const notes = dv.pages(`"${settings.notesRoot}"`);
+        const notes = dv.pages(`"${settings.notesRoot}"`)
+            .map(ApiNote.fromDv)
+            .filter(n => n !== null) as DataArray<ApiNote>;
 
         // Acquire series tags for building a selector.
-        const {seriesAbc, seriesWithout} = acquireSeries(notes);
+        const {seriesAbc, notesWithoutSeries} = acquireSeries(notes);
 
-        const currentSeriesNotes = filterNotesBySeries(notes, currentSeries, seriesWithout);
+        const currentSeriesNotes = filterNotesBySeries(notes, currentSeries, notesWithoutSeries);
 
         // Create a series selector.
         const seriesSelector = <Selector
@@ -174,9 +158,9 @@ const NavView: ViewElement = {
             onChange={setCurrentSection}
         />;
 
-        const onlyWithTitleNotes = onlyWithTitle
-            ? currentSectionNotes.filter(page => {
-                return plugin.api.note.getTitle(page.file.name) !== null;
+        const onlyWithH1Notes = onlyWithH1
+            ? currentSectionNotes.filter(note => {
+                return note.h1 !== null;
             })
             : currentSectionNotes;
 
@@ -184,15 +168,14 @@ const NavView: ViewElement = {
         const onlyWithTitleCheckbox = <label>
             <input
                 type="checkbox"
-                checked={onlyWithTitle}
-                onChange={e => setOnlyWithTitle(e.target.checked)}
+                checked={onlyWithH1}
+                onChange={e => setOnlyWithH1(e.target.checked)}
             />
-            Only notes with titles
+            Only notes with level-1 headings
         </label>;
 
         const noteCards = generateNoteCards(
-            onlyWithTitleNotes,
-            openNote,
+            onlyWithH1Notes,
         );
 
         return <>

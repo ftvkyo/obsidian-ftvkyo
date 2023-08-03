@@ -1,6 +1,7 @@
 import { MarkdownRenderChild } from "obsidian";
 
 import ObsidianFtvkyo from "@/main";
+import ApiNote from "@/api/note";
 
 
 class AliasLink extends MarkdownRenderChild {
@@ -37,16 +38,21 @@ export default function AutoAlias(plugin: ObsidianFtvkyo) {
                 continue;
             }
 
-            const title = plugin.api.note.getTitle(filename);
+            const note = ApiNote.fromPath(filename);
 
-            if (!title) {
-                lg.info(`No title found`);
+            if (!note) {
+                lg.info(`Note not found`);
                 continue;
             }
 
-            lg.info(`Found title "${title}"`);
+            if (!note.h1) {
+                lg.info(`No h1 found`);
+                continue;
+            }
 
-            context.addChild(new AliasLink(link, title));
+            lg.info(`Found h1 "${note.h1}"`);
+
+            context.addChild(new AliasLink(link, note.h1));
         }
     });
 }

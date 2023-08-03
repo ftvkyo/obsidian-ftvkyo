@@ -1,39 +1,47 @@
-import { useMemo } from "react";
+import ApiNote from "@/api/note";
 
-import { usePlugin } from "../context";
+
+function open(
+    e: React.MouseEvent<HTMLAnchorElement>,
+) {
+    e.preventDefault();
+    const href = e.currentTarget.getAttribute("href");
+    if (!href) {
+        return;
+    }
+    const note = ApiNote.fromPath(href);
+    if (!note) {
+        return;
+    }
+    ftvkyo.api.ui.noteReveal(note);
+}
 
 
 export default function NoteCard({
-    filename,
-    openNoteCallback,
+    note,
 }: {
-    filename: string,
-    openNoteCallback: (e: React.MouseEvent<HTMLAnchorElement>) => Promise<void>,
+    note: ApiNote,
 }) {
-    const plugin = usePlugin();
-
-    const dateInfo = useMemo(() => plugin.api.note.getDateInfo(filename), [filename]);
-
     // The title used is either:
-    // 1. The note's title, when available
-    // 2. The note's date parsed from the filename, when available
-    // 3. The note's filename, when all else fails
-    const title = plugin.api.note.getTitle(filename) ?? dateInfo ?? filename;
+    // 1. The note's h1, when available
+    // 2. The note's date parsed from the basename, when available
+    // 3. The note's basename, when all else fails
+    const title = note.h1 ?? note.dateInfo ?? note.base;
 
     // The label/tooltip used shows the note's filename.
-    const label = `Id: ${filename}`;
+    const label = `Id: ${note.base}`;
 
     return <a
         className="note-card internal-link"
-        href={filename}
-        onClick={openNoteCallback}
+        href={note.path}
+        onClick={open}
 
         // Define the tooltip and accesibility label.
         aria-label={label}
         data-tooltip-position="right"
 
         // Just copying obsidian here (probably)
-        data-href={filename}
+        data-href={note.path}
 
         target="_blank"
         rel="noopener noreferrer"

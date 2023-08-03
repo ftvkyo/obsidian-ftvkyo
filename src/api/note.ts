@@ -1,64 +1,96 @@
-import ObsidianFtvkyo from "@/main";
 import { TFile } from "obsidian";
 
 
+// A note in the vault.
+//
+// Identified by its TFile.
+// The getters provide up to date information.
+//
+// Contracts:
+// - TFile must be valid when the object is accessed.
 export default class ApiNote {
+
     constructor(
-        public readonly plugin: ObsidianFtvkyo,
+        // Note identification
+        public readonly tf: TFile,
     ) {}
 
-    resolve(
-        note: string | TFile,
-        from: string = ""
+    // Convenience factory.
+    static from(tf: TFile) {
+        return new ApiNote(tf);
+    }
+
+    // Convenience factory to take Dataview page objects.
+    static fromDv(page: { file: { path: string } }) {
+        return ApiNote.fromPath(page.file.path);
+    }
+
+    // Try to get a note from a path.
+    // Returns null if the path is not found or is not a note.
+    // If `from` is specified, the path is resolved relative to `from`.
+    static fromPath(
+        path: string,
+        from: string = "",
     ) {
-        if (note instanceof TFile) {
-            return note;
-        }
-        return app.metadataCache.getFirstLinkpathDest(note, from);
+        const tf = app.metadataCache.getFirstLinkpathDest(path, from);
+        return tf ? ApiNote.from(tf) : null;
     }
 
-    getTitle(note: TFile | string) {
-        const resolved = this.resolve(note);
+    /* ================ *
+     * Filesystem stuff *
+     * ================ */
 
-        if (!resolved) {
-            // Not found (or not a note).
-            return null;
-        }
-
-        const cache = app.metadataCache.getFileCache(resolved);
-        const heading0 = cache?.headings ? cache.headings[0] : null;
-
-        if (!heading0) {
-            // No headings at all.
-            return null;
-        }
-
-        if (heading0.level !== 1) {
-            // The first heading is not a top-level heading.
-            return null;
-        }
-
-        return heading0.heading;
+    // Vault-relative path to the note without the extension.
+    get path() {
+        return this.tf.path;
     }
 
-    getDateInfo(note: TFile | string) {
-        const resolved = this.resolve(note);
-
-        if (!resolved) {
-            // Not found (or not a note).
-            return null;
-        }
-
-        return this.dateInfoFromBasename(resolved.basename);
+    // Filename without the extension.
+    get base() {
+        return this.tf.basename;
     }
 
-    private dateInfoFromBasename(basename: string) {
-        // Date info is encoded in the filename.
-        // The filenames are expected to be in the format:
+    // File cache of the note.
+    get fc() {
+        return app.metadataCache.getFileCache(this.tf);
+    }
+
+    /* ================= *
+     * Title information *
+     * ================= */
+
+    // H1 heading of the note.
+    // Returns "?" if there are multiple H1 headings.
+    // Returns the heading if there is a single H1 heading.
+    // Returns null if the note has no H1 heading.
+    get h1(): string | null {
+        const hs = this.fc?.headings ?? [];
+        const h1s = hs.filter(h => h.level === 1);
+        if (h1s.length >= 2) {
+            return "?";
+        }
+        return h1s.shift()?.heading ?? null;
+    }
+
+    // Memoization for `dateInfo`.
+    // Does not need recalculating as it only depends on the basename.
+    #dateInfo: string | null = null;
+
+    // Pretty information about the date that identifies the note.
+    // Returns null if the date cannot be determined.
+    // Returns a pretty string for displaying.
+    get dateInfo() {
+        //
+        if (this.#dateInfo !== null) {
+            return this.#dateInfo;
+        }
+
+        // Date info is encoded in the basename.
+        // The basemanes are expected to be in the format:
         // - YYYYMMDD
         // - YYYYMMDD-HHmmss
 
-        const parts = basename.split(/[-.]/);
+        const parts = this.base.split(/[-.]/);
         const date = parts[0];
         const time: string | undefined = parts[1];
 
@@ -72,7 +104,8 @@ export default class ApiNote {
         const D = date.substring(6, 8);
 
         if (!time) {
-            return `${Y}/${M}/${D}`;
+            this.#dateInfo = `${Y}/${M}/${D}`;
+            return this.#dateInfo;
         }
 
         if (time.length !== 6) {
@@ -84,6 +117,61 @@ export default class ApiNote {
         const m = time.substring(2, 4);
         const s = time.substring(4, 6);
 
-        return `${Y}/${M}/${D} ${h}:${m}:${s}`;
+        this.#dateInfo = `${Y}/${M}/${D} ${h}:${m}:${s}`;
+        return this.#dateInfo;
+    }
+
+    /* =============== *
+     * Tag information *
+     * =============== */
+
+    // Tags of the note, without the leading `#`.
+    get tags() {
+        return this.fc?.tags?.map(tag => tag.tag.substring(1)) ?? [];
+    }
+
+    /* =========== *
+     * Frontmatter *
+     * =========== */
+
+    // Get the type of the note, if set.
+    get type(): string | null {
+        return this.fc?.frontmatter?.type ?? null;
+    }
+
+    // Get the list of series of the note.
+    get series(): string[] {
+        return this.tags
+            .filter(tag => tag.startsWith("s/"))
+            .map(tag => tag.substring(2));
+
+        // TODO: migrate to this (requires moving series tags to frontmatter field)
+
+        /*
+        const series = this.fc?.frontmatter?.series;
+
+        if (!series) {
+            return [];
+        }
+
+        if (typeof series === "string") {
+            if (series.includes(",")) {
+                return series
+                    .split(",")
+                    .map(s => s.trim());
+            }
+            return [series];
+        }
+        return series;
+        */
+    }
+
+    /* ============ *
+     * State checks *
+     * ============ */
+
+    // Whether the note is a draft.
+    get isDraft() {
+        return this.tags.includes(ftvkyo.settings.draftTag);
     }
 }

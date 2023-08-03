@@ -6,6 +6,7 @@ import prompt from "@/ui/builtin/prompt";
 
 import ObsidianFtvkyo from "@/main";
 import Logger from "@/util/logger";
+import ApiNote from "@/api/note";
 
 
 // FIXME: this still adds a newline into the current file and moves the cursor?
@@ -101,10 +102,11 @@ type: ${noteType}
     */
 
     lg.info(`Creating the note...`);
-    const note = await app.vault.create(`${folder}/${name}.md`, content);
+    const noteTF = await app.vault.create(`${folder}/${name}.md`, content);
+    const note = ApiNote.from(noteTF);
 
     lg.info(`Opening the note...`);
-    await plugin.api.ui.openTFile(note, "source");
+    await ftvkyo.api.ui.noteReveal(note, "source");
 
     lg.info(`Moving the cursor...`);
     const view = app.workspace.getActiveViewOfType(MarkdownView);
