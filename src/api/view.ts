@@ -1,33 +1,11 @@
-import ApiNote from "./note";
-
-
-export default class ApiUi {
-
-    // Open file in the current tab if it's a new tab, otherwise, create a new tab.
-    async noteReveal(
-        note: ApiNote,
-        mode: "source" | "preview" = "preview"
-    ) {
-        const current = app.workspace.getActiveFile();
-
-        const leaf = app.workspace.getLeaf(!!current);
-        await leaf.openFile(note.tf, {
-            state: { mode },
-        });
-
-        return leaf;
-    }
-
-    /* =============== *
-     * View management *
-     * =============== */
+export default class ApiView {
 
     // List of views that have been loaded.
     loadedViews: string[] = [];
 
     // Add the view to the workspace,
     // and register it to be removed on unload
-    async viewPlace(viewType: string) {
+    async place(viewType: string) {
         app.workspace.detachLeavesOfType(viewType);
         await app.workspace.getLeftLeaf(false).setViewState({
             type: viewType,
@@ -40,7 +18,7 @@ export default class ApiUi {
     }
 
     // Get the reference to the view
-    viewGet(viewType: string) {
+    get(viewType: string) {
         const instances = app.workspace.getLeavesOfType(viewType);
 
         if (instances.length !== 1) {
@@ -50,15 +28,15 @@ export default class ApiUi {
     }
 
     // Reveal the view
-    viewReveal(viewType: string) {
-        const view = this.viewGet(viewType);
+    reveal(viewType: string) {
+        const view = this.get(viewType);
         if (view) {
             app.workspace.revealLeaf(view);
         }
     }
 
     // Detach all views
-    viewDetachAll() {
+    detachAll() {
         for (const view of this.loadedViews) {
             app.workspace.detachLeavesOfType(view);
         }

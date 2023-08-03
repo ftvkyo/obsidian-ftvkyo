@@ -1,7 +1,7 @@
-import ApiUi from "./ui";
+import ApiView from "./view";
 
 
 // A collection of all plugin APIs.
 export default class Api {
-    ui = new ApiUi();
+    view = new ApiView();
 }

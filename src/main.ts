@@ -89,7 +89,7 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     onunload() {
-        this.api.ui.viewDetachAll();
+        this.api.view.detachAll();
     }
 
     private async loadSettings() {
@@ -162,11 +162,11 @@ export default class ObsidianFtvkyo extends Plugin {
             this.addCommand({
                 "id": `reveal-${t}`,
                 "name": `Reveal ${view.displayText}`,
-                "callback": () => this.api.ui.viewReveal(t),
+                "callback": () => this.api.view.reveal(t),
             });
             slg.info(`Added reveal command`);
 
-            this.api.ui.viewPlace(t);
+            this.api.view.place(t);
             slg.info(`Placed`);
         }
     }

@@ -106,7 +106,7 @@ type: ${noteType}
     const note = ApiNote.from(noteTF);
 
     lg.info(`Opening the note...`);
-    await ftvkyo.api.ui.noteReveal(note, "source");
+    await note.reveal({ mode: "source"});
 
     lg.info(`Moving the cursor...`);
     const view = app.workspace.getActiveViewOfType(MarkdownView);

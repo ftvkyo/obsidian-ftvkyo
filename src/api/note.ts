@@ -174,4 +174,29 @@ export default class ApiNote {
     get isDraft() {
         return this.tags.includes(ftvkyo.settings.draftTag);
     }
+
+    /* ======= *
+     * Actions *
+     * ======= */
+
+    // Reveal the note.
+    async reveal({
+        // What mode to open the note in.
+        mode = "preview",
+        // Whether to replace the current workspace leaf.
+        replace = false,
+    }: {
+        mode?: "preview" | "source",
+        replace?: boolean,
+    } = {}) {
+        const current = app.workspace.getActiveFile();
+        const shouldReplace = replace || current === null;
+
+        const leaf = app.workspace.getLeaf(!shouldReplace);
+        await leaf.openFile(this.tf, {
+            state: { mode },
+        });
+
+        return leaf;
+    }
 }

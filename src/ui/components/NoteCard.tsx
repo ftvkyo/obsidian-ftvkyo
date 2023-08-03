@@ -13,7 +13,7 @@ function open(
     if (!note) {
         return;
     }
-    ftvkyo.api.ui.noteReveal(note);
+    note.reveal();
 }
 
 
