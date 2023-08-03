@@ -6,6 +6,7 @@ import Selector from "../components/Selector";
 import Toggle from "../components/Toggle";
 import ApiNoteList from "@/api/note-list";
 import Logger from "@/util/logger";
+import Radio from "../components/Radio";
 
 
 let lg: Logger | undefined = undefined;
@@ -61,7 +62,7 @@ const NavView: ViewElement = {
 
         const [filter, setFilter] = useState({
             series: "",
-            types: [""],
+            type: "",
             requireH1: false,
         });
 
@@ -79,11 +80,11 @@ const NavView: ViewElement = {
         />;
 
         // Create a type selector.
-        const typeSelector = <Selector
+        const typeRadio = <Radio
             label="Type"
             options={types}
-            value={filter.types[0] ?? ""}
-            onChange={(v) => setFilter({...filter, types: [v]})}
+            value={filter.type}
+            onChange={(v) => setFilter({...filter, type: v})}
         />;
 
         // Create a checkbox for filtering notes with/without titles.
@@ -96,10 +97,11 @@ const NavView: ViewElement = {
         const notesFiltered = notes.where(filter);
         const noteCards = generateNoteCards(notesFiltered);
 
+
         return <>
             <div className="filters">
                 {seriesSelector}
-                {typeSelector}
+                {typeRadio}
                 {requireH1Checkbox}
             </div>
             <div className="results">

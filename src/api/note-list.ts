@@ -109,7 +109,7 @@ export default class ApiNoteList {
             }, {} as { [key: string]: number });
 
         const withoutType = this.where({
-            types: ["!"],
+            type: "!",
         }).notes;
 
         return {
@@ -136,17 +136,15 @@ export default class ApiNoteList {
     //
     where({
         series = "",
-        types = [""],
+        type = "",
         requireH1 = false,
     }: {
         // What series to match.
         // - Unset and "" matches all notes.
         series?: string,
-        // What types of notes to include.
-        // - Unset, [] and [""] matches all notes.
-        // - This is an OR filter, so at least one match
-        //   is enough for the note to be included.
-        types?: string[],
+        // What type to match.
+        // - Unset and "" matches all notes.
+        type?: string,
         // Whether to include only notes with a single H1.
         // - Iff True => only notes with a single H1.
         requireH1?: boolean,
@@ -161,17 +159,26 @@ export default class ApiNoteList {
                     return note.series.length === 0;
                 }
                 if (series === "?") {
-                    // At leas some series.
+                    // At least some series.
                     return note.series.length !== 0;
                 }
                 return note.series.includes(series)
             });
         }
 
-        if (types) {
-            notes = types.includes("")
-                ? notes
-                : notes.filter(note => types.includes(note.type ?? "!"));
+        // "" is falsy so no need for a special case
+        if (type) {
+            notes = notes.filter(note => {
+                if (type === "!") {
+                    // No type.
+                    return note.type === null;
+                }
+                if (type === "?") {
+                    // At least some type.
+                    return note.type !== null;
+                }
+                return note.type === type;
+            });
         }
 
         if (requireH1) {
