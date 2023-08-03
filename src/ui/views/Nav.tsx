@@ -142,6 +142,8 @@ const NavView: ViewElement = {
         const [currentSeries, setCurrentSeries] = useState<string>("*" /* all */);
         const [currentSection, setCurrentSection] = useState<string>("*" /* all */);
 
+        const [onlyWithTitle, setOnlyWithTitle] = useState<boolean>(false);
+
         // Create a universal note opener to avoid making one for every note.
         const openNote = useCallback(openNoteCallback.bind(plugin), []);
 
@@ -172,8 +174,24 @@ const NavView: ViewElement = {
             onChange={setCurrentSection}
         />;
 
+        const onlyWithTitleNotes = onlyWithTitle
+            ? currentSectionNotes.filter(page => {
+                return plugin.api.note.getTitle(page.file.name) !== null;
+            })
+            : currentSectionNotes;
+
+        // Create a checkbox for filtering notes with/without titles.
+        const onlyWithTitleCheckbox = <label>
+            <input
+                type="checkbox"
+                checked={onlyWithTitle}
+                onChange={e => setOnlyWithTitle(e.target.checked)}
+            />
+            Only notes with titles
+        </label>;
+
         const noteCards = generateNoteCards(
-            currentSectionNotes,
+            onlyWithTitleNotes,
             openNote,
         );
 
@@ -181,6 +199,7 @@ const NavView: ViewElement = {
             <div className="filters">
                 {seriesSelector}
                 {sectionSelector}
+                {onlyWithTitleCheckbox}
             </div>
             <div className="results">
                 {noteCards}
