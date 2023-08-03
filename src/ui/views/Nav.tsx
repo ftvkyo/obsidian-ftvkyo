@@ -7,6 +7,7 @@ import {type ViewElement} from "./view";
 import NoteCard from "../components/NoteCard";
 import Selector from "../components/Selector";
 import ApiNote from "@/api/note";
+import Toggle from "../components/Toggle";
 
 
 // TODO: Display a warning if there are notes with the same
@@ -165,14 +166,11 @@ const NavView: ViewElement = {
             : currentSectionNotes;
 
         // Create a checkbox for filtering notes with/without titles.
-        const onlyWithTitleCheckbox = <label>
-            <input
-                type="checkbox"
-                checked={onlyWithH1}
-                onChange={e => setOnlyWithH1(e.target.checked)}
-            />
-            Only notes with level-1 headings
-        </label>;
+        const onlyWithTitleCheckbox = <Toggle
+            label="Only notes with level-1 headings"
+            checked={onlyWithH1}
+            onChange={setOnlyWithH1}
+        />;
 
         const noteCards = generateNoteCards(
             onlyWithH1Notes,
