@@ -3,7 +3,7 @@ $gutter: 0.5em;
 div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
     p,h1,h2,h3,h4,h5,h6 {
         margin: 0;
-        padding: $gutter 0;
+        padding: 0;
     }
 
     // Obsidain-provided class
@@ -52,15 +52,50 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
         gap: $gutter;
     }
 
-    a.note-card {
+    div.note-card {
         border: 1px solid #ccc;
         border-radius: 0.5em;
 
-        padding: 0.5em 1em;
+        padding: 0.5em;
 
-        code {
-            opacity: 0.75;
-            font-size: 0.75em;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto;
+
+        .info {
+            grid-column: 1;
+
+            padding: 0 0.5em;
+
+            .title {
+                font-weight: bold;
+            }
+
+            .date {
+                opacity: 0.5; // Muted
+                font-size: 0.75em;
+            }
+        }
+
+        .controls {
+            grid-column: 2;
+
+            display: flex;
+            flex-direction: column;
+            gap: 0.25em;
+
+            a {
+                height: 2em;
+                width: 2em;
+
+                border: 1px solid #ccc;
+                border-radius: 0.25em;
+
+                svg {
+                    height: 100%;
+                    width: 100%;
+                }
+            }
         }
     }
 }
