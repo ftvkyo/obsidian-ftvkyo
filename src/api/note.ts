@@ -104,7 +104,7 @@ export default class ApiNote {
         const D = date.substring(6, 8);
 
         if (!time) {
-            this.#dateInfo = `${Y}/${M}/${D}`;
+            this.#dateInfo = `${Y}.${M}.${D}`;
             return this.#dateInfo;
         }
 
@@ -117,7 +117,7 @@ export default class ApiNote {
         const m = time.substring(2, 4);
         const s = time.substring(4, 6);
 
-        this.#dateInfo = `${Y}/${M}/${D} ${h}:${m}:${s}`;
+        this.#dateInfo = `${Y}.${M}.${D} ${h}:${m}:${s}`;
         return this.#dateInfo;
     }
 
