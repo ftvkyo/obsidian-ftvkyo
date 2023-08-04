@@ -1,9 +1,11 @@
 export default function Selector({
+    className,
     label,
     options,
     value,
     onChange,
 }: {
+    className?: string,
     label: string,
     options: [string /* key */, string /* value */][],
     value: string,
@@ -18,7 +20,9 @@ export default function Selector({
         </option>;
     });
 
-    return <label>
+    return <label
+        className={className}
+    >
         {label}:
         <select
             className="dropdown"

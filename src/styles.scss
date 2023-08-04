@@ -6,42 +6,71 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
         padding: 0;
     }
 
+    select {
+        // Make look good
+        padding: $gutter 1em;
+    }
+
     // Obsidain-provided class
     div.view-content {
         // Padding like in the original sidebars
         padding: $gutter;
         padding-bottom: 0;
 
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
 
         gap: $gutter;
     }
 
-    div.filters {
-        grid-row: 1;
+    div.note-filter {
+        display: grid;
+        grid-template-areas:
+            "series series sort "
+            "type   check  check";
 
-        display: flex;
-        flex-direction: column;
         gap: $gutter;
 
         label {
             display: flex;
             flex-direction: row;
             align-items: center;
-            gap: $gutter;
+            gap: 0.25em;
 
             select {
                 flex-grow: 1;
-
-                // Make look good
-                padding: $gutter 1em;
             }
+        }
+
+        .series {
+            grid-area: series;
+        }
+
+        .sort {
+            grid-area: sort;
+        }
+
+        .type {
+            grid-area: type;
+        }
+
+        .check {
+            grid-area: check;
+
+            display: flex;
+            flex-direction: column;
+            gap: $gutter;
         }
     }
 
-    div.results {
+    p.note-counter {
+        width: 100%;
+        border-top: 1px solid var(--foreground-primary);
+    }
+
+    div.note-list {
         grid-row: 2;
         overflow-y: scroll;
 

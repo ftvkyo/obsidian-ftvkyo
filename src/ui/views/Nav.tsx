@@ -2,11 +2,9 @@ import {useState} from "react";
 
 import {type ViewElement} from "./view";
 import NoteCard from "../components/NoteCard";
-import Selector from "../components/Selector";
-import Toggle from "../components/Toggle";
 import ApiNoteList from "@/api/note-list";
 import Logger from "@/util/logger";
-import Radio from "../components/Radio";
+import NoteFilter from "../components/NoteFilter";
 
 
 let lg: Logger | undefined = undefined;
@@ -14,8 +12,6 @@ let lg: Logger | undefined = undefined;
 
 // TODO: Display a warning if there are notes with the same
 // name in different folders.
-
-// TODO: Filters for sections as toggles rather than a select.
 
 // TODO: Logic to count the notes in dropdowns based on the
 // current search?
@@ -37,23 +33,6 @@ function generateNoteCards(
 }
 
 
-function countedOptions([name, count]: [string, number]): [string, string] {
-    const key = name;
-
-    if (name === "") {
-        name = "Any";
-    }
-    if (name === "!") {
-        name = "None";
-    }
-    if (name === "?") {
-        name = "Some";
-    }
-
-    return [key, `${name} (${count})`];
-}
-
-
 const NavView: ViewElement = {
     Element: () => {
         if (!lg) {
@@ -69,51 +48,21 @@ const NavView: ViewElement = {
 
         const notes = ApiNoteList.all();
 
-        const series = notes.seriesCountedAbc.map(countedOptions);
-        const types = notes.typesCountedAbc.map(countedOptions);
-
-        // Create a series selector.
-        const seriesSelector = <Selector
-            label="Series"
-            options={series}
-            value={filter.series}
-            onChange={(v) => setFilter({...filter, series: v})}
-        />;
-
-        // Create a type selector.
-        const typeRadio = <Radio
-            label="Type"
-            options={types}
-            value={filter.type}
-            onChange={(v) => setFilter({...filter, type: v})}
-        />;
-
-        // Create a checkbox for filtering notes with/without titles.
-        const requireH1Checkbox = <Toggle
-            label="Only with H1 headings"
-            checked={filter.requireH1}
-            onChange={(v) => setFilter({...filter, requireH1: v})}
-        />;
-
-        const onlyDraftsCheckbox = <Toggle
-            label="Only drafts"
-            checked={filter.tag === "draft"}
-            onChange={(v) => setFilter({...filter, tag: v ? "draft" : ""})}
-        />;
-
         const notesFiltered = notes.where(filter);
         const noteCards = generateNoteCards(notesFiltered);
 
-
         return <>
-            <div className="filters">
-                {seriesSelector}
-                {typeRadio}
-                {requireH1Checkbox}
-                {onlyDraftsCheckbox}
-            </div>
-            <div className="results">
-                <p>Found {notesFiltered.length} results.</p>
+            <NoteFilter
+                notes={notes}
+                filter={filter}
+                setFilter={setFilter}
+            />
+            <p
+                className="note-counter"
+            >
+                Found {notesFiltered.length} results.
+            </p>
+            <div className="note-list">
                 {noteCards}
             </div>
         </>;

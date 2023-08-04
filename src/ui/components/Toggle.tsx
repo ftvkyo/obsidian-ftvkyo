@@ -1,14 +1,18 @@
 export default function Toggle({
+    className,
     label,
     checked,
     onChange,
 }: {
+    className?: string,
     label: string,
     checked: boolean,
     onChange: (checked: boolean) => void,
 }) {
 
-    return <label>
+    return <label
+        className={className}
+    >
         <input
             type="checkbox"
             checked={checked}

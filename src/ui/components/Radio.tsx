@@ -1,31 +1,30 @@
 export default function Radio({
+    className,
     label,
     options,
     value,
     onChange,
 }: {
+    className?: string,
     label: string,
     options: [string /* key */, string /* display */][],
     value: string,
     onChange: (option: string) => void,
 }) {
-    return <form
-        onSubmit={() => false}
+    return  <fieldset
+        className={className}
     >
-        <fieldset>
-            <legend>{label}</legend>
+        <legend>{label}</legend>
 
-            {options.map(([key, display]) => <label
-                key={key}
-            >
-                <input
-                    key={key}
-                    type="radio"
-                    checked={key === value}
-                    onChange={() => onChange(key)}
-                />
-                {display}
-            </label>)}
-        </fieldset>
-    </form>;
+        {options.map(([key, display]) => <label
+            key={key}
+        >
+            <input
+                type="radio"
+                checked={key === value}
+                onChange={() => onChange(key)}
+            />
+            {display}
+        </label>)}
+    </fieldset>;
 }
