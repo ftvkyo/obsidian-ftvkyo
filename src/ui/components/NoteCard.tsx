@@ -58,7 +58,7 @@ export default function NoteCard({
     const openReplaceRef = useRef<HTMLAnchorElement>(null);
     const openReplace = <a
         ref={openReplaceRef}
-        className="internal-link note-opener"
+        className="clickable-icon note-opener"
         href={note.path}
         onClick={open}
     />;
@@ -66,7 +66,7 @@ export default function NoteCard({
     const openNewTabRef = useRef<HTMLAnchorElement>(null);
     const openNewTab = <a
         ref={openNewTabRef}
-        className="internal-link note-opener"
+        className="clickable-icon note-opener"
         href={note.path}
         onClick={open}
         target="_blank"
