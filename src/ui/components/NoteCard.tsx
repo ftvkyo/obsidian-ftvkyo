@@ -28,6 +28,18 @@ export default function NoteCard({
 }: {
     note: ApiNote,
 }) {
+
+    // Note information
+
+    const blockInfo = <div
+        className="info"
+    >
+        {note.h1 ? <p>{note.h1}</p> : null}
+        {note.type ? null : <code>{note.dateInfo ?? note.base}</code>}
+    </div>;
+
+    // Note controls
+
     const openReplaceRef = useRef<HTMLAnchorElement>(null);
     const openReplace = <a
         ref={openReplaceRef}
@@ -54,17 +66,12 @@ export default function NoteCard({
         }
     }, [openNewTabRef, openReplaceRef]);
 
-    // The title used is either:
-    // 1. The note's h1, when available
-    // 2. The note's date parsed from the basename, when available
-    // 3. The note's basename, when all else fails
-    const blockTitle = <p className="title">
-        {note.h1 ?? note.dateInfo ?? note.base}
-    </p>
-
-    const blockDate = note.h1 && note.type === null
-        ? <code className="date">{note.dateInfo}</code>
-        : null;
+    const blockControls = <div
+        className="controls"
+    >
+        {openReplace}
+        {openNewTab}
+    </div>;
 
     return <div
         className="note-card"
@@ -73,14 +80,7 @@ export default function NoteCard({
         aria-label={note.base}
         data-tooltip-position="right"
     >
-        <div className="info">
-            {blockTitle}
-            {blockDate}
-        </div>
-
-        <div className="controls">
-            {openReplace}
-            {openNewTab}
-        </div>
+        {blockInfo}
+        {blockControls}
     </div>
 }
