@@ -31,23 +31,31 @@ export default function NoteCard({
 
     // Note information
 
-    const typeIcon = note.type && ftvkyo.settings.typeIcons[note.type] + " " || null;
-
-    const draftIcon = note.isDraft && ftvkyo.settings.draftIcon + " " || null;
-
-    const title = <p>
-        {typeIcon}
-        {draftIcon}
-        {note.h1 && <span>{note.h1}</span>}
+    const title = note.h1 !== null && <p>
+        {note.h1}
     </p>;
 
-    const date = note.type === null && <code>{note.dateInfo ?? note.base}</code>;
+    const date = note.type === null && <code>
+        {note.dateInfo ?? note.base}
+    </code>;
+
+    const blockTitle = <div
+        className="title"
+    >
+        {title}
+        {date}
+    </div>;
+
+    // Note info
+
+    const typeIcon = note.type && ftvkyo.settings.typeIcons[note.type] + " " || null;
+    const draftIcon = note.isDraft && ftvkyo.settings.draftIcon + " " || null;
 
     const blockInfo = <div
         className="info"
     >
-        {title}
-        {date}
+        {typeIcon}
+        {draftIcon}
     </div>;
 
     // Note controls
@@ -92,6 +100,7 @@ export default function NoteCard({
         aria-label={ftvkyo.settings.enableTooltip && note.base || ""}
         data-tooltip-position="right"
     >
+        {blockTitle}
         {blockInfo}
         {blockControls}
     </div>

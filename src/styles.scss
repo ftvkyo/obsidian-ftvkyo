@@ -90,28 +90,36 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
         padding: 0.5em;
 
         display: grid;
-        grid-template-columns: auto;
-        grid-template-rows: auto auto;
+        grid-template-areas:
+            "title title   "
+            "info  controls";
         gap: 0.5em;
 
-        .info {
-            grid-row: 1;
-
+        > * {
             display: flex;
-            flex-direction: column;
             gap: 0.25em;
+        }
+
+        .title {
+            grid-area: title;
+
+            flex-direction: column;
 
             code {
                 opacity: 0.75;
             }
         }
 
-        .controls {
-            grid-row: 2;
+        .info {
+            grid-area: info;
 
-            display: flex;
+            flex-direction: row;
+        }
+
+        .controls {
+            grid-area: controls;
+
             flex-direction: row-reverse;
-            gap: 0.25em;
         }
     }
 }
