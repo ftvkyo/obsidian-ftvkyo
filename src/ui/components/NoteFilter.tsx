@@ -77,12 +77,6 @@ export default function NoteFilter({
 
     return <div className="note-filter">
         {seriesSelector}
-        <Checkbox
-            className="sort"
-            label="New first"
-            checked={filter.orderDir === "desc"}
-            onChange={(v) => setFilter({...filter, orderDir: v ? "desc" : "asc"})}
-        />
         {typeRadio}
         <fieldset
             className="check"

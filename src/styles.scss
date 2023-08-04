@@ -11,45 +11,46 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
         padding: $gutter 1em;
     }
 
+    label {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.25em;
+
+        select {
+            flex-grow: 1;
+        }
+    }
+
     // Obsidain-provided class
     div.view-content {
-        // Padding like in the original sidebars
-        padding: $gutter;
-        padding-bottom: 0;
+        padding: 0;
 
         height: 100%;
 
         display: flex;
         flex-direction: column;
+    }
 
+    div.view-controls {
+        padding: $gutter;
+        border-bottom: 1px solid var(--background-modifier-border);
+
+        display: flex;
+        flex-direction: column;
         gap: $gutter;
     }
 
     div.note-filter {
         display: grid;
         grid-template-areas:
-            "series series sort "
-            "type   check  check";
+            "series series"
+            "type   check ";
 
         gap: $gutter;
 
-        label {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 0.25em;
-
-            select {
-                flex-grow: 1;
-            }
-        }
-
         .series {
             grid-area: series;
-        }
-
-        .sort {
-            grid-area: sort;
         }
 
         .type {
@@ -65,16 +66,22 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
         }
     }
 
-    p.note-counter {
-        width: 100%;
-        border-top: 1px solid var(--foreground-primary);
+    div.note-paginator {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+        gap: $gutter;
+
+        .sort {
+            flex-grow: 1;
+        }
     }
 
     div.note-list {
         grid-row: 2;
         overflow-y: scroll;
 
-        padding: $gutter;
+        padding: ($gutter * 2) $gutter;
 
         display: flex;
         flex-direction: column;

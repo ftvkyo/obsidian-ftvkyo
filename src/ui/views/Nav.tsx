@@ -5,6 +5,7 @@ import NoteCard from "../components/NoteCard";
 import ApiNoteList, {NoteFilterType} from "@/api/note-list";
 import Logger from "@/util/logger";
 import NoteFilter from "../components/NoteFilter";
+import NotePaginator from "../components/NotePaginator";
 
 
 let lg: Logger | undefined = undefined;
@@ -19,10 +20,6 @@ let lg: Logger | undefined = undefined;
 // - The selected series does not affect its own dropdown, as
 //   we can only select 1.
 // - Other stuff :)
-
-// TODO: split NoteSorter out of NoteFilter.
-
-// TODO: create a NotePaginator.
 
 
 function generateNoteCards(
@@ -58,16 +55,18 @@ const NavView: ViewElement = {
         const noteCards = generateNoteCards(notesFiltered);
 
         return <>
-            <NoteFilter
-                notes={notes}
-                filter={filter}
-                setFilter={setFilter}
-            />
-            <p
-                className="note-counter"
-            >
-                Found {notesFiltered.length} results.
-            </p>
+            <div className="view-controls">
+                <NoteFilter
+                    notes={notes}
+                    filter={filter}
+                    setFilter={setFilter}
+                />
+                <NotePaginator
+                    found={notesFiltered.length}
+                    filter={filter}
+                    setFilter={setFilter}
+                />
+            </div>
             <div className="note-list">
                 {noteCards}
             </div>
