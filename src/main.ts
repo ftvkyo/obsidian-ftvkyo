@@ -30,6 +30,8 @@ interface Settings {
     draftIcon: string;
 
     typeIcons: Record<string, string>;
+
+    enableTooltip: boolean;
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -42,6 +44,8 @@ const DEFAULT_SETTINGS: Settings = {
         "wiki": "👁️",
         "person": "👤",
     },
+
+    enableTooltip: false,
 };
 
 

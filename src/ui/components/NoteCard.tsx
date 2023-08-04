@@ -23,9 +23,6 @@ function open(
 }
 
 
-const enableTooltip = false;
-
-
 export default function NoteCard({
     note,
 }: {
@@ -92,7 +89,7 @@ export default function NoteCard({
         className="note-card"
 
         // Define the tooltip and accesibility label.
-        aria-label={enableTooltip && note.base || ""}
+        aria-label={ftvkyo.settings.enableTooltip && note.base || ""}
         data-tooltip-position="right"
     >
         {blockInfo}
