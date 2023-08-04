@@ -23,6 +23,9 @@ function open(
 }
 
 
+const enableTooltip = false;
+
+
 export default function NoteCard({
     note,
 }: {
@@ -89,7 +92,7 @@ export default function NoteCard({
         className="note-card"
 
         // Define the tooltip and accesibility label.
-        aria-label={note.base}
+        aria-label={enableTooltip && note.base || ""}
         data-tooltip-position="right"
     >
         {blockInfo}
