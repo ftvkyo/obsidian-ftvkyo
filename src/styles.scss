@@ -81,29 +81,36 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
         gap: $gutter * 2;
     }
 
+    $card-br: 0.25em;
+
     div.note-card {
-        border-radius: 0.25em;
+        border-radius: $card-br;
         box-shadow: 0.1em 0.1em 0.5em #000;
 
         background-color: var(--background-primary);
-
-        padding: 0.5em;
 
         display: grid;
         grid-template-areas:
             "title title   "
             "info  controls";
-        gap: 0.5em;
 
         > * {
             display: flex;
             gap: 0.25em;
+
+            padding: $gutter;
         }
 
         .title {
             grid-area: title;
-
             flex-direction: column;
+
+            border-radius: $card-br $card-br 0 0;
+            background-color: var(--table-header-background);
+
+            p {
+                font-size: 1.25em;
+            }
 
             code {
                 opacity: 0.75;
@@ -114,6 +121,11 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
             grid-area: info;
 
             flex-direction: row;
+
+            // We are using `clickable-icon` class
+            // from Obsidian, but don't want to actually make
+            // the icon clickable
+            pointer-events: none;
         }
 
         .controls {

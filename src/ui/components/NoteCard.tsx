@@ -1,6 +1,6 @@
 import ApiNote from "@/api/note";
 import {setIcon} from "obsidian";
-import {useEffect, useRef} from "react";
+import {useCallback} from "react";
 
 
 function open(
@@ -20,6 +20,19 @@ function open(
 
     const newTab = e.currentTarget.getAttribute("target") === "_blank";
     note.reveal({ replace: !newTab });
+}
+
+
+function populateIcons(
+    card: HTMLElement,
+) {
+    // Query all children with a "data-icon" attribute.
+    const icons = card.querySelectorAll<HTMLElement>("[data-icon]");
+
+    icons.forEach((icon) => {
+        const name = icon.getAttribute("data-icon");
+        name && setIcon(icon, name);
+    });
 }
 
 
@@ -48,8 +61,17 @@ export default function NoteCard({
 
     // Note info
 
-    const typeIcon = note.type && ftvkyo.settings.typeIcons[note.type] + " " || null;
-    const draftIcon = note.isDraft && ftvkyo.settings.draftIcon + " " || null;
+    const typeIconName = note.type && ftvkyo.settings.typeIcons[note.type] || null;
+    const typeIcon = typeIconName && <div
+        className="clickable-icon"
+        data-icon={typeIconName}
+    />;
+
+    const draftIconName = note.isDraft && ftvkyo.settings.draftIcon || null;
+    const draftIcon = draftIconName && <div
+        className="clickable-icon"
+        data-icon={draftIconName}
+    />;
 
     const blockInfo = <div
         className="info"
@@ -60,31 +82,22 @@ export default function NoteCard({
 
     // Note controls
 
-    const openReplaceRef = useRef<HTMLAnchorElement>(null);
     const openReplace = <a
-        ref={openReplaceRef}
-        className="clickable-icon note-opener"
+        className="clickable-icon"
         href={note.path}
         onClick={open}
+
+        data-icon="corner-down-right"
     />;
 
-    const openNewTabRef = useRef<HTMLAnchorElement>(null);
     const openNewTab = <a
-        ref={openNewTabRef}
-        className="clickable-icon note-opener"
+        className="clickable-icon"
         href={note.path}
         onClick={open}
         target="_blank"
-    />;
 
-    useEffect(() => {
-        if (openReplaceRef.current) {
-            setIcon(openReplaceRef.current, "corner-down-right");
-        }
-        if (openNewTabRef.current) {
-            setIcon(openNewTabRef.current, "plus");
-        }
-    }, [openNewTabRef, openReplaceRef]);
+        data-icon="plus"
+    />;
 
     const blockControls = <div
         className="controls"
@@ -93,7 +106,13 @@ export default function NoteCard({
         {openNewTab}
     </div>;
 
+    const updateRef = useCallback((node: HTMLDivElement) => {
+        node && populateIcons(node);
+    }, []);
+
     return <div
+        ref={updateRef}
+
         className="note-card"
 
         // Define the tooltip and accesibility label.

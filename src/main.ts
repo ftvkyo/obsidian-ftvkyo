@@ -38,11 +38,11 @@ const DEFAULT_SETTINGS: Settings = {
     notesRoot: "text",
 
     draftTag: "draft",
-    draftIcon: "📝",
+    draftIcon: "pencil",
 
     typeIcons: {
-        "wiki": "👁️",
-        "person": "👤",
+        "wiki": "network",
+        "person": "user",
     },
 
     enableTooltip: false,
