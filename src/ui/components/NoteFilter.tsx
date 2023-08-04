@@ -32,7 +32,7 @@ export default function NoteFilter({
     const series = notes.seriesCountedAbc.map(countedOptions);
     const types = notes.typesCountedAbc.map(countedOptions);
 
-    // Create a series selector.
+    // Series selector.
     const seriesSelector = <Selector
         className="series"
         label="Series"
@@ -41,7 +41,7 @@ export default function NoteFilter({
         onChange={(v) => setFilter({...filter, series: v})}
     />;
 
-    // Create a type selector.
+    // Type selector.
     const typeRadio = <Radio
         className="type"
         label="Type"
@@ -50,17 +50,29 @@ export default function NoteFilter({
         onChange={(v) => setFilter({...filter, type: v})}
     />;
 
-    // Create a checkbox for filtering notes with/without titles.
-    const requireH1Checkbox = <Checkbox
-        label="has an H1 heading"
+    // Filtering notes with/without titles.
+    const hasH1Checkbox = <Checkbox
+        label="H1 heading"
         checked={filter.requireH1}
         onChange={(v) => setFilter({...filter, requireH1: v})}
     />;
 
-    const onlyDraftsCheckbox = <Checkbox
-        label="is a draft"
-        checked={filter.tag === "draft"}
-        onChange={(v) => setFilter({...filter, tag: v ? "draft" : ""})}
+    const tagD = ftvkyo.settings.draftTag;
+
+    // Filtering drafts
+    const hasDraftCheckbox = <Checkbox
+        label={"#" + tagD}
+        checked={filter.tags[tagD] ?? false}
+        onChange={(v) => setFilter({...filter, tags: {...filter.tags, [tagD]: v}})}
+    />;
+
+    const tagLe = ftvkyo.settings.looseEndTag;
+
+    // Filtering notes that have places that can be filled in.
+    const hasLooseCheckbox = <Checkbox
+        label={"#" + tagLe}
+        checked={filter.tags[tagLe] ?? false}
+        onChange={(v) => setFilter({...filter, tags: {...filter.tags, [tagLe]: v}})}
     />;
 
     return <div className="note-filter">
@@ -75,9 +87,10 @@ export default function NoteFilter({
         <fieldset
             className="check"
         >
-            <legend>Require</legend>
-            {requireH1Checkbox}
-            {onlyDraftsCheckbox}
+            <legend>Has</legend>
+            {hasH1Checkbox}
+            {hasDraftCheckbox}
+            {hasLooseCheckbox}
         </fieldset>
     </div>;
 }

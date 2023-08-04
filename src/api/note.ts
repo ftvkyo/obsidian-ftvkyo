@@ -175,6 +175,11 @@ export default class ApiNote {
         return this.tags.includes(ftvkyo.settings.draftTag);
     }
 
+    // Whether the note has "ends" that could be "tied up".
+    get hasLooseEnd() {
+        return this.tags.includes(ftvkyo.settings.looseEndTag);
+    }
+
     /* ======= *
      * Actions *
      * ======= */

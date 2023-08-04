@@ -29,6 +29,9 @@ interface Settings {
     draftTag: string;
     draftIcon: string;
 
+    looseEndTag: string;
+    looseEndIcon: string;
+
     typeIcons: Record<string, string>;
 
     enableTooltip: boolean;
@@ -39,6 +42,9 @@ const DEFAULT_SETTINGS: Settings = {
 
     draftTag: "draft",
     draftIcon: "pencil",
+
+    looseEndTag: "le",
+    looseEndIcon: "circle-ellipsis",
 
     typeIcons: {
         "wiki": "network",

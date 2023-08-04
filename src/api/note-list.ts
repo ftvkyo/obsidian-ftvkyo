@@ -128,7 +128,7 @@ export default class ApiNoteList {
 
     // Filter the notes.
     //
-    // Syntax:
+    // Special syntax for series and type:
     // - "" => Match all.
     // - "!" => Match only nulls.
     // - "?" => Match only non-nulls.
@@ -137,20 +137,19 @@ export default class ApiNoteList {
     where({
         series = "",
         type = "",
-        tag = "",
+        tags = {},
         requireH1 = false,
         orderKey = "date",
         orderDir = "desc",
     }: {
         // What series to match.
-        // - Uses special ""/"!"/"?" syntax.
+        // - Uses special syntax.
         series?: string,
         // What type to match.
-        // - Uses special ""/"!"/"?" syntax.
+        // - Uses special syntax.
         type?: string,
-        // What tag to match.
-        // - Mathches all notes when undefined.
-        tag?: string,
+        // What tags to require.
+        tags?: Record<string, boolean | undefined>,
         // Whether to include only notes with a single H1.
         // - Iff True => only notes with a single H1.
         requireH1?: boolean,
@@ -190,9 +189,10 @@ export default class ApiNoteList {
             });
         }
 
-        if (tag) {
+        if (tags) {
             notes = notes.filter(note => {
-                return note.tags.includes(tag);
+                return Object.entries(tags)
+                    .every(([tag, enabled]) => !enabled || note.tags.includes(tag));
             });
         }
 

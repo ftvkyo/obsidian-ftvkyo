@@ -46,7 +46,7 @@ const NavView: ViewElement = {
         const [filter, setFilter] = useState<NoteFilterType>({
             series: "",
             type: "",
-            tag: "",
+            tags: {},
             requireH1: false,
             orderKey: "date",
             orderDir: "desc",
