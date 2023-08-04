@@ -1,4 +1,4 @@
-export default function Toggle({
+export default function Checkbox({
     className,
     label,
     checked,

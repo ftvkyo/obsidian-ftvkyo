@@ -1,7 +1,7 @@
 import ApiNoteList, {NoteFilterType} from "@/api/note-list";
 import Radio from "./Radio";
 import Selector from "./Selector";
-import Toggle from "./Toggle";
+import Checkbox from "./Checkbox";
 
 function countedOptions([name, count]: [string, number]): [string, string] {
     const key = name;
@@ -51,13 +51,13 @@ export default function NoteFilter({
     />;
 
     // Create a checkbox for filtering notes with/without titles.
-    const requireH1Checkbox = <Toggle
+    const requireH1Checkbox = <Checkbox
         label="has an H1 heading"
         checked={filter.requireH1}
         onChange={(v) => setFilter({...filter, requireH1: v})}
     />;
 
-    const onlyDraftsCheckbox = <Toggle
+    const onlyDraftsCheckbox = <Checkbox
         label="is a draft"
         checked={filter.tag === "draft"}
         onChange={(v) => setFilter({...filter, tag: v ? "draft" : ""})}
@@ -65,7 +65,7 @@ export default function NoteFilter({
 
     return <div className="note-filter">
         {seriesSelector}
-        <Toggle
+        <Checkbox
             className="sort"
             label="New first"
             checked={filter.orderDir === "desc"}
