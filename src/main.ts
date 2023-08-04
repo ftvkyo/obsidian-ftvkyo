@@ -25,12 +25,23 @@ declare global {
 
 interface Settings {
     notesRoot: string;
+
     draftTag: string;
+    draftIcon: string;
+
+    typeIcons: Record<string, string>;
 }
 
 const DEFAULT_SETTINGS: Settings = {
     notesRoot: "text",
+
     draftTag: "draft",
+    draftIcon: "📝",
+
+    typeIcons: {
+        "wiki": "👁️",
+        "person": "👤",
+    },
 };
 
 

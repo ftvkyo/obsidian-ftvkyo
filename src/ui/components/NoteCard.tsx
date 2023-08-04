@@ -31,11 +31,23 @@ export default function NoteCard({
 
     // Note information
 
+    const typeIcon = note.type && ftvkyo.settings.typeIcons[note.type] + " " || null;
+
+    const draftIcon = note.isDraft && ftvkyo.settings.draftIcon + " " || null;
+
+    const title = <p>
+        {typeIcon}
+        {draftIcon}
+        {note.h1 && <span>{note.h1}</span>}
+    </p>;
+
+    const date = note.type === null && <code>{note.dateInfo ?? note.base}</code>;
+
     const blockInfo = <div
         className="info"
     >
-        {note.h1 ? <p>{note.h1}</p> : null}
-        {note.type ? null : <code>{note.dateInfo ?? note.base}</code>}
+        {title}
+        {date}
     </div>;
 
     // Note controls

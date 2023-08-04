@@ -59,20 +59,22 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
         padding: 0.5em;
 
         display: grid;
-        grid-template-columns: 1fr auto;
-        grid-template-rows: auto;
+        grid-template-columns: auto;
+        grid-template-rows: auto auto;
 
         .info {
-            grid-column: 1;
+            grid-row: 1;
 
-            padding: 0 0.5em;
+            code {
+                display: block;
+            }
         }
 
         .controls {
-            grid-column: 2;
+            grid-row: 2;
 
             display: flex;
-            flex-direction: column;
+            flex-direction: row-reverse;
             gap: 0.25em;
 
             a {
