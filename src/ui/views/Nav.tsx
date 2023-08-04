@@ -20,6 +20,10 @@ let lg: Logger | undefined = undefined;
 //   we can only select 1.
 // - Other stuff :)
 
+// TODO: split NoteSorter out of NoteFilter.
+
+// TODO: create a NotePaginator.
+
 
 function generateNoteCards(
     notes: ApiNoteList,
