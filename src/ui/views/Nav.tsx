@@ -2,7 +2,7 @@ import {useState} from "react";
 
 import {type ViewElement} from "./view";
 import NoteCard from "../components/NoteCard";
-import ApiNoteList from "@/api/note-list";
+import ApiNoteList, {NoteFilterType} from "@/api/note-list";
 import Logger from "@/util/logger";
 import NoteFilter from "../components/NoteFilter";
 
@@ -39,11 +39,13 @@ const NavView: ViewElement = {
             lg = ftvkyo.lg.sub("nav");
         }
 
-        const [filter, setFilter] = useState({
+        const [filter, setFilter] = useState<NoteFilterType>({
             series: "",
             type: "",
             tag: "",
             requireH1: false,
+            orderKey: "date",
+            orderDir: "desc",
         });
 
         const notes = ApiNoteList.all();

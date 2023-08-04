@@ -139,6 +139,8 @@ export default class ApiNoteList {
         type = "",
         tag = "",
         requireH1 = false,
+        orderKey = "date",
+        orderDir = "desc",
     }: {
         // What series to match.
         // - Uses special ""/"!"/"?" syntax.
@@ -152,6 +154,9 @@ export default class ApiNoteList {
         // Whether to include only notes with a single H1.
         // - Iff True => only notes with a single H1.
         requireH1?: boolean,
+        // How to order the notes.
+        orderKey?: "date" | "title",
+        orderDir?: "asc" | "desc",
     }) {
         let notes = this.notes;
 
@@ -195,6 +200,14 @@ export default class ApiNoteList {
             notes = notes.filter(note => note.h1 !== null);
         }
 
+        const keyF = orderKey === "title"
+            ? (e: ApiNote) => e.h1 ?? e.base
+            : (e: ApiNote) => e.base;
+
+        notes = notes.sort(keyF, orderDir);
+
         return new ApiNoteList(notes);
     }
 }
+
+export type NoteFilterType = Required<Parameters<typeof ApiNoteList.prototype.where>[0]>;

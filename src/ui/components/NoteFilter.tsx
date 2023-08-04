@@ -1,4 +1,4 @@
-import ApiNoteList from "@/api/note-list";
+import ApiNoteList, {NoteFilterType} from "@/api/note-list";
 import Radio from "./Radio";
 import Selector from "./Selector";
 import Toggle from "./Toggle";
@@ -20,17 +20,14 @@ function countedOptions([name, count]: [string, number]): [string, string] {
 }
 
 
-type FilterType = Required<Parameters<typeof ApiNoteList.prototype.where>[0]>;
-
-
 export default function NoteFilter({
     notes,
     filter,
     setFilter,
 }: {
     notes: ApiNoteList,
-    filter: FilterType,
-    setFilter: (filter: FilterType) => void,
+    filter: NoteFilterType,
+    setFilter: (filter: NoteFilterType) => void,
 }) {
     const series = notes.seriesCountedAbc.map(countedOptions);
     const types = notes.typesCountedAbc.map(countedOptions);
@@ -68,9 +65,12 @@ export default function NoteFilter({
 
     return <div className="note-filter">
         {seriesSelector}
-        <div className="sort">
-            Sort by...
-        </div>
+        <Toggle
+            className="sort"
+            label="New first"
+            checked={filter.orderDir === "desc"}
+            onChange={(v) => setFilter({...filter, orderDir: v ? "desc" : "asc"})}
+        />
         {typeRadio}
         <fieldset
             className="check"
