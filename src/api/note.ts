@@ -125,7 +125,7 @@ export default class ApiNote {
      * Tag information *
      * =============== */
 
-    // Tags of the note, without the leading `#`.
+    // Tags of the note, without the leading `#` and without "special" tags.
     get tags() {
         return this.fc?.tags
             // Remove leading "#".
@@ -158,9 +158,10 @@ export default class ApiNote {
 
     // Whether the note has "ends" that could be "tied up".
     get loose() {
+        const lt = "#" + ftvkyo.settings.looseTag;
         // TODO: Implement a better way to detect this.
         //       Probably also by checking for dead links.
-        return this.tags.includes(ftvkyo.settings.looseTag);
+        return this.fc?.tags?.some((t) => t.tag === lt) ?? false;
     }
 
     /* ======= *
