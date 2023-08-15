@@ -45,6 +45,8 @@ const NavView: ViewElement = {
             type: "",
             tags: {},
             requireH1: false,
+            requireWip: false,
+            requireLoose: false,
             orderKey: "date",
             orderDir: "desc",
         });

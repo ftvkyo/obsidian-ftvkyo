@@ -26,11 +26,10 @@ declare global {
 interface Settings {
     notesRoot: string;
 
-    draftTag: string;
-    draftIcon: string;
+    wipIcon: string;
 
-    looseEndTag: string;
-    looseEndIcon: string;
+    looseTag: string;
+    looseIcon: string;
 
     typeIcons: Record<string, string>;
 
@@ -40,11 +39,10 @@ interface Settings {
 const DEFAULT_SETTINGS: Settings = {
     notesRoot: "text",
 
-    draftTag: "draft",
-    draftIcon: "pencil",
+    wipIcon: "pencil",
 
-    looseEndTag: "le",
-    looseEndIcon: "circle-ellipsis",
+    looseTag: "le",
+    looseIcon: "circle-ellipsis",
 
     typeIcons: {
         "wiki": "network",

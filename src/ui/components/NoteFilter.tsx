@@ -57,22 +57,18 @@ export default function NoteFilter({
         onChange={(v) => setFilter({...filter, requireH1: v})}
     />;
 
-    const tagD = ftvkyo.settings.draftTag;
-
-    // Filtering drafts
-    const hasDraftCheckbox = <Checkbox
-        label={"#" + tagD}
-        checked={filter.tags[tagD] ?? false}
-        onChange={(v) => setFilter({...filter, tags: {...filter.tags, [tagD]: v}})}
+    // Filtering WIP notes.
+    const isWipCheckbox = <Checkbox
+        label="Is WIP"
+        checked={filter.requireWip}
+        onChange={(v) => setFilter({...filter, requireWip: v})}
     />;
 
-    const tagLe = ftvkyo.settings.looseEndTag;
-
     // Filtering notes that have places that can be filled in.
-    const hasLooseCheckbox = <Checkbox
-        label={"#" + tagLe}
-        checked={filter.tags[tagLe] ?? false}
-        onChange={(v) => setFilter({...filter, tags: {...filter.tags, [tagLe]: v}})}
+    const isLooseCheckbox = <Checkbox
+        label="Is loose"
+        checked={filter.requireLoose}
+        onChange={(v) => setFilter({...filter, requireLoose: v})}
     />;
 
     return <div className="note-filter">
@@ -83,8 +79,8 @@ export default function NoteFilter({
         >
             <legend>Has</legend>
             {hasH1Checkbox}
-            {hasDraftCheckbox}
-            {hasLooseCheckbox}
+            {isWipCheckbox}
+            {isLooseCheckbox}
         </fieldset>
     </div>;
 }

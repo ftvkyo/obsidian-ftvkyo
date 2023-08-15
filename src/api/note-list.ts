@@ -139,6 +139,8 @@ export default class ApiNoteList {
         type = "",
         tags = {},
         requireH1 = false,
+        requireWip = false,
+        requireLoose = false,
         orderKey = "date",
         orderDir = "desc",
     }: {
@@ -150,9 +152,12 @@ export default class ApiNoteList {
         type?: string,
         // What tags to require.
         tags?: Record<string, boolean | undefined>,
-        // Whether to include only notes with a single H1.
-        // - Iff True => only notes with a single H1.
+        // Whether to only include notes with a single H1.
         requireH1?: boolean,
+        // Whether to only include notes with `status: wip`.
+        requireWip?: boolean,
+        // Whether to only include notes that have expansion potential.
+        requireLoose?: boolean,
         // How to order the notes.
         orderKey?: "date" | "title",
         orderDir?: "asc" | "desc",
@@ -198,6 +203,14 @@ export default class ApiNoteList {
 
         if (requireH1) {
             notes = notes.filter(note => note.h1 !== null);
+        }
+
+        if (requireWip) {
+            notes = notes.filter(note => note.wip);
+        }
+
+        if (requireLoose) {
+            notes = notes.filter(note => note.loose);
         }
 
         const keyF = orderKey === "title"

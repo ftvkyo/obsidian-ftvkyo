@@ -75,21 +75,19 @@ const NoteCreate = {
             Prepare note content.
         */
 
-        let content = "";
+        let content = "---\n";
 
         if (noteType !== "default") {
-            content += `\
----
-type: ${noteType}
----
-`;
+            content += noteType + "\n";
         }
+
+        content += "status: wip\n";
+
+        content += "---\n\n";
 
         if (heading) {
             content += `${heading}\n`;
         }
-
-        content += `#${ftvkyo.settings.draftTag}\n\n\n`;
 
         // Count the lines in the content
         const lines = content.split("\n").length;

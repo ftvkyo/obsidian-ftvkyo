@@ -166,18 +166,24 @@ export default class ApiNote {
         */
     }
 
+    get status(): string | null {
+        return this.fc?.frontmatter?.status ?? null;
+    }
+
     /* ============ *
      * State checks *
      * ============ */
 
-    // Whether the note is a draft.
-    get isDraft() {
-        return this.tags.includes(ftvkyo.settings.draftTag);
+    // Whether the note is work in progress.
+    get wip() {
+        return this.status === "wip";
     }
 
     // Whether the note has "ends" that could be "tied up".
-    get hasLooseEnd() {
-        return this.tags.includes(ftvkyo.settings.looseEndTag);
+    get loose() {
+        // TODO: Implement a better way to detect this.
+        //       Probably also by checking for dead links.
+        return this.tags.includes(ftvkyo.settings.looseTag);
     }
 
     /* ======= *

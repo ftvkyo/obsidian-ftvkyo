@@ -21,13 +21,13 @@ export class OFSettingTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName("Draft tag")
-            .setDesc("Tag to use for draft notes")
+            .setName("Loose tag")
+            .setDesc("Tag to use for notes that have extension potential")
             .addText((text) =>
                 text
-                    .setValue(ftvkyo.settings.draftTag)
+                    .setValue(ftvkyo.settings.looseTag)
                     .onChange(async (value) => {
-                        ftvkyo.settings.draftTag = value;
+                        ftvkyo.settings.looseTag = value;
                         await ftvkyo.saveSettings();
                     })
             );

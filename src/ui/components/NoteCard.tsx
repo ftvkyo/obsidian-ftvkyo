@@ -67,13 +67,13 @@ export default function NoteCard({
         data-icon={typeIconName}
     />;
 
-    const draftIconName = note.isDraft && ftvkyo.settings.draftIcon || null;
+    const draftIconName = note.wip && ftvkyo.settings.wipIcon || null;
     const draftIcon = draftIconName && <div
         className="clickable-icon"
         data-icon={draftIconName}
     />;
 
-    const leIconName = note.hasLooseEnd && ftvkyo.settings.looseEndIcon || null;
+    const leIconName = note.loose && ftvkyo.settings.looseIcon || null;
     const leIcon = leIconName && <div
         className="clickable-icon"
         data-icon={leIconName}
