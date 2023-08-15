@@ -36,53 +36,53 @@ export default class ApiNoteList {
         return this.notes.length;
     }
 
-    // Get all unique series of the notes.
-    get series(): string[] {
+    // Get all unique tags of the notes.
+    get tags(): string[] {
         return this.notes
-            .flatMap(note => note.series)
+            .flatMap(note => note.tags)
             .filter(onlyUnique)
             .array();
     }
 
-    // Get all unique series of the notes,
+    // Get all unique tags of the notes,
     // sorted alphabetically.
-    get seriesAbc(): string[] {
-        return this.series
+    get tagsAbc(): string[] {
+        return this.tags
             .sort((a, b) => a.localeCompare(b));
     }
 
-    // Get all unique series of the notes,
-    // with the number of notes in each series.
+    // Get all unique tags of the notes,
+    // with the number of notes for each tag.
     // Counts all notes towards "" (empty string) key.
-    // Counts notes without series towards "!" key.
-    // Counts notes with at least some series towards "?" key.
-    get seriesCounted(): { [key: string]: number } {
-        const series = this.notes
-            .flatMap(note => note.series)
+    // Counts notes without tags towards "!" key.
+    // Counts notes with at least some tags towards "?" key.
+    get tagsCounted(): { [key: string]: number } {
+        const tags = this.notes
+            .flatMap(note => note.tags)
             .array();
 
-        const seriesCounted = series
+        const tagsCounted = tags
             .reduce((prev, curr) => {
                 prev[curr] = (prev[curr] ?? 0) + 1;
                 return prev;
             }, {} as { [key: string]: number });
 
-        const withoutSeries = this.where({
-            series: "!",
+        const withoutTags = this.where({
+            tag: "!",
         }).notes;
 
         return {
             "": this.notes.length,
-            "!": withoutSeries.length,
-            "?": series.length,
-            ...seriesCounted,
+            "!": withoutTags.length,
+            "?": tags.length,
+            ...tagsCounted,
         };
     }
 
-    // Sorted version of seriesCounted.
-    get seriesCountedAbc(): [string, number][] {
-        return Object.entries(this.seriesCounted)
-        .sort(([a], [b]) => a.localeCompare(b));
+    // Sorted version of tagsCounted.
+    get tagsCountedAbc(): [string, number][] {
+        return Object.entries(this.tagsCounted)
+            .sort(([a], [b]) => a.localeCompare(b));
     }
 
     // Get the list of types of the notes.
@@ -128,30 +128,27 @@ export default class ApiNoteList {
 
     // Filter the notes.
     //
-    // Special syntax for series and type:
+    // Special syntax for `type` and `tag`:
     // - "" => Match all.
     // - "!" => Match only nulls.
     // - "?" => Match only non-nulls.
     // - else => Match only the given value.
     //
     where({
-        series = "",
         type = "",
-        tags = {},
+        tag = "",
         requireH1 = false,
         requireWip = false,
         requireLoose = false,
         orderKey = "date",
         orderDir = "desc",
     }: {
-        // What series to match.
-        // - Uses special syntax.
-        series?: string,
         // What type to match.
         // - Uses special syntax.
         type?: string,
-        // What tags to require.
-        tags?: Record<string, boolean | undefined>,
+        // What tag to require.
+        // - Uses special syntax.
+        tag?: string,
         // Whether to only include notes with a single H1.
         requireH1?: boolean,
         // Whether to only include notes with `status: wip`.
@@ -163,21 +160,6 @@ export default class ApiNoteList {
         orderDir?: "asc" | "desc",
     }) {
         let notes = this.notes;
-
-        // "" is falsy so no need for a special case
-        if (series) {
-            notes = notes.filter(note => {
-                if (series === "!") {
-                    // No series.
-                    return note.series.length === 0;
-                }
-                if (series === "?") {
-                    // At least some series.
-                    return note.series.length !== 0;
-                }
-                return note.series.includes(series)
-            });
-        }
 
         // "" is falsy so no need for a special case
         if (type) {
@@ -194,10 +176,18 @@ export default class ApiNoteList {
             });
         }
 
-        if (tags) {
+        // "" is falsy so no need for a special case
+        if (tag) {
             notes = notes.filter(note => {
-                return Object.entries(tags)
-                    .every(([tag, enabled]) => !enabled || note.tags.includes(tag));
+                if (tag === "!") {
+                    // No tags.
+                    return note.tags.length === 0;
+                }
+                if (tag === "?") {
+                    // At least some tags.
+                    return note.tags.length !== 0;
+                }
+                return note.tags.includes(tag)
             });
         }
 

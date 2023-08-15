@@ -127,7 +127,11 @@ export default class ApiNote {
 
     // Tags of the note, without the leading `#`.
     get tags() {
-        return this.fc?.tags?.map(tag => tag.tag.substring(1)) ?? [];
+        return this.fc?.tags
+            // Remove leading "#".
+            ?.map(tag => tag.tag.substring(1))
+            // Remove "special" tags.
+            .filter(tag => !tag.startsWith("-")) ?? [];
     }
 
     /* =========== *
@@ -137,33 +141,6 @@ export default class ApiNote {
     // Get the type of the note, if set.
     get type(): string | null {
         return this.fc?.frontmatter?.type ?? null;
-    }
-
-    // Get the list of series of the note.
-    get series(): string[] {
-        return this.tags
-            .filter(tag => tag.startsWith("s/"))
-            .map(tag => tag.substring(2));
-
-        // TODO: migrate to this (requires moving series tags to frontmatter field)
-
-        /*
-        const series = this.fc?.frontmatter?.series;
-
-        if (!series) {
-            return [];
-        }
-
-        if (typeof series === "string") {
-            if (series.includes(",")) {
-                return series
-                    .split(",")
-                    .map(s => s.trim());
-            }
-            return [series];
-        }
-        return series;
-        */
     }
 
     get status(): string | null {

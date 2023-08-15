@@ -44,13 +44,13 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
     div.note-filter {
         display: grid;
         grid-template-areas:
-            "series series"
-            "type   check ";
+            "tag  tag  "
+            "type check";
 
         gap: $gutter;
 
-        .series {
-            grid-area: series;
+        .tag {
+            grid-area: tag;
         }
 
         .type {

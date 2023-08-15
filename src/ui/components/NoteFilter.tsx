@@ -29,16 +29,16 @@ export default function NoteFilter({
     filter: NoteFilterType,
     setFilter: (filter: NoteFilterType) => void,
 }) {
-    const series = notes.seriesCountedAbc.map(countedOptions);
+    const tags = notes.tagsCountedAbc.map(countedOptions);
     const types = notes.typesCountedAbc.map(countedOptions);
 
-    // Series selector.
-    const seriesSelector = <Selector
-        className="series"
-        label="Series"
-        options={series}
-        value={filter.series}
-        onChange={(v) => setFilter({...filter, series: v})}
+    // Tag selector.
+    const tagSelector = <Selector
+        className="tag"
+        label="Tag"
+        options={tags}
+        value={filter.tag}
+        onChange={(v) => setFilter({...filter, tag: v})}
     />;
 
     // Type selector.
@@ -72,7 +72,7 @@ export default function NoteFilter({
     />;
 
     return <div className="note-filter">
-        {seriesSelector}
+        {tagSelector}
         {typeRadio}
         <fieldset
             className="check"

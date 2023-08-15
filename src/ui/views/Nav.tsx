@@ -17,7 +17,7 @@ let lg: Logger | undefined = undefined;
 // TODO: Logic to count the notes in dropdowns based on the
 // current search?
 // It's tricky because we have to make it so:
-// - The selected series does not affect its own dropdown, as
+// - The selected tag does not affect its own dropdown, as
 //   we can only select 1.
 // - Other stuff :)
 
@@ -41,9 +41,8 @@ const NavView: ViewElement = {
         }
 
         const [filter, setFilter] = useState<NoteFilterType>({
-            series: "",
             type: "",
-            tags: {},
+            tag: "",
             requireH1: false,
             requireWip: false,
             requireLoose: false,
