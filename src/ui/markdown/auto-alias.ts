@@ -30,7 +30,7 @@ export default function AutoAlias(
     }
 
     // Find all internal links
-    const links = Array.from(element.querySelectorAll<HTMLElement>("a.internal-link"));
+    const links = Array.from(element.querySelectorAll<HTMLAnchorElement>("a.internal-link"));
 
     if (links.length > 0) {
         lg.info(`Found ${links.length} internal links.`);

@@ -12,6 +12,7 @@ import NavView from "@/ui/views/Nav";
 
 import "./styles.scss";
 import {OFSettingTab} from "./ui/settings";
+import PlanCallout from "./ui/markdown/plan-callout";
 
 
 declare global {
@@ -56,6 +57,7 @@ const commands: Command[] = [
 
 const markdown = [
     AutoAlias,
+    PlanCallout,
 ];
 
 const views = [
