@@ -1,11 +1,9 @@
-import { Plugin } from "obsidian";
+import { Command, Plugin } from "obsidian";
 import { getAPI as getDataviewAPI, DataviewApi } from "obsidian-dataview";
 
 import Logger from "@/util/logger";
 
 import Api from "@/api/api";
-
-import NoteCreate from "@/commands/note-create";
 
 import AutoAlias from "@/ui/markdown/auto-alias";
 
@@ -53,8 +51,7 @@ const DEFAULT_SETTINGS: Settings = {
 };
 
 
-const commands = [
-    NoteCreate,
+const commands: Command[] = [
 ];
 
 const markdown = [
