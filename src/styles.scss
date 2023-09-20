@@ -142,3 +142,8 @@ div.workspace-leaf-content[data-type="ftvkyo-navigation"] {
         }
     }
 }
+
+div.callout[data-callout="plan"] {
+    --callout-color: 128, 200, 128;
+    --callout-icon: lucide-calendar;
+}
