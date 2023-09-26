@@ -13,7 +13,7 @@ const CopyLink: Command = {
             return currentFile !== null;
         }
 
-        toClipboard(`[[${currentFile.basename}]]`)
+        toClipboard(`[[${currentFile.basename}]]`);
     },
 };
 
