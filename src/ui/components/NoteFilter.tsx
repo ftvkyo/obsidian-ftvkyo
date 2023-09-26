@@ -64,13 +64,6 @@ export default function NoteFilter({
         onChange={(v) => setFilter({...filter, requireWip: v})}
     />;
 
-    // Filtering notes that have places that can be filled in.
-    const isLooseCheckbox = <Checkbox
-        label="Is loose"
-        checked={filter.requireLoose}
-        onChange={(v) => setFilter({...filter, requireLoose: v})}
-    />;
-
     return <div className="note-filter">
         {tagSelector}
         {typeRadio}
@@ -80,7 +73,6 @@ export default function NoteFilter({
             <legend>Has</legend>
             {hasH1Checkbox}
             {isWipCheckbox}
-            {isLooseCheckbox}
         </fieldset>
     </div>;
 }

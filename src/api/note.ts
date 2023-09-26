@@ -156,14 +156,6 @@ export default class ApiNote {
         return this.status === "wip";
     }
 
-    // Whether the note has "ends" that could be "tied up".
-    get loose() {
-        const lt = "#" + ftvkyo.settings.looseTag;
-        // TODO: Implement a better way to detect this.
-        //       Probably also by checking for dead links.
-        return this.fc?.tags?.some((t) => t.tag === lt) ?? false;
-    }
-
     /* ======= *
      * Actions *
      * ======= */

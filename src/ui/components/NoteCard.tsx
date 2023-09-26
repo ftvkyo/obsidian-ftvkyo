@@ -73,18 +73,11 @@ export default function NoteCard({
         data-icon={draftIconName}
     />;
 
-    const leIconName = note.loose && ftvkyo.settings.looseIcon || null;
-    const leIcon = leIconName && <div
-        className="clickable-icon"
-        data-icon={leIconName}
-    />;
-
     const blockInfo = <div
         className="info"
     >
         {typeIcon}
         {draftIcon}
-        {leIcon}
     </div>;
 
     // Note controls

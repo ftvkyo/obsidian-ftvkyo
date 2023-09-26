@@ -19,17 +19,5 @@ export class OFSettingTab extends PluginSettingTab {
                         await ftvkyo.saveSettings();
                     })
             );
-
-        new Setting(containerEl)
-            .setName("Loose tag")
-            .setDesc("Tag to use for notes that have extension potential")
-            .addText((text) =>
-                text
-                    .setValue(ftvkyo.settings.looseTag)
-                    .onChange(async (value) => {
-                        ftvkyo.settings.looseTag = value;
-                        await ftvkyo.saveSettings();
-                    })
-            );
     }
 }

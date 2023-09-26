@@ -27,9 +27,6 @@ interface Settings {
 
     wipIcon: string;
 
-    looseTag: string;
-    looseIcon: string;
-
     typeIcons: Record<string, string>;
 
     enableTooltip: boolean;
@@ -39,9 +36,6 @@ const DEFAULT_SETTINGS: Settings = {
     notesRoot: "text",
 
     wipIcon: "pencil",
-
-    looseTag: "le",
-    looseIcon: "circle-ellipsis",
 
     typeIcons: {
         "wiki": "network",
