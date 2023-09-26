@@ -1,4 +1,5 @@
 import ApiNote from "@/api/note";
+import { toClipboard } from "@/util/clipboard";
 import {setIcon} from "obsidian";
 import {useCallback} from "react";
 
@@ -20,6 +21,20 @@ function open(
 
     const newTab = e.currentTarget.getAttribute("target") === "_blank";
     note.reveal({ replace: !newTab });
+}
+
+
+function copy(
+    e: React.MouseEvent<HTMLAnchorElement>,
+) {
+    e.preventDefault();
+
+    const href = e.currentTarget.getAttribute("href");
+    if (!href) {
+        return;
+    }
+
+    toClipboard(href);
 }
 
 
@@ -82,6 +97,14 @@ export default function NoteCard({
 
     // Note controls
 
+    const copyLink = <a
+        className="clickable-icon"
+        href={`[[${note.base}]]`}
+        onClick={copy}
+
+        data-icon="link"
+    />;
+
     const openReplace = <a
         className="clickable-icon"
         href={note.path}
@@ -104,6 +127,7 @@ export default function NoteCard({
     >
         {openReplace}
         {openNewTab}
+        {copyLink}
     </div>;
 
     const updateRef = useCallback((node: HTMLDivElement) => {
