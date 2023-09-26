@@ -13,6 +13,7 @@ import NavView from "@/ui/views/Nav";
 import "./styles.scss";
 import {OFSettingTab} from "./ui/settings";
 import PlanCallout from "./ui/markdown/plan-callout";
+import CopyLink from "./ui/commands/copy-link";
 
 
 declare global {
@@ -47,6 +48,7 @@ const DEFAULT_SETTINGS: Settings = {
 
 
 const commands: Command[] = [
+    CopyLink
 ];
 
 const markdown = [
