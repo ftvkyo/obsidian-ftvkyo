@@ -73,9 +73,9 @@ const NavView: ViewElement = {
         </>;
     },
     short: "nav",
-    viewType: "ftvkyo-navigation",
-    displayText: "Ftvkyo Navigation",
-    icon: "lucide-folder-tree",
+    viewType: "ftvkyo-explore",
+    displayText: "Explore",
+    icon: "lucide-globe-2",
 };
 
 export default NavView;
