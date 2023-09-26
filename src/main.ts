@@ -5,15 +5,17 @@ import Logger from "@/util/logger";
 
 import Api from "@/api/api";
 
+import CopyLink from "./ui/commands/copy-link";
+
 import AutoAlias from "@/ui/markdown/auto-alias";
+import PlanCallout from "./ui/markdown/plan-callout";
 
 import ObsidianFtvkyoView from "@/ui/views/view";
 import NavView from "@/ui/views/Nav";
 
-import "./styles.scss";
 import {OFSettingTab} from "./ui/settings";
-import PlanCallout from "./ui/markdown/plan-callout";
-import CopyLink from "./ui/commands/copy-link";
+
+import "./styles.scss";
 
 
 declare global {
