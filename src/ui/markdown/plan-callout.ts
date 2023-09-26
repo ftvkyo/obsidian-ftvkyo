@@ -66,16 +66,31 @@ export default function PlanCallout(
     }
 
     for (const plan of plans) {
-        // Find all <code> elements inside of <li> elements in the plan.
-        // This is because we expect task time estimations in the "`...`" syntax.
-        // FIXME: this also tries to grab other <code> elements in <li>s.
-        const estimations = Array.from(plan.querySelectorAll<HTMLElement>("li > code"));
+        const tasks = Array.from(plan.querySelectorAll<HTMLLIElement>("li.task-list-item"));
+
+        lg.info(`Found ${tasks.length} tasks in a plan callout.`);
+
+        const estimations = tasks.map((val) => {
+            for (const node of Array.from(val.childNodes)) {
+                if (node instanceof HTMLDivElement && node.className === "list-bullet") {
+                    // Skip the magical list bullet
+                    continue;
+                }
+                if (node instanceof HTMLInputElement && node.className === "task-list-item-checkbox") {
+                    // Skip the checkbox
+                    continue;
+                }
+                if (node instanceof HTMLElement && node.nodeName === "CODE") {
+                    return node;
+                }
+                // No estimation provided or it's specified incorrectly
+                return undefined;
+            }
+        }).filter((val) => val !== undefined) as HTMLElement[];
 
         if (estimations.length <= 0) {
             continue;
         }
-
-        lg.info(`Found ${estimations.length} "li > code".`);
 
         let minutes = 0;
         let breaks = 0;
