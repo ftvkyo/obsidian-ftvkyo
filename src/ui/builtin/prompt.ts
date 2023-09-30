@@ -29,7 +29,7 @@ class PrompterModal extends Modal {
         resolve: Resolve,
         reject: Reject,
     ) {
-        lg?.info(`Prompting for "${this.prompt}" with initial value "${this.value_initial}"`);
+        lg?.debug(`Prompting for "${this.prompt}" with initial value "${this.value_initial}"`);
 
         this.resolve = resolve;
         this.reject = reject;
@@ -42,10 +42,10 @@ class PrompterModal extends Modal {
 
             // Resolve if it's not empty
             if (v !== "" || this.allow_empty) {
-                lg?.info(`Resolving with "${v}"`);
+                lg?.debug(`Resolving with "${v}"`);
                 this.resolve(v);
             } else {
-                lg?.info(`Empty value, rejecting`);
+                lg?.debug(`Empty value, rejecting`);
                 this.reject("empty");
             }
 
@@ -67,7 +67,7 @@ class PrompterModal extends Modal {
     }
 
     onClose() {
-        lg?.info(`Closed`);
+        lg?.debug(`Closed`);
         this.contentEl.empty();
         this.reject("cancelled");
     }

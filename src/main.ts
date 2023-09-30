@@ -28,6 +28,8 @@ declare global {
 interface Settings {
     notesRoot: string;
 
+    debugLogging: boolean;
+
     wipIcon: string;
 
     typeIcons: Record<string, string>;
@@ -37,6 +39,8 @@ interface Settings {
 
 const DEFAULT_SETTINGS: Settings = {
     notesRoot: "text",
+
+    debugLogging: false,
 
     wipIcon: "pencil",
 
@@ -84,10 +88,7 @@ export default class ObsidianFtvkyo extends Plugin {
         // Make the plugin available globally
         globalThis.ftvkyo = this;
 
-        this.lg
-        //    .clear()
-            .big(new Date().toISOString())
-            .big("obsidian-ftvkyo");
+        this.lg.important(`Loading obsidian-ftvkyo`);
 
         await this.loadSettings();
         this.addSettingTab(new OFSettingTab(app, this));
@@ -115,6 +116,7 @@ export default class ObsidianFtvkyo extends Plugin {
 
     async saveSettings() {
         await this.saveData(this.settings);
+        // TODO: re-render the Explore view.
     }
 
     // Loads everything we actually need

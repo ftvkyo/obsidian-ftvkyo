@@ -62,13 +62,13 @@ export default function PlanCallout(
     const plans = Array.from(element.querySelectorAll<HTMLDivElement>("div.callout[data-callout=\"plan\"]"));
 
     if (plans.length > 0) {
-        lg.info(`Found ${plans.length} plan callouts.`);
+        lg.debug(`Found ${plans.length} plan callouts.`);
     }
 
     for (const plan of plans) {
         const tasks = Array.from(plan.querySelectorAll<HTMLLIElement>("li.task-list-item"));
 
-        lg.info(`Found ${tasks.length} tasks in a plan callout.`);
+        lg.debug(`Found ${tasks.length} tasks in a plan callout.`);
 
         const estimations = tasks.map((val) => {
             for (const node of Array.from(val.childNodes)) {
@@ -102,7 +102,7 @@ export default function PlanCallout(
             const [, h, m] = match;
 
             if (h === undefined && m === undefined) {
-                lg.info(`Failed to extract time from ${estimation.innerText}`);
+                lg.debug(`Failed to extract time from ${estimation.innerText}`);
                 continue;
             }
 
@@ -114,7 +114,7 @@ export default function PlanCallout(
         }
 
         if (breaks === 0) {
-            lg.info("No estimations were parsed successfully.");
+            lg.debug("No estimations were parsed successfully.");
             continue;
         }
 

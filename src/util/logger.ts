@@ -30,9 +30,10 @@ export default class Logger {
         return this;
     }
 
-    clear() {
-        console.clear();
-        return this;
+    important(
+        text: string,
+    ) {
+        return this.log(text, "font-size: 1.5em;");
     }
 
     info(
@@ -41,16 +42,13 @@ export default class Logger {
         return this.log(text);
     }
 
-    muted(
+    debug(
         text: string,
     ) {
-        return this.log(text, "color: #888888;");
-    }
-
-    big(
-        text: string,
-    ) {
-        return this.log(text, "font-size: 1.5em;");
+        if (ftvkyo.settings.debugLogging) {
+            return this.log(text, "color: #888888;");
+        }
+        return this;
     }
 
     // Create a sub-logger

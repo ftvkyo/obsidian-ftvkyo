@@ -30,7 +30,7 @@ class SuggesterModal extends FuzzySuggestModal<string> {
         resolve: Resolve,
         reject: Reject,
     ) {
-        lg?.info(`Suggesting from ${this.items_text.length} items`);
+        lg?.debug(`Suggesting from ${this.items_text.length} items`);
 
         this.resolve = resolve;
         this.reject = reject;
@@ -48,7 +48,7 @@ class SuggesterModal extends FuzzySuggestModal<string> {
     }
 
     onChooseItem(item: string) {
-        lg?.info(`Chosen item "${item}"`);
+        lg?.debug(`Chosen item "${item}"`);
         this.resolve(item);
     }
 
@@ -67,7 +67,7 @@ class SuggesterModal extends FuzzySuggestModal<string> {
     // From `Modal`:
 
     onClose() {
-        lg?.info(`Closed`);
+        lg?.debug(`Closed`);
         if (!this.suppress_reject) {
             this.reject("cancelled");
         }

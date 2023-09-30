@@ -19,5 +19,16 @@ export class OFSettingTab extends PluginSettingTab {
                         await ftvkyo.saveSettings();
                     })
             );
+
+        new Setting(containerEl)
+            .setName("Debug logging")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(ftvkyo.settings.debugLogging)
+                    .onChange(async (value) => {
+                        ftvkyo.settings.debugLogging = value;
+                        await ftvkyo.saveSettings();
+                    })
+            );
     }
 }
