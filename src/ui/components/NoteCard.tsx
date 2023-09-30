@@ -57,21 +57,10 @@ export default function NoteCard({
     note: ApiNote,
 }) {
 
-    // Note information
-
-    const title = note.h1 !== null && <p>
-        {note.h1}
-    </p>;
-
-    const date = note.type === null && <code>
-        {note.dateInfo ?? note.base}
-    </code>;
-
-    const blockTitle = <div
+    const blockTitle = note.h1 !== null && <div
         className="title"
     >
-        {title}
-        {date}
+        {note.h1}
     </div>;
 
     // Note info

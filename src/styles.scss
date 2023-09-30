@@ -115,13 +115,7 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
             border-radius: $card-br $card-br 0 0;
             background-color: var(--table-header-background);
 
-            p {
-                font-size: 1.25em;
-            }
-
-            code {
-                opacity: 0.75;
-            }
+            font-size: 1.25em;
         }
 
         .info {
