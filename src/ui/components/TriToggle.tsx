@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 import { useId } from "react";
 
-export enum TriToggleState {
+export enum TriState {
     On = "on",
     Off = "off",
     Maybe = "maybe",
@@ -15,8 +15,8 @@ export default function TriToggle({
 }: {
     className?: string,
     label: string,
-    value: TriToggleState,
-    onChange: (state: TriToggleState) => void,
+    value: TriState,
+    onChange: (state: TriState) => void,
 }) {
     const name = useId();
 
@@ -30,17 +30,17 @@ export default function TriToggle({
         >
             <div className={clsx("tri-toggle-slider", value)}/>
 
-            <input type="radio" name={name} className={TriToggleState.Off}
-                checked={value == TriToggleState.Off}
-                onChange={() => onChange(TriToggleState.Off)}
+            <input type="radio" name={name} className={TriState.Off}
+                checked={value == TriState.Off}
+                onChange={() => onChange(TriState.Off)}
             />
-            <input type="radio" name={name} className={TriToggleState.Maybe}
-                checked={value == TriToggleState.Maybe}
-                onChange={() => onChange(TriToggleState.Maybe)}
+            <input type="radio" name={name} className={TriState.Maybe}
+                checked={value == TriState.Maybe}
+                onChange={() => onChange(TriState.Maybe)}
             />
-            <input type="radio" name={name} className={TriToggleState.On}
-                checked={value == TriToggleState.On}
-                onChange={() => onChange(TriToggleState.On)}
+            <input type="radio" name={name} className={TriState.On}
+                checked={value == TriState.On}
+                onChange={() => onChange(TriState.On)}
             />
         </div>
     </div>;

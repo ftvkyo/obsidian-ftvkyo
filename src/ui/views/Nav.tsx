@@ -6,7 +6,7 @@ import ApiNoteList, {NoteFilterType} from "@/api/note-list";
 import Logger from "@/util/logger";
 import NoteFilter from "../components/NoteFilter";
 import NotePaginator from "../components/NotePaginator";
-import TriToggle, { TriToggleState } from "../components/TriToggle";
+import { TriState } from "../components/TriToggle";
 
 
 let lg: Logger | undefined = undefined;
@@ -44,13 +44,11 @@ const NavView: ViewElement = {
         const [filter, setFilter] = useState<NoteFilterType>({
             type: "",
             tag: "",
-            requireH1: false,
-            requireWip: false,
+            title: TriState.Maybe,
+            wip: TriState.Maybe,
             orderKey: "date",
             orderDir: "desc",
         });
-
-        const [headings, setHeadings] = useState<TriToggleState>(TriToggleState.Maybe);
 
         const notes = ApiNoteList.all();
 
@@ -68,11 +66,6 @@ const NavView: ViewElement = {
                     found={notesFiltered.length}
                     filter={filter}
                     setFilter={setFilter}
-                />
-                <TriToggle
-                    label="Headings"
-                    value={headings}
-                    onChange={setHeadings}
                 />
             </div>
             <div className="note-list">

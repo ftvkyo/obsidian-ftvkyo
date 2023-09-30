@@ -51,7 +51,7 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
                 margin: math.div(((1 - $slider-factor) * $height), 2);
                 border-radius: math.div($height * $slider-factor, 2);
 
-                transition: 0.3s all ease-in-out;
+                transition: 0.1s all ease-in-out;
             }
 
             .tri-toggle-slider.off {

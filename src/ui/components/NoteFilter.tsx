@@ -1,7 +1,7 @@
 import ApiNoteList, {NoteFilterType} from "@/api/note-list";
 import Radio from "./Radio";
 import Selector from "./Selector";
-import Checkbox from "./Checkbox";
+import TriToggle from "./TriToggle";
 
 function countedOptions([name, count]: [string, number]): [string, string] {
     const key = name;
@@ -51,17 +51,17 @@ export default function NoteFilter({
     />;
 
     // Filtering notes with/without titles.
-    const hasH1Checkbox = <Checkbox
-        label="H1 heading"
-        checked={filter.requireH1}
-        onChange={(v) => setFilter({...filter, requireH1: v})}
+    const hasTitle = <TriToggle
+        label="Title present"
+        value={filter.title}
+        onChange={(v) => setFilter({...filter, title: v})}
     />;
 
     // Filtering WIP notes.
-    const isWipCheckbox = <Checkbox
-        label="Is WIP"
-        checked={filter.requireWip}
-        onChange={(v) => setFilter({...filter, requireWip: v})}
+    const isWip = <TriToggle
+        label="Work in Progress"
+        value={filter.wip}
+        onChange={(v) => setFilter({...filter, wip: v})}
     />;
 
     return <div className="note-filter">
@@ -70,9 +70,9 @@ export default function NoteFilter({
         <fieldset
             className="check"
         >
-            <legend>Has</legend>
-            {hasH1Checkbox}
-            {isWipCheckbox}
+            <legend>Condition</legend>
+            {hasTitle}
+            {isWip}
         </fieldset>
     </div>;
 }

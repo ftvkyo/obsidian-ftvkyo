@@ -1,3 +1,4 @@
+import { TriState } from "@/ui/components/TriToggle";
 import { DataArray } from "obsidian-dataview";
 
 import ApiNote from "./note";
@@ -137,8 +138,8 @@ export default class ApiNoteList {
     where({
         type = "",
         tag = "",
-        requireH1 = false,
-        requireWip = false,
+        title: heading = TriState.Maybe,
+        wip = TriState.Maybe,
         orderKey = "date",
         orderDir = "desc",
     }: {
@@ -148,10 +149,10 @@ export default class ApiNoteList {
         // What tag to require.
         // - Uses special syntax.
         tag?: string,
-        // Whether to only include notes with a single H1.
-        requireH1?: boolean,
-        // Whether to only include notes with `status: wip`.
-        requireWip?: boolean,
+        // Heading presence
+        title?: TriState,
+        // Note status
+        wip?: TriState,
         // How to order the notes.
         orderKey?: "date" | "title",
         orderDir?: "asc" | "desc",
@@ -188,12 +189,16 @@ export default class ApiNoteList {
             });
         }
 
-        if (requireH1) {
+        if (heading === TriState.On) {
             notes = notes.filter(note => note.h1 !== null);
+        } else if (heading === TriState.Off) {
+            notes = notes.filter(note => note.h1 === null);
         }
 
-        if (requireWip) {
+        if (wip === TriState.On) {
             notes = notes.filter(note => note.wip);
+        } else if (wip === TriState.Off) {
+            notes = notes.filter(note => !note.wip);
         }
 
         const keyF = orderKey === "title"
