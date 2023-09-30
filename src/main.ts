@@ -85,7 +85,7 @@ export default class ObsidianFtvkyo extends Plugin {
         globalThis.ftvkyo = this;
 
         this.lg
-            .clear()
+        //    .clear()
             .big(new Date().toISOString())
             .big("obsidian-ftvkyo");
 
