@@ -28,6 +28,13 @@ $card-br: 0.25em;
         background-color: var(--table-header-background);
 
         font-size: 1.25em;
+
+        font-family: var(--h1-font);
+        font-weight: var(--h1-weight);
+        font-style: var(--h1-style);
+        font-variant: var(--h1-variant);
+
+        color: var(--h1-color);
     }
 
     .info {
