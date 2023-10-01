@@ -4,7 +4,7 @@ import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
 
-import { sassPlugin } from "esbuild-sass-plugin";
+import { postcssModules, sassPlugin } from "esbuild-sass-plugin";
 import { copy } from "esbuild-plugin-copy";
 
 
@@ -66,6 +66,10 @@ const context = await esbuild.context({
 				to: ".",
 			},
 			watch: !prod,
+		}),
+		sassPlugin({
+			filter: /\.module\.scss$/,
+			transform: postcssModules({}),
 		}),
 		sassPlugin(),
 		renameCSS(),

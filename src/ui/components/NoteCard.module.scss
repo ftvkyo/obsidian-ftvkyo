@@ -1,0 +1,49 @@
+@use "../../vars";
+
+$card-br: 0.25em;
+
+.noteCard {
+    border-radius: $card-br;
+    box-shadow: 0.1em 0.1em 0.5em #000;
+
+    background-color: var(--background-primary);
+
+    display: grid;
+    grid-template-areas:
+        "title title   "
+        "info  controls";
+
+    > * {
+        display: flex;
+        gap: 0.25em;
+
+        padding: vars.$gutter;
+    }
+
+    .title {
+        grid-area: title;
+        flex-direction: column;
+
+        border-radius: $card-br $card-br 0 0;
+        background-color: var(--table-header-background);
+
+        font-size: 1.25em;
+    }
+
+    .info {
+        grid-area: info;
+
+        flex-direction: row;
+
+        // We are using `clickable-icon` class
+        // from Obsidian, but don't want to actually make
+        // the icon clickable
+        pointer-events: none;
+    }
+
+    .controls {
+        grid-area: controls;
+
+        flex-direction: row-reverse;
+    }
+}

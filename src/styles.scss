@@ -1,6 +1,6 @@
 @use "sass:math";
 
-$gutter: 0.5em;
+@use "vars";
 
 div.workspace-leaf-content[data-type^="ftvkyo-"] {
     p,h1,h2,h3,h4,h5,h6 {
@@ -10,7 +10,7 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
 
     select {
         // Make look good
-        padding: $gutter 1em;
+        padding: vars.$gutter 1em;
     }
 
     label {
@@ -84,18 +84,18 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
     }
 
     div.view-controls {
-        padding: $gutter;
+        padding: vars.$gutter;
         border-bottom: 1px solid var(--background-modifier-border);
 
         display: flex;
         flex-direction: column;
-        gap: $gutter;
+        gap: vars.$gutter;
     }
 
     div.note-filter {
         display: grid;
         grid-template-columns: auto auto;
-        gap: $gutter;
+        gap: vars.$gutter;
 
         align-items: center;
     }
@@ -104,7 +104,7 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
         display: flex;
         flex-direction: row;
         align-items: baseline;
-        gap: $gutter;
+        gap: vars.$gutter;
 
         .dropdown {
             flex-grow: 1;
@@ -115,59 +115,11 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
         grid-row: 2;
         overflow-y: scroll;
 
-        padding: ($gutter * 2) $gutter;
+        padding: (vars.$gutter * 2) vars.$gutter;
 
         display: flex;
         flex-direction: column;
-        gap: $gutter * 2;
-    }
-
-    $card-br: 0.25em;
-
-    div.note-card {
-        border-radius: $card-br;
-        box-shadow: 0.1em 0.1em 0.5em #000;
-
-        background-color: var(--background-primary);
-
-        display: grid;
-        grid-template-areas:
-            "title title   "
-            "info  controls";
-
-        > * {
-            display: flex;
-            gap: 0.25em;
-
-            padding: $gutter;
-        }
-
-        .title {
-            grid-area: title;
-            flex-direction: column;
-
-            border-radius: $card-br $card-br 0 0;
-            background-color: var(--table-header-background);
-
-            font-size: 1.25em;
-        }
-
-        .info {
-            grid-area: info;
-
-            flex-direction: row;
-
-            // We are using `clickable-icon` class
-            // from Obsidian, but don't want to actually make
-            // the icon clickable
-            pointer-events: none;
-        }
-
-        .controls {
-            grid-area: controls;
-
-            flex-direction: row-reverse;
-        }
+        gap: vars.$gutter * 2;
     }
 }
 

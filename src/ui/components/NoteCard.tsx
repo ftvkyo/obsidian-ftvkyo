@@ -3,6 +3,8 @@ import { toClipboard } from "@/util/clipboard";
 import {setIcon} from "obsidian";
 import {useCallback} from "react";
 
+import styles from "./NoteCard.module.scss";
+
 
 function open(
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -58,7 +60,7 @@ export default function NoteCard({
 }) {
 
     const blockTitle = note.h1 !== null && <div
-        className="title"
+        className={styles.title}
     >
         {note.h1}
     </div>;
@@ -78,7 +80,7 @@ export default function NoteCard({
     />;
 
     const blockInfo = <div
-        className="info"
+        className={styles.info}
     >
         {typeIcon}
         {draftIcon}
@@ -112,7 +114,7 @@ export default function NoteCard({
     />;
 
     const blockControls = <div
-        className="controls"
+        className={styles.controls}
     >
         {openReplace}
         {openNewTab}
@@ -126,7 +128,7 @@ export default function NoteCard({
     return <div
         ref={updateRef}
 
-        className="note-card"
+        className={styles.noteCard}
 
         // Define the tooltip and accesibility label.
         aria-label={ftvkyo.settings.enableTooltip && note.base || ""}
