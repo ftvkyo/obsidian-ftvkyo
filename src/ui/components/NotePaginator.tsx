@@ -1,6 +1,9 @@
 import {NoteFilterType} from "@/api/note-list";
 import Selector from "./Selector";
 
+import styles from "./NotePaginator.module.scss";
+
+
 export default function NotePaginator({
     found,
     filter,
@@ -28,7 +31,7 @@ export default function NotePaginator({
         }}
     />;
 
-    return <div className="note-paginator">
+    return <div className={styles.paginator}>
         {sortingSelector}
         <div className="found">
             {found} found.

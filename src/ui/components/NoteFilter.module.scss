@@ -1,0 +1,9 @@
+@use "../../vars";
+
+.filter {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: vars.$gutter;
+
+    align-items: center;
+}

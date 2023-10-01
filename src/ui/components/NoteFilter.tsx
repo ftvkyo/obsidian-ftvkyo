@@ -2,6 +2,9 @@ import ApiNoteList, {NoteFilterType} from "@/api/note-list";
 import Selector from "./Selector";
 import TriToggle from "./TriToggle";
 
+import styles from "./NoteFilter.module.scss";
+
+
 function countedOptions([name, count]: [string, number]): [string, string] {
     const key = name;
 
@@ -49,7 +52,7 @@ export default function NoteFilter({
         onChange={(v) => setFilter({...filter, wip: v})}
     />;
 
-    return <div className="note-filter">
+    return <div className={styles.filter}>
         <span>Tag</span> {tagSelector}
         <span>Title</span> {hasTitle}
         <span>Work in Progress</span> {isWip}

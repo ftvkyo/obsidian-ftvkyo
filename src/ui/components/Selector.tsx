@@ -17,7 +17,6 @@ export default function Selector({
     });
 
     return <select
-        className="dropdown"
         value={value}
         onChange={(e) => onChange(e.target.value)}
     >

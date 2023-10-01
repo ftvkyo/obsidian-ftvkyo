@@ -1,0 +1,12 @@
+@use "../../vars";
+
+.paginator {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: vars.$gutter;
+
+    select {
+        flex-grow: 1;
+    }
+}

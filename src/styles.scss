@@ -43,24 +43,9 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
         gap: vars.$gutter;
     }
 
-    div.note-filter {
-        display: grid;
-        grid-template-columns: auto auto;
-        gap: vars.$gutter;
 
-        align-items: center;
-    }
 
-    div.note-paginator {
-        display: flex;
-        flex-direction: row;
-        align-items: baseline;
-        gap: vars.$gutter;
-
-        .dropdown {
-            flex-grow: 1;
-        }
-    }
+    
 
     div.note-list {
         grid-row: 2;
