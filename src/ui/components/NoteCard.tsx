@@ -57,11 +57,11 @@ function populateIcons(
 function getBlockTitle(
     note: ApiNote,
 ): JSX.Element {
-    const className = note.h1 ? styles.title : styles.untitle;
+    const className = note.title ? styles.title : styles.untitle;
     let title;
 
-    if (note.h1) {
-        title = <Markdown>{note.h1}</Markdown>;
+    if (note.title) {
+        title = <Markdown>{note.title}</Markdown>;
     } else {
         title = "Untitled, " + (note.dateInfo || note.base);
     }
@@ -74,12 +74,27 @@ function getBlockTitle(
 }
 
 
+function getBlockValidity(
+    note: ApiNote,
+): JSX.Element | null {
+    if (note.invalid) {
+        return <div className={styles.invalid}>
+            {note.invalid}
+        </div>;
+    } else {
+        return null;
+    }
+}
+
+
 export default function NoteCard({
     note,
 }: {
     note: ApiNote,
 }) {
     const blockTitle = getBlockTitle(note);
+
+    const blockValidity = getBlockValidity(note);
 
     // Note info
 
@@ -151,6 +166,7 @@ export default function NoteCard({
         data-tooltip-position="right"
     >
         {blockTitle}
+        {blockValidity}
         {blockInfo}
         {blockControls}
     </div>

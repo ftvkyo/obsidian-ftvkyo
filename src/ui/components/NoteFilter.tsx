@@ -52,9 +52,16 @@ export default function NoteFilter({
         onChange={(v) => setFilter({...filter, wip: v})}
     />;
 
+    // Filtering invalid notes.
+    const isInvalid = <TriToggle
+        value={filter.invalid}
+        onChange={(v) => setFilter({...filter, invalid: v})}
+    />;
+
     return <div className={styles.filter}>
         <span>Tag</span> {tagSelector}
         <span>Title</span> {hasTitle}
         <span>Work in Progress</span> {isWip}
+        <span>Invalid</span> {isInvalid}
     </div>;
 }

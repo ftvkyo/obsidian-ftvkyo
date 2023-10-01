@@ -53,13 +53,13 @@ export default function AutoAlias(
             continue;
         }
 
-        if (!note.h1) {
+        if (!note.title) {
             lg.debug(`No h1 found`);
             continue;
         }
 
-        lg.debug(`Found h1 "${note.h1}"`);
+        lg.debug(`Found h1 "${note.title}"`);
 
-        context.addChild(new AliasLink(link, note.h1));
+        context.addChild(new AliasLink(link, note.title));
     }
 }

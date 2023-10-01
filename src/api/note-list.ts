@@ -140,6 +140,7 @@ export default class ApiNoteList {
         tag = "",
         title: heading = TriState.Maybe,
         wip = TriState.Maybe,
+        invalid = TriState.Maybe,
         orderKey = "date",
         orderDir = "desc",
     }: {
@@ -153,6 +154,8 @@ export default class ApiNoteList {
         title?: TriState,
         // Note status
         wip?: TriState,
+        // Note validity
+        invalid?: TriState,
         // How to order the notes.
         orderKey?: "date" | "title",
         orderDir?: "asc" | "desc",
@@ -190,9 +193,9 @@ export default class ApiNoteList {
         }
 
         if (heading === TriState.On) {
-            notes = notes.filter(note => note.h1 !== null);
+            notes = notes.filter(note => note.title !== null);
         } else if (heading === TriState.Off) {
-            notes = notes.filter(note => note.h1 === null);
+            notes = notes.filter(note => note.title === null);
         }
 
         if (wip === TriState.On) {
@@ -201,8 +204,14 @@ export default class ApiNoteList {
             notes = notes.filter(note => !note.wip);
         }
 
+        if (invalid === TriState.On) {
+            notes = notes.filter(note => note.invalid !== false);
+        } else if (invalid === TriState.Off) {
+            notes = notes.filter(note => note.invalid === false);
+        }
+
         const keyF = orderKey === "title"
-            ? (e: ApiNote) => e.h1 ?? e.base
+            ? (e: ApiNote) => e.title ?? e.base
             : (e: ApiNote) => e.base;
 
         notes = notes.sort(keyF, orderDir);

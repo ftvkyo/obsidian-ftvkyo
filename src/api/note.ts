@@ -1,6 +1,9 @@
 import { TFile } from "obsidian";
 
 
+const RE_TITLE_ROOT = /^#[\w-][\w-/]*$/
+
+
 // A note in the vault.
 //
 // Identified by its TFile.
@@ -59,17 +62,16 @@ export default class ApiNote {
      * Title information *
      * ================= */
 
-    // H1 heading of the note.
-    // Returns "?" if there are multiple H1 headings.
-    // Returns the heading if there is a single H1 heading.
-    // Returns null if the note has no H1 heading.
-    get h1(): string | null {
+    // Title of the note.
+    // Returns the H1 heading if there is only one of them.
+    // Returns null otherwise.
+    get title(): string | null {
         const hs = this.fc?.headings ?? [];
         const h1s = hs.filter(h => h.level === 1);
         if (h1s.length >= 2) {
-            return "?";
+            return null;
         }
-        return h1s.shift()?.heading ?? null;
+        return h1s.shift()?.heading.trim() ?? null;
     }
 
     // Memoization for `dateInfo`.
@@ -154,6 +156,31 @@ export default class ApiNote {
     // Whether the note is work in progress.
     get wip() {
         return this.status === "wip";
+    }
+
+    // Whether the note is a root note.
+    // Those notes have a tag as their title.
+    get root() {
+        return RE_TITLE_ROOT.test(this.title ?? "");
+    }
+
+    // Check if the note is invalid.
+    // If invalid, reason is provided.
+    get invalid(): false | string {
+        const hs = this.fc?.headings ?? [];
+        const h1s = hs.filter(h => h.level === 1);
+        if (h1s.length >= 2) {
+            return "Note has more than one top-level title.";
+        }
+
+        // A note title can contain a tag or some text, but not both.
+        // This simply checks that the title does not have the "#" symbol when
+        // the note is not root, and this is good enough.
+        if (!this.root && this.title && this.title.search("#") !== -1) {
+            return "Note title has a '#' when the note is not a root note.";
+        }
+
+        return false;
     }
 
     /* ======= *

@@ -46,6 +46,7 @@ const NavView: ViewElement = {
             tag: "",
             title: TriState.Maybe,
             wip: TriState.Maybe,
+            invalid: TriState.Maybe,
             orderKey: "date",
             orderDir: "desc",
         });

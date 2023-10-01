@@ -10,8 +10,9 @@ $card-br: 0.25em;
 
     display: grid;
     grid-template-areas:
-        "title title   "
-        "info  controls";
+        "title   title   "
+        "invalid invalid "
+        "info    controls";
 
     > * {
         display: flex;
@@ -38,6 +39,11 @@ $card-br: 0.25em;
     .title {
         font-weight: var(--h1-weight);
         color: var(--h1-color);
+    }
+
+    .invalid {
+        grid-area: invalid;
+        color: var(--color-red);
     }
 
     .info {
