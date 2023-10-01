@@ -20,7 +20,9 @@ $card-br: 0.25em;
         padding: vars.$gutter;
     }
 
-    .title {
+    .title,
+    .untitle
+    {
         grid-area: title;
         flex-direction: column;
 
@@ -28,12 +30,13 @@ $card-br: 0.25em;
         background-color: var(--table-header-background);
 
         font-size: 1.25em;
-
         font-family: var(--h1-font);
-        font-weight: var(--h1-weight);
         font-style: var(--h1-style);
         font-variant: var(--h1-variant);
+    }
 
+    .title {
+        font-weight: var(--h1-weight);
         color: var(--h1-color);
     }
 

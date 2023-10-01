@@ -2,6 +2,7 @@ import ApiNote from "@/api/note";
 import { toClipboard } from "@/util/clipboard";
 import {setIcon} from "obsidian";
 import {useCallback} from "react";
+import Markdown from "react-markdown";
 
 import styles from "./NoteCard.module.scss";
 
@@ -53,17 +54,32 @@ function populateIcons(
 }
 
 
+function getBlockTitle(
+    note: ApiNote,
+): JSX.Element {
+    const className = note.h1 ? styles.title : styles.untitle;
+    let title;
+
+    if (note.h1) {
+        title = <Markdown>{note.h1}</Markdown>;
+    } else {
+        title = "Untitled, " + (note.dateInfo || note.base);
+    }
+
+    return <div
+        className={className}
+    >
+        {title}
+    </div>;
+}
+
+
 export default function NoteCard({
     note,
 }: {
     note: ApiNote,
 }) {
-
-    const blockTitle = note.h1 !== null && <div
-        className={styles.title}
-    >
-        {note.h1}
-    </div>;
+    const blockTitle = getBlockTitle(note);
 
     // Note info
 
