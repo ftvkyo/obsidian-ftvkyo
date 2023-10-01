@@ -180,6 +180,11 @@ export default class ApiNote {
             return "Note title has a '#' when the note is not a root note.";
         }
 
+        // If a note is a root note, it can't have other tags.
+        if (this.root && this.tags.length > 1) {
+            return "Root notes can't have extra tags.";
+        }
+
         return false;
     }
 
