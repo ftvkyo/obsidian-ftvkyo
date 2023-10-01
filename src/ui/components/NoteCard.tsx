@@ -74,6 +74,18 @@ function getBlockTitle(
 }
 
 
+function getBlockTags(
+    note: ApiNote,
+): JSX.Element | null {
+    if (!note.root && note.tags) {
+        return <div className={styles.tags}>
+            {note.tags.map((t) => "#" + t).join(", ")}
+        </div>;
+    }
+    return null;
+}
+
+
 function getBlockValidity(
     note: ApiNote,
 ): JSX.Element | null {
@@ -81,9 +93,8 @@ function getBlockValidity(
         return <div className={styles.invalid}>
             {note.invalid}
         </div>;
-    } else {
-        return null;
     }
+    return null;
 }
 
 
@@ -93,6 +104,8 @@ export default function NoteCard({
     note: ApiNote,
 }) {
     const blockTitle = getBlockTitle(note);
+
+    const blockTags = getBlockTags(note);
 
     const blockValidity = getBlockValidity(note);
 
@@ -166,6 +179,7 @@ export default function NoteCard({
         data-tooltip-position="right"
     >
         {blockTitle}
+        {blockTags}
         {blockValidity}
         {blockInfo}
         {blockControls}

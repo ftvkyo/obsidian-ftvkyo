@@ -11,6 +11,7 @@ $card-br: 0.25em;
     display: grid;
     grid-template-areas:
         "title   title   "
+        "tags    tags    "
         "invalid invalid "
         "info    controls";
 
@@ -39,6 +40,13 @@ $card-br: 0.25em;
     .title {
         font-weight: var(--h1-weight);
         color: var(--h1-color);
+    }
+
+    .tags {
+        grid-area: tags;
+
+        background-color: var(--table-header-background);
+        color: var(--tag-color);
     }
 
     .invalid {
