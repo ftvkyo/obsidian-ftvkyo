@@ -1,6 +1,8 @@
 import { clsx } from "clsx";
 import { useId } from "react";
 
+import styles from "./TriToggle.module.scss";
+
 export enum TriState {
     On = "on",
     Off = "off",
@@ -17,19 +19,19 @@ export default function TriToggle({
     const name = useId();
 
     return <div
-        className="tri-toggle"
+        className={styles.triToggle}
     >
-        <div className={clsx("tri-toggle-slider", value)}/>
+        <div className={clsx(styles.slider, styles[value])}/>
 
-        <input type="radio" name={name} className={TriState.Off}
+        <input type="radio" name={name}
             checked={value == TriState.Off}
             onChange={() => onChange(TriState.Off)}
         />
-        <input type="radio" name={name} className={TriState.Maybe}
+        <input type="radio" name={name}
             checked={value == TriState.Maybe}
             onChange={() => onChange(TriState.Maybe)}
         />
-        <input type="radio" name={name} className={TriState.On}
+        <input type="radio" name={name}
             checked={value == TriState.On}
             onChange={() => onChange(TriState.On)}
         />
