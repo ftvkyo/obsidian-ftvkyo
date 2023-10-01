@@ -86,47 +86,6 @@ export default class ApiNoteList {
             .sort(([a], [b]) => a.localeCompare(b));
     }
 
-    // Get the list of types of the notes.
-    get types(): string[] {
-        return this.notes
-            .map(note => note.type)
-            .filter(type => type !== null)
-            .filter(onlyUnique)
-            .array() as string[];
-    }
-
-    // Get the list of types of the notes,
-    // with the number of notes of each type.
-    get typesCounted() {
-        const types = this.notes
-            .map(note => note.type)
-            .filter(type => type !== null)
-            .array() as string[];
-
-        const typesCounted = types
-            .reduce((prev, curr) => {
-                prev[curr] = (prev[curr] ?? 0) + 1;
-                return prev;
-            }, {} as { [key: string]: number });
-
-        const withoutType = this.where({
-            type: "!",
-        }).notes;
-
-        return {
-            "": this.notes.length,
-            "!": withoutType.length,
-            "?": types.length,
-            ...typesCounted,
-        };
-    }
-
-    // Sorted version of typesCounted.
-    get typesCountedAbc(): [string, number][] {
-        return Object.entries(this.typesCounted)
-            .sort(([a], [b]) => a.localeCompare(b));
-    }
-
     // Filter the notes.
     //
     // Special syntax for `type` and `tag`:
@@ -136,7 +95,6 @@ export default class ApiNoteList {
     // - else => Match only the given value.
     //
     where({
-        type = "",
         tag = "",
         title: heading = TriState.Maybe,
         wip = TriState.Maybe,
@@ -144,9 +102,6 @@ export default class ApiNoteList {
         orderKey = "date",
         orderDir = "desc",
     }: {
-        // What type to match.
-        // - Uses special syntax.
-        type?: string,
         // What tag to require.
         // - Uses special syntax.
         tag?: string,
@@ -161,21 +116,6 @@ export default class ApiNoteList {
         orderDir?: "asc" | "desc",
     }) {
         let notes = this.notes;
-
-        // "" is falsy so no need for a special case
-        if (type) {
-            notes = notes.filter(note => {
-                if (type === "!") {
-                    // No type.
-                    return note.type === null;
-                }
-                if (type === "?") {
-                    // At least some type.
-                    return note.type !== null;
-                }
-                return note.type === type;
-            });
-        }
 
         // "" is falsy so no need for a special case
         if (tag) {

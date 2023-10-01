@@ -42,7 +42,6 @@ const NavView: ViewElement = {
         }
 
         const [filter, setFilter] = useState<NoteFilterType>({
-            type: "",
             tag: "",
             title: TriState.Maybe,
             wip: TriState.Maybe,
