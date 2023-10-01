@@ -1,12 +1,8 @@
 export default function Selector({
-    className,
-    label,
     options,
     value,
     onChange,
 }: {
-    className?: string,
-    label: string,
     options: [string /* key */, string /* value */][],
     value: string,
     onChange: (option: string) => void,
@@ -20,16 +16,11 @@ export default function Selector({
         </option>;
     });
 
-    return <label
-        className={className}
+    return <select
+        className="dropdown"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
     >
-        {label}:
-        <select
-            className="dropdown"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-        >
-            {opts}
-        </select>
-    </label>;
+        {opts}
+    </select>;
 }

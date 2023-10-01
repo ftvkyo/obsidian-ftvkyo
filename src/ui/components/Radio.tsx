@@ -1,20 +1,16 @@
 export default function Radio({
-    className,
-    label,
+    legend,
     options,
     value,
     onChange,
 }: {
-    className?: string,
-    label: string,
+    legend: string,
     options: [string /* key */, string /* display */][],
     value: string,
     onChange: (option: string) => void,
 }) {
-    return  <fieldset
-        className={className}
-    >
-        <legend>{label}</legend>
+    return  <fieldset>
+        <legend>{legend}</legend>
 
         {options.map(([key, display]) => <label
             key={key}

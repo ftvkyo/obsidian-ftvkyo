@@ -11,8 +11,6 @@ export default function NotePaginator({
     setFilter: (filter: NoteFilterType) => void,
 }) {
     const sortingSelector = <Selector
-        className="sort"
-        label="Sort"
         options={[
             ["date-desc", "Date: New first"],
             ["date-asc", "Date: Old first"],

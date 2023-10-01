@@ -25,57 +25,51 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
     }
 
     div.tri-toggle {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 0.25em;
+        $height: 1.5rem;
+        $width: $height;
+        $slider-factor: 0.8;
 
-        .tri-toggle-selector {
-            $height: 1.5rem;
-            $width: $height;
-            $slider-factor: 0.8;
+        position: relative;
+        background-color: var(--color-base-20);
 
-            position: relative;
-            background-color: var(--color-base-20);
+        height: $height;
+        width: $width * 3;
+        border-radius: math.div($height, 2);
 
+        .tri-toggle-slider {
+            position: absolute;
+            background-color: white;
+
+            height: $height * $slider-factor;
+            width: $height * $slider-factor;
+
+            margin: math.div(((1 - $slider-factor) * $height), 2);
+            border-radius: math.div($height * $slider-factor, 2);
+
+            transition: 0.1s all ease-in-out;
+        }
+
+        .tri-toggle-slider.off {
+            left: 0;
+            background-color: var(--color-red);
+        }
+
+        .tri-toggle-slider.maybe {
+            left: 33%;
+            background-color: var(--color-base-40);
+        }
+
+        .tri-toggle-slider.on {
+            left: 67%;
+            background-color: var(--color-green);
+        }
+
+        input[type="radio"] {
+            appearance: none;
+
+            margin: 0;
             height: $height;
-            border-radius: math.div($height, 2);
-
-            .tri-toggle-slider {
-                position: absolute;
-                background-color: white;
-
-                height: $height * $slider-factor;
-                width: $height * $slider-factor;
-
-                margin: math.div(((1 - $slider-factor) * $height), 2);
-                border-radius: math.div($height * $slider-factor, 2);
-
-                transition: 0.1s all ease-in-out;
-            }
-
-            .tri-toggle-slider.off {
-                left: 0;
-                background-color: var(--color-red);
-            }
-
-            .tri-toggle-slider.maybe {
-                left: 33%;
-                background-color: var(--color-base-40);
-            }
-
-            .tri-toggle-slider.on {
-                left: 67%;
-                background-color: var(--color-green);
-            }
-
-            input[type="radio"] {
-                appearance: none;
-
-                margin: 0;
-                height: $height;
-                width: $width;
-            }
+            width: $width;
         }
     }
 
@@ -100,27 +94,10 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
 
     div.note-filter {
         display: grid;
-        grid-template-areas:
-            "tag  tag  "
-            "type check";
-
+        grid-template-columns: auto auto;
         gap: $gutter;
 
-        .tag {
-            grid-area: tag;
-        }
-
-        .type {
-            grid-area: type;
-        }
-
-        .check {
-            grid-area: check;
-
-            display: flex;
-            flex-direction: column;
-            gap: $gutter;
-        }
+        align-items: center;
     }
 
     div.note-paginator {
@@ -129,7 +106,7 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
         align-items: baseline;
         gap: $gutter;
 
-        .sort {
+        .dropdown {
             flex-grow: 1;
         }
     }
