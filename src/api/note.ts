@@ -145,17 +145,14 @@ export default class ApiNote {
         return this.fc?.frontmatter?.type ?? null;
     }
 
-    get status(): string | null {
-        return this.fc?.frontmatter?.status ?? null;
-    }
-
     /* ============ *
      * State checks *
      * ============ */
 
     // Whether the note is work in progress.
     get wip() {
-        return this.status === "wip";
+        const incompleteTasks = this.fc?.listItems?.filter((val) => val.task === " ") ?? [];
+        return incompleteTasks.length > 0;
     }
 
     // Whether the note is a root note.
