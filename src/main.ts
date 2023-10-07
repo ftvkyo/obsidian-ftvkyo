@@ -11,7 +11,7 @@ import AutoAlias from "@/ui/markdown/auto-alias";
 import PlanCallout from "./ui/markdown/plan-callout";
 
 import ObsidianFtvkyoView from "@/ui/views/view";
-import NavView from "@/ui/views/Nav";
+import ExploreView from "@/ui/views/Explore";
 
 import {OFSettingTab} from "./ui/settings";
 
@@ -63,7 +63,7 @@ const markdown = [
 ];
 
 const views = [
-    NavView,
+    ExploreView,
 ];
 
 

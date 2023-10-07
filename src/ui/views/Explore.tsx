@@ -8,7 +8,7 @@ import NoteFilter from "../components/NoteFilter";
 import NotePaginator from "../components/NotePaginator";
 import { TriState } from "../components/TriToggle";
 
-import styles from "./Nav.module.scss";
+import styles from "./Explore.module.scss";
 
 
 let lg: Logger | undefined = undefined;
@@ -37,7 +37,7 @@ function generateNoteCards(
 }
 
 
-const NavView: ViewElement = {
+const ExploreView: ViewElement = {
     Element: () => {
         if (!lg) {
             lg = ftvkyo.lg.sub("nav");
@@ -83,4 +83,4 @@ const NavView: ViewElement = {
     icon: "lucide-globe-2",
 };
 
-export default NavView;
+export default ExploreView;
