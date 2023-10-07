@@ -1,8 +1,6 @@
 import {NoteFilterType} from "@/api/note-list";
 import Selector from "./Selector";
 
-import styles from "./NotePaginator.module.scss";
-
 
 export default function NotePaginator({
     total: found,
@@ -63,18 +61,18 @@ export default function NotePaginator({
         {">"}
     </button>;
 
-    return <div className={styles.paginator}>
+    return <>
         <div>
-            {sortingSelector}
-            {found} notes found.
+            Found {found}, {onPageSelector} per page
         </div>
         <div>
+            Sorting by {sortingSelector}
+        </div>
+        <div>
+            Page
             {pagePrevBtn}
+            {filter.page + 1}/{pages}
             {pageNextBtn}
-            Page {filter.page + 1} out of {pages}.
         </div>
-        <div>
-            Show on page: {onPageSelector}
-        </div>
-    </div>
+    </>
 }

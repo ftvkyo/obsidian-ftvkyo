@@ -58,10 +58,12 @@ export default function NoteFilter({
         onChange={(v) => setFilter({...filter, invalid: v})}
     />;
 
-    return <div className={styles.filter}>
-        <span>Tag</span> {tagSelector}
-        <span>Title</span> {hasTitle}
-        <span>Work in Progress</span> {isWip}
-        <span>Invalid</span> {isInvalid}
-    </div>;
+    return <>
+        <div>Tag {tagSelector}</div>
+        <div className={styles.toggles}>
+            <div>Title {hasTitle}</div>
+            <div>WIP {isWip}</div>
+            <div>Invalid {isInvalid}</div>
+        </div>
+    </>;
 }
