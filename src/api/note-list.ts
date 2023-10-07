@@ -133,7 +133,16 @@ export default class ApiNoteList {
                     // At least some tags.
                     return note.tags.length !== 0;
                 }
-                return note.tags.includes(tag)
+                // Include both tags themselves and their subtags
+                for (const nt of note.tags) {
+                    if (nt === tag) {
+                        return true;
+                    }
+                    if (nt.startsWith(tag + "/")) {
+                        return true;
+                    }
+                }
+                return false;
             });
         }
 
