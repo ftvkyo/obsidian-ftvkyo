@@ -21,9 +21,6 @@ export type ViewElement = {
 };
 
 
-// TODO: only register metadata change event when the initial loading is done
-
-
 export default class ObsidianFtvkyoView extends View {
     root: Root | undefined;
 
