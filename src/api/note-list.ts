@@ -101,6 +101,8 @@ export default class ApiNoteList {
         invalid = TriState.Maybe,
         orderKey = "date",
         orderDir = "desc",
+        onPage = undefined,
+        page = 0,
     }: {
         // What tag to require.
         // - Uses special syntax.
@@ -114,7 +116,10 @@ export default class ApiNoteList {
         // How to order the notes.
         orderKey?: "date" | "title",
         orderDir?: "asc" | "desc",
-    }) {
+        // Pagination
+        onPage?: number,
+        page?: number,
+    }): {notes: ApiNoteList, found: number} {
         let notes = this.notes;
 
         // "" is falsy so no need for a special case
@@ -156,7 +161,17 @@ export default class ApiNoteList {
 
         notes = notes.sort(keyF, orderDir);
 
-        return new ApiNoteList(notes);
+        const count = notes.length;
+
+        if (page && onPage) {
+            notes = notes.slice(onPage * page);
+        }
+
+        if (onPage !== undefined) {
+            notes = notes.limit(onPage);
+        }
+
+        return {notes: new ApiNoteList(notes), found: count};
     }
 }
 

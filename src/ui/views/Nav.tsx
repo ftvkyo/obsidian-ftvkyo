@@ -48,11 +48,13 @@ const NavView: ViewElement = {
             invalid: TriState.Maybe,
             orderKey: "date",
             orderDir: "desc",
+            onPage: 25,
+            page: 0,
         });
 
         const notes = ApiNoteList.all();
 
-        const notesFiltered = notes.where(filter);
+        const {notes: notesFiltered, found} = notes.where(filter);
         const noteCards = generateNoteCards(notesFiltered);
 
         return <>
@@ -63,7 +65,7 @@ const NavView: ViewElement = {
                     setFilter={setFilter}
                 />
                 <NotePaginator
-                    found={notesFiltered.length}
+                    found={found}
                     filter={filter}
                     setFilter={setFilter}
                 />

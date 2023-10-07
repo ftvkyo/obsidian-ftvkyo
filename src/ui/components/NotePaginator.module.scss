@@ -2,9 +2,15 @@
 
 .paginator {
     display: flex;
-    flex-direction: row;
-    align-items: baseline;
+    flex-direction: column;
     gap: vars.$gutter;
+
+    > * {
+        display: flex;
+        flex-direction: row;
+        gap: vars.$gutter;
+        align-items: baseline;
+    }
 
     select {
         flex-grow: 1;
