@@ -58,4 +58,8 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
 div.callout[data-callout="plan"] {
     --callout-color: 128, 200, 128;
     --callout-icon: lucide-calendar;
+
+    code.parsed {
+        color: var(--color-green);
+    }
 }

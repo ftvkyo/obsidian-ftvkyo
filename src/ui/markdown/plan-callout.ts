@@ -21,7 +21,14 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
 
     #getListItemMinutes(listEl: HTMLLIElement): null | number {
         const code = listEl.querySelector<HTMLElement>("code:first-of-type");
-        return code ? this.#parseTimeDeltaToMinutes(code.innerText) : null;
+        if (code) {
+            const td = this.#parseTimeDeltaToMinutes(code.innerText);
+            if (td) {
+                code.addClass("parsed");
+                return td;
+            }
+        }
+        return null;
     }
 
     #parseTimeDeltaToMinutes(est: string): null | number {
@@ -74,6 +81,8 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
         let breaks = 0;
 
         const lis = this.#getListItems();
+        lg?.debug(`Found ${lis.length} list elements.`);
+
         for (const li of lis) {
             const minutes = this.#getListItemMinutes(li);
             if (minutes) {
@@ -83,13 +92,17 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
             // TODO: add a marker for successfully parsed lis
         }
 
-        const td = this.#formatTimeDelta(minutesTotal);
-        const brs = this.#formatBreaks(breaks);
+        lg?.debug(`Total minutes is ${minutesTotal}.`);
 
-        const p = document.createElement<"em">("em");
-        p.innerText = `Total: ${td}, ${brs}.`;
+        if (minutesTotal > 0) {
+            const td = this.#formatTimeDelta(minutesTotal);
+            const brs = this.#formatBreaks(breaks);
 
-        this.containerEl.appendChild(p);
+            const p = document.createElement<"em">("em");
+            p.innerText = `Total: ${td}, ${brs}.`;
+
+            this.containerEl.appendChild(p);
+        }
     }
 }
 
