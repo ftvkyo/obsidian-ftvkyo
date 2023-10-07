@@ -1,0 +1,21 @@
+@use "../../vars";
+
+.controls {
+    padding: vars.$gutter;
+    border-bottom: 1px solid var(--background-modifier-border);
+
+    display: flex;
+    flex-direction: column;
+    gap: vars.$gutter;
+}
+
+.list {
+    grid-row: 2;
+    overflow-y: scroll;
+
+    padding: (vars.$gutter * 2) vars.$gutter;
+
+    display: flex;
+    flex-direction: column;
+    gap: vars.$gutter * 2;
+}

@@ -8,6 +8,8 @@ import NoteFilter from "../components/NoteFilter";
 import NotePaginator from "../components/NotePaginator";
 import { TriState } from "../components/TriToggle";
 
+import styles from "./Nav.module.scss";
+
 
 let lg: Logger | undefined = undefined;
 
@@ -58,19 +60,19 @@ const NavView: ViewElement = {
         const noteCards = generateNoteCards(notesFiltered);
 
         return <>
-            <div className="view-controls">
+            <div className={styles.controls}>
                 <NoteFilter
                     notes={notes}
                     filter={filter}
                     setFilter={setFilter}
                 />
                 <NotePaginator
-                    found={found}
+                    total={found}
                     filter={filter}
                     setFilter={setFilter}
                 />
             </div>
-            <div className="note-list">
+            <div className={styles.list}>
                 {noteCards}
             </div>
         </>;

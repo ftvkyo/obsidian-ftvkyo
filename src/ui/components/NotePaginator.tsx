@@ -5,11 +5,11 @@ import styles from "./NotePaginator.module.scss";
 
 
 export default function NotePaginator({
-    found,
+    total: found,
     filter,
     setFilter,
 }: {
-    found: number,
+    total: number,
     filter: NoteFilterType,
     setFilter: (filter: NoteFilterType) => void,
 }) {
