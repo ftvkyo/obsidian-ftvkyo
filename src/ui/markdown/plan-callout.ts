@@ -9,46 +9,91 @@ let lg: Logger | undefined = undefined;
 
 
 const BREAK_MINUTES = 5;
+const RE_TIME_DELTA = /^(\d+[hH])?\s?(\d+[mM])?$/;
+
 
 class PlanCalloutCalculator extends MarkdownRenderChild {
     constructor(
         readonly containerEl: HTMLElement,
-        readonly minutesEstimated: number,
-        readonly breaks: number,
     ) {
         super(containerEl);
     }
 
-    onload() {
-        const minutesTotal = this.minutesEstimated + BREAK_MINUTES * this.breaks;
+    #getListItemMinutes(listEl: HTMLLIElement): null | number {
+        const code = listEl.querySelector<HTMLElement>("code:first-of-type");
+        return code ? this.#parseTimeDeltaToMinutes(code.innerText) : null;
+    }
 
-        const hoursTotal = Math.floor(minutesTotal / 60);
-        const minutesTotalRemainder = minutesTotal % 60;
+    #parseTimeDeltaToMinutes(est: string): null | number {
+        const match = RE_TIME_DELTA.exec(est) ?? [];
+
+        const [, h, m] = match;
+
+        if (h === undefined && m === undefined) {
+            lg?.debug(`No hours nor minutes found in "${est}"`);
+            return null;
+        }
+
+        const hm = h ? Number(h.substring(0, h.length - 1)) : 0;
+        const mm = m ? Number(m.substring(0, m.length - 1)) : 0;
+
+        return hm * 60 + mm;
+    }
+
+    #formatTimeDelta(minutes: number): string {
+        const hours = Math.floor(minutes / 60);
+        const minutesRemainder = minutes % 60;
 
         let time = "";
-        if (hoursTotal > 0) {
-            time += `${hoursTotal}h`;
+        if (hours > 0) {
+            time += `${hours}h`;
         }
         time += " ";
-        if (minutesTotalRemainder > 0) {
-            time += `${minutesTotalRemainder}m`;
+        if (minutesRemainder > 0) {
+            time += `${minutesRemainder}m`;
         }
         time = time.trim();
 
-        let breaks = this.breaks + " break";
-        if (this.breaks > 1) {
-            breaks += "s";
+        return time;
+    }
+
+    #formatBreaks(breaks: number): string {
+        let ret = `${breaks} break`;
+        if (breaks > 1) {
+            ret += "s";
+        }
+        return ret;
+    }
+
+    #getListItems(): HTMLLIElement[] {
+        return Array.from(this.containerEl.querySelectorAll("li"));
+    }
+
+    onload() {
+        let minutesTotal = 0;
+        let breaks = 0;
+
+        const lis = this.#getListItems();
+        for (const li of lis) {
+            const minutes = this.#getListItemMinutes(li);
+            if (minutes) {
+                minutesTotal += minutes + BREAK_MINUTES;
+                breaks++;
+            }
+            // TODO: add a marker for successfully parsed lis
         }
 
+        const td = this.#formatTimeDelta(minutesTotal);
+        const brs = this.#formatBreaks(breaks);
+
         const p = document.createElement<"em">("em");
-        p.innerText = `Total: ${time}, ${breaks}.`;
+        p.innerText = `Total: ${td}, ${brs}.`;
 
         this.containerEl.appendChild(p);
     }
 }
 
 
-const RE_TIME = /^(\d+[hH])?\s?(\d+[mM])?$/;
 
 export default function PlanCallout(
     element: HTMLElement,
@@ -66,58 +111,6 @@ export default function PlanCallout(
     }
 
     for (const plan of plans) {
-        const tasks = Array.from(plan.querySelectorAll<HTMLLIElement>("li.task-list-item"));
-
-        lg.debug(`Found ${tasks.length} tasks in a plan callout.`);
-
-        const estimations = tasks.map((val) => {
-            for (const node of Array.from(val.childNodes)) {
-                if (node instanceof HTMLDivElement && node.className === "list-bullet") {
-                    // Skip the magical list bullet
-                    continue;
-                }
-                if (node instanceof HTMLInputElement && node.className === "task-list-item-checkbox") {
-                    // Skip the checkbox
-                    continue;
-                }
-                if (node instanceof HTMLElement && node.nodeName === "CODE") {
-                    return node;
-                }
-                // No estimation provided or it's specified incorrectly
-                return undefined;
-            }
-        }).filter((val) => val !== undefined) as HTMLElement[];
-
-        if (estimations.length <= 0) {
-            continue;
-        }
-
-        let minutes = 0;
-        let breaks = 0;
-
-        for (const estimation of estimations) {
-            // Check if the estimation contains time.
-            const match = RE_TIME.exec(estimation.innerText) ?? [];
-
-            const [, h, m] = match;
-
-            if (h === undefined && m === undefined) {
-                lg.debug(`Failed to extract time from ${estimation.innerText}`);
-                continue;
-            }
-
-            const hm = h ? Number(h.substring(0, h.length - 1)) : 0;
-            const mm = m ? Number(m.substring(0, m.length - 1)) : 0;
-
-            minutes += hm * 60 + mm;
-            breaks += 1;
-        }
-
-        if (breaks === 0) {
-            lg.debug("No estimations were parsed successfully.");
-            continue;
-        }
-
-        context.addChild(new PlanCalloutCalculator(plan, minutes, breaks));
+        context.addChild(new PlanCalloutCalculator(plan));
     }
 }
