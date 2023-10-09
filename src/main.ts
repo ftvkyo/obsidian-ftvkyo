@@ -69,10 +69,17 @@ const views = [
 ];
 
 
+interface OFDependencies {
+    dv: DataviewApi;
+    periodic: unknown;
+    unique: unknown;
+}
+
+
 export default class ObsidianFtvkyo extends Plugin {
     lg = new Logger("👁️‍🗨️");
 
-    dv: DataviewApi;
+    deps: OFDependencies;
 
     api = new Api();
 
@@ -141,9 +148,24 @@ export default class ObsidianFtvkyo extends Plugin {
         if (!dv) {
             throw new Error("Plugin 'dataview' not found/loaded");
         }
-        this.dv = dv;
 
-        lg.info("Loaded 'dataview'");
+        const periodic = (<any>this.app).plugins.getPlugin("periodic-notes");
+        if (!periodic) {
+            throw new Error("Plugin 'Periodic Notes' not found/loaded");
+        }
+
+        const unique = (<any>this.app).internalPlugins.getEnabledPluginById("zk-prefixer");
+        if (!unique) {
+            throw new Error("Plugin 'Unique Note Creator' not found/loaded");
+        }
+
+        this.deps = {
+            dv,
+            periodic,
+            unique,
+        };
+
+        lg.info("Loaded the dependencies");
     }
 
     private loadCommands() {

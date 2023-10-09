@@ -27,7 +27,7 @@ export default class ApiNoteList {
     // Find all the notes in the source in the vault.
     static from(source: string) {
         return new ApiNoteList(
-            ftvkyo.dv.pages(source)
+            ftvkyo.deps.dv.pages(source)
                 .map(ApiNote.fromDv)
                 .filter(n => n !== null) as DataArray<ApiNote>
         );
