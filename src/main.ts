@@ -5,6 +5,8 @@ import Logger from "@/util/logger";
 
 import Api from "@/api/api";
 
+import { sendError } from "./ui/builtin/notice";
+
 import CopyLink from "./ui/commands/copy-link";
 
 import AutoAlias from "@/ui/markdown/auto-alias";
@@ -97,6 +99,7 @@ export default class ObsidianFtvkyo extends Plugin {
             try {
                 this.afterLayoutReady();
             } catch (e) {
+                sendError(String(e));
                 console.error(e);
                 this.unload();
             }
