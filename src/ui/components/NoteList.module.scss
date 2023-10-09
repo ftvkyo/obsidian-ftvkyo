@@ -1,5 +1,6 @@
 @use "../../vars";
 
+
 .controls {
     padding: vars.$gutter;
     border-bottom: 1px solid var(--background-modifier-border);
@@ -16,8 +17,18 @@
         display: flex;
         flex-direction: row;
         gap: vars.$gutter;
-        justify-content: end;
+        justify-content: var(--justify-content);
         align-items: center;
+    }
+}
+
+.tagHeader {
+    --justify-content: start;
+
+    > span {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: var(--tag-color);
     }
 }
 

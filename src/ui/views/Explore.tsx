@@ -1,81 +1,38 @@
 import {useState} from "react";
 
 import {type ViewElement} from "./view";
-import NoteCard from "../components/NoteCard";
-import ApiNoteList, {NoteFilterType} from "@/api/note-list";
 import Logger from "@/util/logger";
-import NoteFilter from "../components/NoteFilter";
-import NotePaginator from "../components/NotePaginator";
-import { TriState } from "../components/TriToggle";
-
-import styles from "./Explore.module.scss";
+import NoteList from "../components/NoteList";
+import ApiNoteList, { TagWildcard } from "@/api/note-list";
+import TagList from "../components/TagList";
 
 
 let lg: Logger | undefined = undefined;
 
 
-// TODO: Display a warning if there are notes with the same
-// name in different folders.
-
-// TODO: Logic to count the notes in dropdowns based on the
-// current search?
-// It's tricky because we have to make it so:
-// - The selected tag does not affect its own dropdown, as
-//   we can only select 1.
-// - Other stuff :)
-
-
-function generateNoteCards(
-    notes: ApiNoteList,
-) {
-    return notes
-        .notes
-        .map(note => <NoteCard
-            key={note.base}
-            note={note}
-        />);
-}
-
-
 const ExploreView: ViewElement = {
     Element: () => {
         if (!lg) {
-            lg = ftvkyo.lg.sub("nav");
+            lg = ftvkyo.lg.sub("Explore");
         }
 
-        const [filter, setFilter] = useState<NoteFilterType>({
-            tag: "",
-            title: TriState.Maybe,
-            wip: TriState.Maybe,
-            invalid: TriState.Maybe,
-            orderKey: "date",
-            orderDir: "desc",
-            onPage: 25,
-            page: 0,
-        });
+        const [tag, setTag] = useState<string | TagWildcard | null>(null);
 
+        // TODO: Usememo on this somehow?
         const notes = ApiNoteList.all();
 
-        const {notes: notesFiltered, found} = notes.where(filter);
-        const noteCards = generateNoteCards(notesFiltered);
-
-        return <>
-            <div className={styles.controls}>
-                <NoteFilter
-                    notes={notes}
-                    filter={filter}
-                    setFilter={setFilter}
-                />
-                <NotePaginator
-                    total={found}
-                    filter={filter}
-                    setFilter={setFilter}
-                />
-            </div>
-            <div className={styles.list}>
-                {noteCards}
-            </div>
-        </>;
+        if (tag === null) {
+            return <TagList
+                setTag={setTag}
+                notes={notes}
+            />
+        } else {
+            return <NoteList
+                tag={tag}
+                setTag={setTag}
+                notes={notes}
+            />;
+        }
     },
     short: "nav",
     viewType: "ftvkyo-explore",

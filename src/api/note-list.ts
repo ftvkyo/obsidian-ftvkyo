@@ -14,6 +14,27 @@ function onlyUnique<T>(
 }
 
 
+export enum TagWildcard {
+    All,
+    Any,
+    None,
+}
+
+
+export function tagDisplay(tag: string | TagWildcard) {
+    if (tag === TagWildcard.All) {
+        return "All notes";
+    }
+    if (tag === TagWildcard.Any) {
+        return "Any tags";
+    }
+    if (tag === TagWildcard.None) {
+        return "Without tags";
+    }
+    return "#" + tag;
+}
+
+
 export default class ApiNoteList {
 
     constructor(
@@ -42,60 +63,28 @@ export default class ApiNoteList {
         return this.notes
             .flatMap(note => note.tags)
             .filter(onlyUnique)
-            .array();
-    }
-
-    // Get all unique tags of the notes,
-    // sorted alphabetically.
-    get tagsAbc(): string[] {
-        return this.tags
+            .array()
             .sort((a, b) => a.localeCompare(b));
     }
 
     // Get all unique tags of the notes,
     // with the number of notes for each tag.
-    // Counts all notes towards "" (empty string) key.
-    // Counts notes without tags towards "!" key.
-    // Counts notes with at least some tags towards "?" key.
-    get tagsCounted(): { [key: string]: number } {
+    get tagsCounted(): [string, number][] {
         const tags = this.notes
             .flatMap(note => note.tags)
             .array();
 
-        const tagsCounted = tags
-            .reduce((prev, curr) => {
+        return Object.entries(
+            tags.reduce((prev, curr) => {
                 prev[curr] = (prev[curr] ?? 0) + 1;
                 return prev;
-            }, {} as { [key: string]: number });
-
-        const withoutTags = this.where({
-            tag: "!",
-        }).notes;
-
-        return {
-            "": this.notes.length,
-            "!": withoutTags.length,
-            "?": tags.length,
-            ...tagsCounted,
-        };
-    }
-
-    // Sorted version of tagsCounted.
-    get tagsCountedAbc(): [string, number][] {
-        return Object.entries(this.tagsCounted)
-            .sort(([a], [b]) => a.localeCompare(b));
+            }, {} as { [key: string]: number })
+        ).sort(([a], [b]) => a.localeCompare(b));
     }
 
     // Filter the notes.
-    //
-    // Special syntax for `type` and `tag`:
-    // - "" => Match all.
-    // - "!" => Match only nulls.
-    // - "?" => Match only non-nulls.
-    // - else => Match only the given value.
-    //
     where({
-        tag = "",
+        tag = TagWildcard.All,
         title: heading = TriState.Maybe,
         wip = TriState.Maybe,
         invalid = TriState.Maybe,
@@ -105,8 +94,7 @@ export default class ApiNoteList {
         page = 0,
     }: {
         // What tag to require.
-        // - Uses special syntax.
-        tag?: string,
+        tag?: string | TagWildcard,
         // Heading presence
         title?: TriState,
         // Note status
@@ -122,15 +110,14 @@ export default class ApiNoteList {
     }): {notes: ApiNoteList, found: number} {
         let notes = this.notes;
 
-        // "" is falsy so no need for a special case
-        if (tag) {
+        if (tag !== TagWildcard.All) {
             notes = notes.filter(note => {
-                if (tag === "!") {
-                    // No tags.
+                // No tags.
+                if (tag === TagWildcard.None) {
                     return note.tags.length === 0;
                 }
-                if (tag === "?") {
-                    // At least some tags.
+                // At least some tags.
+                if (tag === TagWildcard.Any) {
                     return note.tags.length !== 0;
                 }
                 // Include both tags themselves and their subtags

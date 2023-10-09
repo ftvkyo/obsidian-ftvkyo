@@ -1,0 +1,24 @@
+@use "../../vars";
+
+.list {
+    padding: (vars.$gutter * 2) vars.$gutter;
+
+    display: flex;
+    flex-direction: column;
+    gap: vars.$gutter * 2;
+}
+
+.card {
+    font-size: 1.2em;
+    font-weight: bold;
+
+    border-radius: vars.$card-br;
+
+    background-color: var(--background-primary);
+
+    padding: vars.$gutter;
+}
+
+.card.tag {
+    color: var(--tag-color);
+}

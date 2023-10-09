@@ -1,45 +1,16 @@
-import ApiNoteList, {NoteFilterType} from "@/api/note-list";
-import Selector from "./Selector";
+import {NoteFilterType} from "@/api/note-list";
 import TriToggle from "./TriToggle";
 
 import styles from "./NoteFilter.module.scss";
 
 
-function countedOptions([name, count]: [string, number]): [string, string] {
-    const key = name;
-
-    if (name === "") {
-        name = "Any";
-    }
-    if (name === "!") {
-        name = "None";
-    }
-    if (name === "?") {
-        name = "Some";
-    }
-
-    return [key, `${name} (${count})`];
-}
-
-
 export default function NoteFilter({
-    notes,
     filter,
     setFilter,
 }: {
-    notes: ApiNoteList,
     filter: NoteFilterType,
     setFilter: (filter: NoteFilterType) => void,
 }) {
-    const tags = notes.tagsCountedAbc.map(countedOptions);
-
-    // Tag selector.
-    const tagSelector = <Selector
-        options={tags}
-        value={filter.tag}
-        onChange={(v) => setFilter({...filter, tag: v})}
-    />;
-
     // Filtering notes with/without titles.
     const hasTitle = <TriToggle
         value={filter.title}
@@ -59,7 +30,6 @@ export default function NoteFilter({
     />;
 
     return <>
-        <div>Tag {tagSelector}</div>
         <div className={styles.toggles}>
             <div>Title {hasTitle}</div>
             <div>WIP {isWip}</div>

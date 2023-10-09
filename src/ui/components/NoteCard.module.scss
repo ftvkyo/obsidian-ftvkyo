@@ -1,9 +1,8 @@
 @use "../../vars";
 
-$card-br: 0.25em;
 
 .noteCard {
-    border-radius: $card-br;
+    border-radius: vars.$card-br;
     box-shadow: 0.1em 0.1em 0.5em #000;
 
     background-color: var(--background-primary);
@@ -28,7 +27,7 @@ $card-br: 0.25em;
         grid-area: title;
         flex-direction: column;
 
-        border-radius: $card-br $card-br 0 0;
+        border-radius: vars.$card-br vars.$card-br 0 0;
         background-color: var(--table-header-background);
 
         font-size: 1.25em;
