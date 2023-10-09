@@ -15,7 +15,7 @@ import PlanCallout from "./ui/markdown/plan-callout";
 import ObsidianFtvkyoView from "@/ui/views/view";
 import ExploreView from "@/ui/views/Explore";
 
-import {OFSettingTab} from "./ui/settings";
+import {DEFAULT_SETTINGS, OFSettingTab, Settings} from "./ui/settings";
 
 import "./styles.scss";
 
@@ -25,34 +25,6 @@ declare global {
     // eslint-disable-next-line no-var
     var ftvkyo: ObsidianFtvkyo;
 }
-
-
-interface Settings {
-    notesRoot: string;
-
-    debugLogging: boolean;
-
-    wipIcon: string;
-
-    typeIcons: Record<string, string>;
-
-    enableTooltip: boolean;
-}
-
-const DEFAULT_SETTINGS: Settings = {
-    notesRoot: "text",
-
-    debugLogging: false,
-
-    wipIcon: "pencil",
-
-    typeIcons: {
-        "wiki": "network",
-        "person": "user",
-    },
-
-    enableTooltip: false,
-};
 
 
 const commands: Command[] = [
