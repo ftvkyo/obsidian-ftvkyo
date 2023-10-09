@@ -21,7 +21,7 @@ export default class ApiNoteList {
     ) {}
 
     static all() {
-        return ApiNoteList.from(`"${ftvkyo.settings.notesRoot}"`);
+        return ApiNoteList.from(`"${ftvkyo.deps.unique.options.folder}"`);
     }
 
     // Find all the notes in the source in the vault.

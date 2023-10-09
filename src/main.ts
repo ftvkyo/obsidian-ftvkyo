@@ -1,5 +1,4 @@
 import { Command, Plugin } from "obsidian";
-import { getAPI as getDataviewAPI, DataviewApi } from "obsidian-dataview";
 
 import Logger from "@/util/logger";
 
@@ -18,6 +17,7 @@ import ExploreView from "@/ui/views/Explore";
 import {DEFAULT_SETTINGS, OFSettingTab, Settings} from "./ui/settings";
 
 import "./styles.scss";
+import { Dependencies } from "./util/dependencies";
 
 
 declare global {
@@ -41,17 +41,12 @@ const views = [
 ];
 
 
-interface OFDependencies {
-    dv: DataviewApi;
-    periodic: unknown;
-    unique: unknown;
-}
 
 
 export default class ObsidianFtvkyo extends Plugin {
     lg = new Logger("👁️‍🗨️");
 
-    deps: OFDependencies;
+    deps: Dependencies;
 
     api = new Api();
 
@@ -116,26 +111,7 @@ export default class ObsidianFtvkyo extends Plugin {
     private loadDependencies() {
         const lg = this.lg.sub("dependencies");
 
-        const dv = getDataviewAPI(this.app);
-        if (!dv) {
-            throw new Error("Plugin 'dataview' not found/loaded");
-        }
-
-        const periodic = (<any>this.app).plugins.getPlugin("periodic-notes");
-        if (!periodic) {
-            throw new Error("Plugin 'Periodic Notes' not found/loaded");
-        }
-
-        const unique = (<any>this.app).internalPlugins.getEnabledPluginById("zk-prefixer");
-        if (!unique) {
-            throw new Error("Plugin 'Unique Note Creator' not found/loaded");
-        }
-
-        this.deps = {
-            dv,
-            periodic,
-            unique,
-        };
+        this.deps = Dependencies.load();
 
         lg.info("Loaded the dependencies");
     }
