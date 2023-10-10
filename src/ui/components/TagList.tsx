@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { useMemo } from "react";
+import { useCallback } from "react";
 
 import ApiNoteList, { tagDisplay, TagWildcard } from "@/api/note-list";
 
@@ -8,19 +8,21 @@ import styles from "./TagList.module.scss";
 
 function TagCard({
     id,
-    onClick,
+    setTag,
 }: {
     id: string | TagWildcard,
-    onClick: (e: React.MouseEvent<HTMLDivElement>) => void,
+    setTag: (id: string | TagWildcard) => void,
 }) {
-    return <div
-        key={id}
-        data-id={id}
+    const onClick = useCallback(() => {
+        setTag(id);
+    }, [setTag, id]);
+
+    return <a
         className={clsx(styles.card)}
         onClick={onClick}
     >
         {tagDisplay(id)}
-    </div>
+    </a>
 }
 
 
@@ -37,22 +39,17 @@ export default function TagList({
         TagWildcard.None,
     ];
 
-    const onClick = useMemo(() => (e: React.MouseEvent<HTMLDivElement>) => {
-        const id = e.currentTarget.getAttribute("data-id");
-        if (id) {
-            setTag(id);
-        }
-    }, [setTag]);
-
     return <div className={styles.list}>
-        {wildcards.map((w) => <TagCard
-            id={w}
-            onClick={() => setTag(w)}
+        {wildcards.map((id) => <TagCard
+            key={id}
+            id={id}
+            setTag={setTag}
         />)}
 
         {notes.tags.map((id) => <TagCard
+            key={id}
             id={id}
-            onClick={onClick}
+            setTag={setTag}
         />)}
     </div>
 }
