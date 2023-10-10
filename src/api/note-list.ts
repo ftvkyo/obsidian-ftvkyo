@@ -1,4 +1,4 @@
-import { TriState } from "@/ui/components/TriToggle";
+import { TriState } from "@/ui/components/controls/TriToggle";
 import { DataArray } from "obsidian-dataview";
 
 import ApiNote from "./note";

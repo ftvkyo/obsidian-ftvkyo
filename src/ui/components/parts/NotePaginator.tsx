@@ -1,5 +1,5 @@
 import {NoteFilterType} from "@/api/note-list";
-import Selector from "./Selector";
+import Selector from "../controls/Selector";
 
 
 export default function NotePaginator({

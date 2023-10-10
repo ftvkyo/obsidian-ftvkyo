@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import NoteCard from "../components/NoteCard";
+import NoteCard from "./parts/NoteCard";
 import ApiNoteList, {NoteFilterType, TagWildcard, tagDisplay} from "@/api/note-list";
-import NoteFilter from "../components/NoteFilter";
-import NotePaginator from "../components/NotePaginator";
-import { TriState } from "../components/TriToggle";
+import NoteFilter from "./parts/NoteFilter";
+import NotePaginator from "./parts/NotePaginator";
+import { TriState } from "./controls/TriToggle";
 
 import styles from "./NoteList.module.scss";
 

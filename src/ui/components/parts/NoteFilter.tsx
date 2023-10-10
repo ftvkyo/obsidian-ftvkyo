@@ -1,5 +1,5 @@
 import {NoteFilterType} from "@/api/note-list";
-import TriToggle from "./TriToggle";
+import TriToggle from "../controls/TriToggle";
 
 import styles from "./NoteFilter.module.scss";
 
