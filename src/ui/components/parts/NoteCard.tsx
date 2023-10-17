@@ -1,8 +1,10 @@
-import ApiNote from "@/api/note";
-import { toClipboard } from "@/util/clipboard";
+import { clsx } from "clsx";
 import {setIcon} from "obsidian";
 import {useCallback} from "react";
 import Markdown from "react-markdown";
+
+import ApiNote from "@/api/note";
+import { toClipboard } from "@/util/clipboard";
 
 import styles from "./NoteCard.module.scss";
 
@@ -22,8 +24,14 @@ function open(
         return;
     }
 
-    const newTab = e.currentTarget.getAttribute("target") === "_blank";
-    note.reveal({ replace: !newTab });
+    const tabNew = e.button === 1 || (e.button === 0 && e.ctrlKey);
+    const tabReplace = !tabNew && e.button === 0;
+
+    if (tabNew || tabReplace) {
+        note.reveal({ replace: tabReplace });
+    }
+
+    // Otherwise, we ignore the clicks
 }
 
 
@@ -54,29 +62,41 @@ function populateIcons(
 }
 
 
-function getBlockTitle(
+function Header({
+    note
+}: {
     note: ApiNote,
-): JSX.Element {
-    const className = note.title ? styles.title : styles.untitle;
-    let title;
-
-    if (note.title) {
-        title = <Markdown>{note.title}</Markdown>;
-    } else {
-        title = "Untitled, " + (note.dateInfo || note.base);
-    }
-
+}): JSX.Element {
     return <div
-        className={className}
+        className={styles.header}
     >
-        {title}
+        <a
+            className={clsx(styles.title, note.title && styles.h1)}
+            href={note.path}
+            onClick={open}
+        >
+            {note.title
+                ? <Markdown>{note.title}</Markdown>
+                : "Untitled, " + (note.dateInfo || note.base)
+            }
+        </a>
+
+        <a
+            className="clickable-icon"
+            data-icon="link"
+
+            href={`[[${note.base}]]`}
+            onClick={copy}
+        />
     </div>;
 }
 
 
-function getBlockTags(
+function Tags({
+    note
+}: {
     note: ApiNote,
-): JSX.Element | null {
+}): JSX.Element | null {
     if (!note.root && note.tags) {
         return <div className={styles.tags}>
             {note.tags.map((t) => "#" + t).join(", ")}
@@ -86,9 +106,11 @@ function getBlockTags(
 }
 
 
-function getBlockValidity(
+function Invalid({
+    note
+}: {
     note: ApiNote,
-): JSX.Element | null {
+}): JSX.Element | null {
     if (note.invalid) {
         return <div className={styles.invalid}>
             {note.invalid}
@@ -98,19 +120,11 @@ function getBlockValidity(
 }
 
 
-export default function NoteCard({
-    note,
+function Info({
+    note
 }: {
     note: ApiNote,
-}) {
-    const blockTitle = getBlockTitle(note);
-
-    const blockTags = getBlockTags(note);
-
-    const blockValidity = getBlockValidity(note);
-
-    // Note info
-
+}): JSX.Element {
     const typeIconName = note.type && ftvkyo.settings.typeIcons[note.type] || null;
     const typeIcon = typeIconName && <div
         className="clickable-icon"
@@ -123,47 +137,22 @@ export default function NoteCard({
         data-icon={draftIconName}
     />;
 
-    const blockInfo = <div
+    return <div
         className={styles.info}
     >
+        <Tags note={note}/>
         {typeIcon}
         {draftIcon}
+        <Invalid note={note}/>
     </div>;
+}
 
-    // Note controls
 
-    const copyLink = <a
-        className="clickable-icon"
-        href={`[[${note.base}]]`}
-        onClick={copy}
-
-        data-icon="link"
-    />;
-
-    const openReplace = <a
-        className="clickable-icon"
-        href={note.path}
-        onClick={open}
-
-        data-icon="corner-down-right"
-    />;
-
-    const openNewTab = <a
-        className="clickable-icon"
-        href={note.path}
-        onClick={open}
-        target="_blank"
-
-        data-icon="plus"
-    />;
-
-    const blockControls = <div
-        className={styles.controls}
-    >
-        {openReplace}
-        {openNewTab}
-        {copyLink}
-    </div>;
+export default function NoteCard({
+    note,
+}: {
+    note: ApiNote,
+}) {
 
     const updateRef = useCallback((node: HTMLDivElement) => {
         node && populateIcons(node);
@@ -171,17 +160,9 @@ export default function NoteCard({
 
     return <div
         ref={updateRef}
-
-        className={styles.noteCard}
-
-        // Define the tooltip and accesibility label.
-        aria-label={ftvkyo.settings.enableTooltip && note.base || ""}
-        data-tooltip-position="right"
+        className={styles.card}
     >
-        {blockTitle}
-        {blockTags}
-        {blockValidity}
-        {blockInfo}
-        {blockControls}
+        <Header note={note}/>
+        <Info note={note}/>
     </div>
 }

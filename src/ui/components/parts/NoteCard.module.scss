@@ -1,72 +1,58 @@
 @use "../../../vars";
+@use "../list";
 
 
-.noteCard {
-    border-radius: vars.$card-br;
-    box-shadow: 0.1em 0.1em 0.5em #000;
+.card {
+    @include list.card;
 
-    background-color: var(--background-primary);
+    // We have nested stuff so we need to re-pad
+    padding: 0;
 
-    display: grid;
-    grid-template-areas:
-        "title   title   "
-        "tags    tags    "
-        "invalid invalid "
-        "info    controls";
-
-    > * {
-        display: flex;
-        gap: 0.25em;
-
+    .header {
         padding: vars.$gutter;
-    }
-
-    .title,
-    .untitle
-    {
-        grid-area: title;
-        flex-direction: column;
-
-        border-radius: vars.$card-br vars.$card-br 0 0;
-        background-color: var(--table-header-background);
-
-        font-size: 1.25em;
-        font-family: var(--h1-font);
-        font-style: var(--h1-style);
-        font-variant: var(--h1-variant);
-    }
-
-    .title {
-        font-weight: var(--h1-weight);
-        color: var(--h1-color);
-    }
-
-    .tags {
-        grid-area: tags;
+        border-radius: repeat(vars.$card-br, 2) 0 0;
 
         background-color: var(--table-header-background);
-        color: var(--tag-color);
-    }
 
-    .invalid {
-        grid-area: invalid;
-        color: var(--color-red);
+        display: flex;
+        flex-direction: row;
+
+        .title {
+            flex: 1;
+
+            font-size: 1.25em;
+            font-family: var(--h1-font);
+            font-style: var(--h1-style);
+            font-variant: var(--h1-variant);
+
+            &.h1 {
+                font-weight: var(--h1-weight);
+                color: var(--h1-color);
+            }
+        }
+
+        [data-icon="link"] {
+            aspect-ratio: 1 / 1;
+        }
     }
 
     .info {
-        grid-area: info;
+        padding: vars.$gutter;
 
-        flex-direction: row;
+        [class="clickable-icon"] {
+            // We are using `clickable-icon` class
+            // from Obsidian, but don't want to actually make
+            // the icon clickable
+            pointer-events: none;
+        }
 
-        // We are using `clickable-icon` class
-        // from Obsidian, but don't want to actually make
-        // the icon clickable
-        pointer-events: none;
+        .tags {
+            color: var(--tag-color);
+        }
+
+        .invalid {
+            color: var(--color-red);
+        }
     }
 
-    .controls {
-        grid-area: controls;
-
-        flex-direction: row-reverse;
-    }
 }
