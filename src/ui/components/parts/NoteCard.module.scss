@@ -10,7 +10,7 @@
 
     .header {
         padding: vars.$gutter;
-        border-radius: repeat(vars.$card-br, 2) 0 0;
+        border-radius: vars.$card-br vars.$card-br 0 0;
 
         background-color: var(--table-header-background);
 
@@ -27,7 +27,6 @@
 
             &.h1 {
                 font-weight: var(--h1-weight);
-                color: var(--h1-color);
             }
         }
 
