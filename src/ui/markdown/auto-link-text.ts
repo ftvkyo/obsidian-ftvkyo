@@ -1,27 +1,15 @@
-import { MarkdownPostProcessorContext, MarkdownRenderChild } from "obsidian";
+import { MarkdownPostProcessorContext } from "obsidian";
 
 import Logger from "@/util/logger";
 
 import ApiNote from "@/api/note";
+import Replacer from "./Replacer";
 
 
 let lg: Logger | undefined = undefined;
 
 
-class AliasLink extends MarkdownRenderChild {
-    constructor(
-        readonly containerEl: HTMLElement,
-        readonly alias: string,
-    ) {
-        super(containerEl);
-    }
-
-    onload() {
-        this.containerEl.innerText = this.alias;
-    }
-}
-
-export default function AutoAlias(
+export default function AutoLinkText(
     element: HTMLElement,
     context: MarkdownPostProcessorContext,
 ) {
@@ -60,6 +48,6 @@ export default function AutoAlias(
 
         lg.debug(`Found h1 "${note.title}"`);
 
-        context.addChild(new AliasLink(link, note.title));
+        context.addChild(new Replacer(link, note.title));
     }
 }

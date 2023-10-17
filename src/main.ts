@@ -8,7 +8,7 @@ import { sendError } from "./ui/builtin/notice";
 
 import CopyLink from "./ui/commands/copy-link";
 
-import AutoAlias from "@/ui/markdown/auto-alias";
+import AutoLinkText from "@/ui/markdown/auto-link-text";
 import PlanCallout from "./ui/markdown/plan-callout";
 
 import ObsidianFtvkyoView from "@/ui/views/view";
@@ -32,7 +32,7 @@ const commands: Command[] = [
 ];
 
 const markdown = [
-    AutoAlias,
+    AutoLinkText,
     PlanCallout,
 ];
 
