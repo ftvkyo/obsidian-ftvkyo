@@ -11,7 +11,7 @@ export default function NotePaginator({
     filter: NoteFilterType,
     setFilter: (filter: NoteFilterType) => void,
 }) {
-    const pages = Math.ceil(found / filter.onPage);
+    const pages = Math.ceil(found / ftvkyo.settings.resultsPerPage);
 
     const sortingSelector = <Selector
         options={[
@@ -32,25 +32,15 @@ export default function NotePaginator({
         }}
     />;
 
-    const onPageSelector = <Selector
-        options={[
-            ["10", "10"],
-            ["25", "25"],
-            ["50", "50"],
-        ]}
-        value={String(filter.onPage)}
-        onChange={(v) => {
-            setFilter({
-                ...filter,
-                onPage: Number(v),
-                page: 0,
-            });
-        }}
-    />;
-
     const pagePrevBtn = <button
         disabled={filter.page < 1}
-        onClick={() => {setFilter({...filter, page: filter.page - 1})}}
+        onClick={(e) => {
+            if (e.ctrlKey) {
+                setFilter({...filter, page: 0});
+                return;
+            }
+            setFilter({...filter, page: filter.page - 1})
+        }}
     >
         {"<"}
     </button>;
@@ -62,16 +52,10 @@ export default function NotePaginator({
         {">"}
     </button>;
 
-    return <>
-        <div>
-            Found {found},
-            {onPageSelector} per page
-        </div>
-        <div>
-            {sortingSelector}
-            {pagePrevBtn}
-            {filter.page + 1}/{pages}
-            {pageNextBtn}
-        </div>
-    </>
+    return <div>
+        {filter.page + 1}/{pages} ({found})
+        {pagePrevBtn}
+        {pageNextBtn}
+        {sortingSelector}
+    </div>;
 }

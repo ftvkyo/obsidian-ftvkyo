@@ -54,7 +54,6 @@ export default function NoteList({
         ...filterDefaults,
         orderKey: "date",
         orderDir: "desc",
-        onPage: 25,
         page: 0,
     });
 

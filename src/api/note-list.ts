@@ -85,8 +85,7 @@ export default class ApiNoteList {
         invalid = TriState.Maybe,
         orderKey = "date",
         orderDir = "desc",
-        onPage = undefined,
-        page = 0,
+        page = undefined,
     }: {
         // What tag to require.
         tag?: string | TagWildcard,
@@ -101,8 +100,7 @@ export default class ApiNoteList {
         // How to order the notes.
         orderKey?: "date" | "title",
         orderDir?: "asc" | "desc",
-        // Pagination
-        onPage?: number,
+        // Pagination, undefined = all results
         page?: number,
     }): {notes: ApiNoteList, found: number} {
         let notes = this.notes;
@@ -166,12 +164,10 @@ export default class ApiNoteList {
 
         const count = notes.length;
 
-        if (page && onPage) {
-            notes = notes.slice(onPage * page);
-        }
-
-        if (onPage !== undefined) {
-            notes = notes.slice(undefined, onPage);
+        if (page !== undefined) {
+            const start = ftvkyo.settings.resultsPerPage * page;
+            const end = start + ftvkyo.settings.resultsPerPage;
+            notes = notes.slice(start, end);
         }
 
         return {notes: new ApiNoteList(notes), found: count};
