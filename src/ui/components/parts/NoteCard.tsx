@@ -1,12 +1,11 @@
 import { clsx } from "clsx";
-import {useCallback} from "react";
 import Markdown from "react-markdown";
 
 import ApiNote from "@/api/note";
 import { toClipboard } from "@/util/clipboard";
 
 import styles from "./NoteCard.module.scss";
-import {populateIcons} from "@/util/icons";
+import {useIcons} from "@/util/icons";
 
 
 function onClick(
@@ -193,9 +192,7 @@ export default function NoteCard({
 }: {
     note: ApiNote,
 }) {
-    const updateRef = useCallback((node: HTMLDivElement) => {
-        node && populateIcons(node);
-    }, []);
+    const updateRef = useIcons();
 
     return <div
         ref={updateRef}
