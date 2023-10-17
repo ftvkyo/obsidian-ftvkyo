@@ -1,4 +1,4 @@
-import { TFile } from "obsidian";
+import { ListItemCache, TFile } from "obsidian";
 
 
 const RE_TITLE_ROOT = /^#[\w-][\w-/]*$/
@@ -140,14 +140,29 @@ export default class ApiNote {
         return this.fc?.frontmatter?.type ?? null;
     }
 
+    /* ================ *
+     * Task information *
+     * ================ */
+
+    get tasks(): ListItemCache[] {
+        return this.fc?.listItems?.filter((val) => val.task !== undefined) ?? [];
+    }
+
+    get tasksUndone(): ListItemCache[] {
+        return this.tasks.filter((val) => val.task === " ");
+    }
+
+    get tasksDone(): ListItemCache[] {
+        return this.tasks.filter((val) => val.task !== " ");
+    }
+
     /* ============ *
      * State checks *
      * ============ */
 
     // Whether the note is work in progress.
     get wip() {
-        const incompleteTasks = this.fc?.listItems?.filter((val) => val.task === " ") ?? [];
-        return incompleteTasks.length > 0;
+        return this.tasksUndone.length > 0;
     }
 
     // Whether the note is a root note.

@@ -3,25 +3,10 @@ import { PluginSettingTab, Setting } from "obsidian";
 
 export interface Settings {
     debugLogging: boolean;
-
-    wipIcon: string;
-
-    typeIcons: Record<string, string>;
-
-    enableTooltip: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
     debugLogging: false,
-
-    wipIcon: "pencil",
-
-    typeIcons: {
-        "wiki": "network",
-        "person": "user",
-    },
-
-    enableTooltip: false,
 };
 
 

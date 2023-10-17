@@ -39,7 +39,11 @@
     .info {
         padding: vars.$gutter;
 
-        [class="clickable-icon"] {
+        display: flex;
+        flex-direction: column;
+        gap: vars.$gutter;
+
+        [data-icon] {
             // We are using `clickable-icon` class
             // from Obsidian, but don't want to actually make
             // the icon clickable
@@ -50,9 +54,18 @@
             color: var(--tag-color);
         }
 
+        .tasks {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            [data-icon]:not(:first-of-type) {
+                margin-inline-start: 1em;
+            }
+        }
+
         .invalid {
             color: var(--color-red);
         }
     }
-
 }

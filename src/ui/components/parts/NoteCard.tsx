@@ -106,6 +106,37 @@ function Tags({
 }
 
 
+function Tasks({
+    note
+}: {
+    note: ApiNote,
+}): JSX.Element | null {
+    const undone = note.tasksUndone.length;
+    const done = note.tasksDone.length;
+
+    if (undone > 0 || done > 0) {
+        return <div
+            className={styles.tasks}
+        >
+            <div
+                className="clickable-icon"
+                data-icon="circle"
+            />
+
+            {undone}
+
+            <div
+                className="clickable-icon"
+                data-icon="check-circle"
+            />
+
+            {done}
+        </div>;
+    }
+    return null;
+}
+
+
 function Invalid({
     note
 }: {
@@ -125,24 +156,11 @@ function Info({
 }: {
     note: ApiNote,
 }): JSX.Element {
-    const typeIconName = note.type && ftvkyo.settings.typeIcons[note.type] || null;
-    const typeIcon = typeIconName && <div
-        className="clickable-icon"
-        data-icon={typeIconName}
-    />;
-
-    const draftIconName = note.wip && ftvkyo.settings.wipIcon || null;
-    const draftIcon = draftIconName && <div
-        className="clickable-icon"
-        data-icon={draftIconName}
-    />;
-
     return <div
         className={styles.info}
     >
         <Tags note={note}/>
-        {typeIcon}
-        {draftIcon}
+        <Tasks note={note}/>
         <Invalid note={note}/>
     </div>;
 }
@@ -153,7 +171,6 @@ export default function NoteCard({
 }: {
     note: ApiNote,
 }) {
-
     const updateRef = useCallback((node: HTMLDivElement) => {
         node && populateIcons(node);
     }, []);
