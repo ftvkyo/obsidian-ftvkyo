@@ -18,7 +18,7 @@ const ExploreView: ViewElement = {
 
         const [tag, setTag] = useState<string | TagWildcard | null>(null);
 
-        const notes = ftvkyo.api.source.cacheUnique;
+        const notes = ftvkyo.api.source.cache.unique;
 
         if (tag === null) {
             return <TagList

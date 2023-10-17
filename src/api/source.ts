@@ -4,27 +4,35 @@ export default class ApiSource {
 
     #et = new EventTarget();
 
-    cacheUnique: ApiNoteList;
+    cache: {
+        unique: ApiNoteList,
+        periodic: ApiNoteList,
+    };
 
     constructor() {
         this.update();
 
-        const event = ftvkyo.app.metadataCache.on("resolved", () => {
-            this.update();
-        });
-        ftvkyo.registerEvent(event);
+        ftvkyo.on("metadata", () => this.update());
     }
 
     update() {
         const mdfs = ftvkyo.app.vault.getMarkdownFiles();
 
         const unique = mdfs.filter((v) => v.path.startsWith(ftvkyo.deps.unique.options.folder))
-        this.cacheUnique = ApiNoteList.from(unique);
+
+        const periodic = mdfs.filter((v) => {
+            return false;
+        });
+
+        this.cache = {
+            unique: ApiNoteList.from(unique),
+            periodic: ApiNoteList.from(periodic),
+        };
 
         this.#et.dispatchEvent(new Event("updated"));
     }
 
-    on(event: "updated", callback: () => void) {
-        this.#et.addEventListener("updated", callback);
+    on(e: "updated", cb: () => void) {
+        this.#et.addEventListener("updated", cb);
     }
 }

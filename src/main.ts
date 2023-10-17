@@ -163,4 +163,13 @@ export default class ObsidianFtvkyo extends Plugin {
             slg.info(`Placed`);
         }
     }
+
+    /* ====== *
+     * Events *
+     * ====== */
+
+    on(_e: "metadata", cb: () => void) {
+        const event = this.app.metadataCache.on("resolved", cb);
+        this.registerEvent(event);
+    }
 }
