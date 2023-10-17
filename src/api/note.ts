@@ -23,11 +23,6 @@ export default class ApiNote {
         return new ApiNote(tf);
     }
 
-    // Convenience factory to take Dataview page objects.
-    static fromDv(page: { file: { path: string } }) {
-        return ApiNote.fromPath(page.file.path);
-    }
-
     // Try to get a note from a path.
     // Returns null if the path is not found or is not a note.
     // If `from` is specified, the path is resolved relative to `from`.

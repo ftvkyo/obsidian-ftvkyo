@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot, Root } from 'react-dom/client';
 import { ErrorBoundary } from "react-error-boundary";
 
-import { EventRef, View, WorkspaceLeaf } from "obsidian";
+import { View, WorkspaceLeaf } from "obsidian";
 
 import ObsidianFtvkyo from "@/main";
 
@@ -58,26 +58,8 @@ export default class ObsidianFtvkyoView extends View {
         // TODO: figure out if I can do it in a built-in way.
         this.containerEl.setAttribute("data-type", this.viewType);
 
-        // Typecheck the Dataview event correctly
-        type DMC = typeof app.metadataCache & {
-            on: (event: "dataview:metadata-change", callback: () => void) => EventRef,
-        }
-
-        // Register the metadata change event only after the metadata has been fully resolved.
-        // Then, remove the metadata resolution event.
-        // This is done to prevent re-rendering for every single file during metadata initialization.
-        const context: { ref?: EventRef } = {};
-        context.ref = app.metadataCache.on("resolved", () => {
-            const dvEvent = (app.metadataCache as DMC).on("dataview:metadata-change", () => {
-                this.render();
-            });
-            plugin.registerEvent(dvEvent);
-
-            // Unregister self
-            if (context.ref) {
-                app.metadataCache.offref(context.ref);
-                delete context.ref;
-            }
+        ftvkyo.api.source.on("updated", () => {
+            this.render();
         });
     }
 

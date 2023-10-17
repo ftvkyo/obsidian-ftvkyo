@@ -48,7 +48,7 @@ export default class ObsidianFtvkyo extends Plugin {
 
     deps: Dependencies;
 
-    api = new Api();
+    api: Api;
 
     /* ======== *
      * Settings *
@@ -63,6 +63,9 @@ export default class ObsidianFtvkyo extends Plugin {
     async onload() {
         // Make the plugin available globally
         globalThis.ftvkyo = this;
+
+        // Load the Api (may depend on the plugin being global)
+        this.api = new Api();
 
         this.lg.important(`Loading obsidian-ftvkyo`);
 

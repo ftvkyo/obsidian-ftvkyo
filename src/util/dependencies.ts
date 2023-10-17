@@ -1,6 +1,3 @@
-import { getAPI as getDataviewAPI, DataviewApi } from "obsidian-dataview";
-
-
 export interface SingleNoteTypeSetting {
     format: string,
     template: string,
@@ -27,17 +24,11 @@ export interface UniqueNotesPlugin {
 export class Dependencies {
 
     constructor(
-        readonly dv: DataviewApi,
         readonly periodic: PeriodicNotesPlugin,
         readonly unique: UniqueNotesPlugin,
     ) {}
 
     static load(): Dependencies {
-        const dv = getDataviewAPI(ftvkyo.app);
-        if (!dv) {
-            throw new Error("Plugin 'dataview' not found/loaded");
-        }
-
         const periodic = (<any>ftvkyo.app).plugins.getPlugin("periodic-notes");
         if (!periodic) {
             throw new Error("Plugin 'Periodic Notes' not found/loaded");
@@ -48,6 +39,6 @@ export class Dependencies {
             throw new Error("Plugin 'Unique Note Creator' not found/loaded");
         }
 
-        return new Dependencies(dv, periodic, unique);
+        return new Dependencies(periodic, unique);
     }
 }

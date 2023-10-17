@@ -3,7 +3,7 @@ import {useState} from "react";
 import {type ViewElement} from "./view";
 import Logger from "@/util/logger";
 import NoteList from "../components/NoteList";
-import ApiNoteList, { TagWildcard } from "@/api/note-list";
+import { TagWildcard } from "@/api/note-list";
 import TagList from "../components/TagList";
 
 
@@ -18,8 +18,7 @@ const ExploreView: ViewElement = {
 
         const [tag, setTag] = useState<string | TagWildcard | null>(null);
 
-        // TODO: Usememo on this somehow?
-        const notes = ApiNoteList.all();
+        const notes = ftvkyo.api.source.cacheUnique;
 
         if (tag === null) {
             return <TagList

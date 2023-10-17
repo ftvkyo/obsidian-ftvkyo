@@ -1,5 +1,5 @@
 import { TriState } from "@/ui/components/controls/TriToggle";
-import { DataArray } from "obsidian-dataview";
+import {TFile} from "obsidian";
 
 import ApiNote from "./note";
 
@@ -38,19 +38,12 @@ export function tagDisplay(tag: string | TagWildcard) {
 export default class ApiNoteList {
 
     constructor(
-        public readonly notes: DataArray<ApiNote>,
+        public readonly notes: ApiNote[],
     ) {}
 
-    static all() {
-        return ApiNoteList.from(`"${ftvkyo.deps.unique.options.folder}"`);
-    }
-
-    // Find all the notes in the source in the vault.
-    static from(source: string) {
+    static from(files: TFile[]) {
         return new ApiNoteList(
-            ftvkyo.deps.dv.pages(source)
-                .map(ApiNote.fromDv)
-                .filter(n => n !== null) as DataArray<ApiNote>
+            files.map(ApiNote.from)
         );
     }
 
@@ -63,7 +56,6 @@ export default class ApiNoteList {
         return this.notes
             .flatMap(note => note.tags)
             .filter(onlyUnique)
-            .array()
             .sort((a, b) => a.localeCompare(b));
     }
 
@@ -71,8 +63,7 @@ export default class ApiNoteList {
     // with the number of notes for each tag.
     get tagsCounted(): [string, number][] {
         const tags = this.notes
-            .flatMap(note => note.tags)
-            .array();
+            .flatMap(note => note.tags);
 
         return Object.entries(
             tags.reduce((prev, curr) => {
@@ -155,7 +146,11 @@ export default class ApiNoteList {
             ? (e: ApiNote) => e.title ?? e.base
             : (e: ApiNote) => e.base;
 
-        notes = notes.sort(keyF, orderDir);
+        notes = notes.sort((a, b) => keyF(a).localeCompare(keyF(b)));
+
+        if (orderDir === "desc") {
+            notes = notes.reverse();
+        }
 
         const count = notes.length;
 
@@ -164,7 +159,7 @@ export default class ApiNoteList {
         }
 
         if (onPage !== undefined) {
-            notes = notes.limit(onPage);
+            notes = notes.slice(undefined, onPage);
         }
 
         return {notes: new ApiNoteList(notes), found: count};
