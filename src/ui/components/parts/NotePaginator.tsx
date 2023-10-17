@@ -64,13 +64,11 @@ export default function NotePaginator({
 
     return <>
         <div>
-            Found {found}, {onPageSelector} per page
+            Found {found},
+            {onPageSelector} per page
         </div>
         <div>
-            Sorting by {sortingSelector}
-        </div>
-        <div>
-            Page
+            {sortingSelector}
             {pagePrevBtn}
             {filter.page + 1}/{pages}
             {pageNextBtn}
