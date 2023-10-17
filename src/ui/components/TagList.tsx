@@ -33,7 +33,7 @@ export default function TagList({
                 className="clickable-icon"
                 data-icon="circle-off"
                 aria-label="Without tags"
-                onClick={() => setTag(TagWildcard.Any)}
+                onClick={() => setTag(TagWildcard.None)}
             />
         </div>
 
