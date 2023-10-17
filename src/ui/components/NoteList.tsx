@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import NoteCard from "./parts/NoteCard";
 import ApiNoteList, {NoteFilterType, TagWildcard, tagDisplay} from "@/api/note-list";
@@ -7,6 +7,8 @@ import NotePaginator from "./parts/NotePaginator";
 import { TriState } from "./controls/TriToggle";
 
 import styles from "./NoteList.module.scss";
+import {populateIcons} from "@/util/icons";
+import {clsx} from "clsx";
 
 
 // TODO: Display a warning if there are notes with the same
@@ -41,30 +43,59 @@ export default function NoteList({
     setTag: (t: string | TagWildcard | null) => void,
     notes: ApiNoteList,
 }) {
-    const [filter, setFilter] = useState<Omit<NoteFilterType, "tag">>({
+    const filterDefaults = {
         title: TriState.Maybe,
         todos: TriState.Maybe,
         locked: TriState.Maybe,
         invalid: TriState.Maybe,
+    }
+
+    const [filter, setFilter] = useState<Omit<NoteFilterType, "tag">>({
+        ...filterDefaults,
         orderKey: "date",
         orderDir: "desc",
         onPage: 25,
         page: 0,
     });
 
+    const [filtering, setFiltering] = useState(false);
+
     const {notes: notesFiltered, found} = notes.where({...filter, tag});
     const noteCards = generateNoteCards(notesFiltered);
 
+    const updateRef = useCallback((node: HTMLDivElement) => {
+        node && populateIcons(node);
+    }, []);
+
     return <>
         <div className={styles.controls}>
-            <div className={styles.tagHeader}>
-                <button onClick={() => setTag(null)}>{"<"}</button>
+            <div
+            ref={updateRef}
+                className={styles.tagHeader}
+            >
+                <div
+                    className="clickable-icon"
+                    data-icon="arrow-left"
+
+                    onClick={() => setTag(null)}
+                />
                 <span>{tagDisplay(tag)}</span>
+                <div
+                    className={clsx("clickable-icon", filtering && "is-active")}
+                    data-icon="filter"
+
+                    onClick={() => {
+                        setFilter({...filter, ...filterDefaults});
+                        setFiltering(!filtering);
+                    }}>
+                </div>
             </div>
-            <NoteFilter
+
+            {filtering ? <NoteFilter
                 filter={{...filter, tag}}
                 setFilter={setFilter}
-            />
+            /> : null}
+
             <NotePaginator
                 total={found}
                 filter={{...filter, tag}}

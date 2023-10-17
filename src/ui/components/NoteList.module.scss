@@ -21,12 +21,22 @@
         justify-content: var(--justify-content);
         align-items: center;
     }
+
+    [data-icon] {
+        aspect-ratio: 1 / 1;
+    }
 }
 
 .tagHeader {
     --justify-content: start;
 
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
     > span {
+        flex: 1;
+
         font-size: 1.2em;
         font-weight: bold;
         color: var(--tag-color);

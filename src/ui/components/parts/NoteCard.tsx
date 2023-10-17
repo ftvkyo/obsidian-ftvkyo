@@ -1,5 +1,4 @@
 import { clsx } from "clsx";
-import {setIcon} from "obsidian";
 import {useCallback} from "react";
 import Markdown from "react-markdown";
 
@@ -7,6 +6,7 @@ import ApiNote from "@/api/note";
 import { toClipboard } from "@/util/clipboard";
 
 import styles from "./NoteCard.module.scss";
+import {populateIcons} from "@/util/icons";
 
 
 function onClick(
@@ -56,19 +56,6 @@ function copy(
     }
 
     toClipboard(href);
-}
-
-
-function populateIcons(
-    card: HTMLElement,
-) {
-    // Query all children with a "data-icon" attribute.
-    const icons = card.querySelectorAll<HTMLElement>("[data-icon]");
-
-    icons.forEach((icon) => {
-        const name = icon.getAttribute("data-icon");
-        name && setIcon(icon, name);
-    });
 }
 
 
