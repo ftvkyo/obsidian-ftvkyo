@@ -58,11 +58,14 @@ function copy(
 }
 
 
+interface Props {
+    note: ApiNote,
+}
+
+
 function Header({
     note
-}: {
-    note: ApiNote,
-}): JSX.Element {
+}: Props): JSX.Element {
     return <div
         className={styles.header}
     >
@@ -91,9 +94,7 @@ function Header({
 
 function Tags({
     note
-}: {
-    note: ApiNote,
-}): JSX.Element | null {
+}: Props): JSX.Element | null {
     if (!note.isRoot && note.tags) {
         return <div className={styles.tags}>
             {note.tags.map((t) => "#" + t).join(", ")}
@@ -105,9 +106,7 @@ function Tags({
 
 function State({
     note
-}: {
-    note: ApiNote,
-}): JSX.Element | null {
+}: Props): JSX.Element | null {
     const undone = note.tasksUndone.length;
     const done = note.tasksDone.length;
     const locked = note.locked;
@@ -160,9 +159,7 @@ function State({
 
 function Invalid({
     note
-}: {
-    note: ApiNote,
-}): JSX.Element | null {
+}: Props): JSX.Element | null {
     if (note.invalid) {
         return <div className={styles.invalid}>
             {note.invalid}
@@ -174,9 +171,7 @@ function Invalid({
 
 function Info({
     note
-}: {
-    note: ApiNote,
-}): JSX.Element {
+}: Props): JSX.Element {
     return <div
         className={styles.info}
     >
@@ -189,9 +184,7 @@ function Info({
 
 export default function NoteCard({
     note,
-}: {
-    note: ApiNote,
-}) {
+}: Props) {
     const updateRef = useIcons();
 
     return <div
