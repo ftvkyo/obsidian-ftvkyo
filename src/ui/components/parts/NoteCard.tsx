@@ -9,7 +9,7 @@ import { toClipboard } from "@/util/clipboard";
 import styles from "./NoteCard.module.scss";
 
 
-function open(
+function onClick(
     e: React.MouseEvent<HTMLAnchorElement>,
 ) {
     e.preventDefault();
@@ -24,14 +24,24 @@ function open(
         return;
     }
 
-    const tabNew = e.button === 1 || (e.button === 0 && e.ctrlKey);
-    const tabReplace = !tabNew && e.button === 0;
-
-    if (tabNew || tabReplace) {
-        note.reveal({ replace: tabReplace });
-    }
+    note.reveal({ replace: !e.ctrlKey });
 
     // Otherwise, we ignore the clicks
+}
+
+
+function onAuxClick(
+    e: React.MouseEvent<HTMLAnchorElement>,
+) {
+    if (e.button === 1) {
+        // Middle mouse button.
+        e.preventDefault();
+
+        // "genius": Relay to the other handler.
+        e.button = 0;
+        e.ctrlKey = true;
+        onClick(e);
+    }
 }
 
 
@@ -73,7 +83,8 @@ function Header({
         <a
             className={clsx(styles.title, note.title && styles.h1)}
             href={note.path}
-            onClick={open}
+            onClick={onClick}
+            onAuxClick={onAuxClick}
         >
             {note.title
                 ? <Markdown>{note.title}</Markdown>
