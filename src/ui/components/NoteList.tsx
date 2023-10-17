@@ -1,14 +1,14 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
+import {clsx} from "clsx";
 
 import NoteCard from "./parts/NoteCard";
 import ApiNoteList, {NoteFilterType, TagWildcard, tagDisplay} from "@/api/note-list";
 import NoteFilter from "./parts/NoteFilter";
 import NotePaginator from "./parts/NotePaginator";
 import { TriState } from "./controls/TriToggle";
+import {useIcons} from "@/util/icons";
 
 import styles from "./NoteList.module.scss";
-import {populateIcons} from "@/util/icons";
-import {clsx} from "clsx";
 
 
 // TODO: Display a warning if there are notes with the same
@@ -62,9 +62,7 @@ export default function NoteList({
     const {notes: notesFiltered, found} = notes.where({...filter, tag});
     const noteCards = generateNoteCards(notesFiltered);
 
-    const updateRef = useCallback((node: HTMLDivElement) => {
-        node && populateIcons(node);
-    }, []);
+    const updateRef = useIcons();
 
     return <>
         <div className={styles.controls}>
