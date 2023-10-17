@@ -1,20 +1,14 @@
 @use "../../vars";
+@use "./list";
+
 
 .list {
-    padding: (vars.$gutter * 2) vars.$gutter;
-
-    display: flex;
-    flex-direction: column;
-    gap: vars.$gutter * 2;
+    @include list.list;
 }
 
 .card {
+    @include list.card;
+
     font-size: 1.2em;
     font-weight: bold;
-
-    border-radius: vars.$card-br;
-
-    background-color: var(--background-primary);
-
-    padding: vars.$gutter;
 }

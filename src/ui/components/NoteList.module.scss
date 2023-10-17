@@ -1,4 +1,5 @@
 @use "../../vars";
+@use "./list";
 
 
 .controls {
@@ -33,11 +34,5 @@
 }
 
 .list {
-    overflow-y: scroll;
-
-    padding: (vars.$gutter * 2) vars.$gutter;
-
-    display: flex;
-    flex-direction: column;
-    gap: vars.$gutter * 2;
+    @include list.list;
 }

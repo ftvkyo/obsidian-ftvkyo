@@ -1,0 +1,25 @@
+@use "../../vars";
+
+
+@mixin list {
+    padding: (vars.$gutter * 2) vars.$gutter;
+
+    display: flex;
+    flex-direction: column;
+    gap: vars.$gutter * 2;
+
+    overflow-y: scroll;
+}
+
+
+@mixin card {
+    padding: vars.$gutter;
+    border-radius: vars.$card-br;
+
+    background-color: var(--background-primary);
+    box-shadow: 0.1em 0.1em 0.5em #000;
+
+    &.selected {
+		box-shadow: 0.1em 0.1em 0.5em gold;
+    }
+}
