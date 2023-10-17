@@ -6,9 +6,15 @@
     @include list.list;
 }
 
-.card {
-    @include list.card;
 
-    font-size: 1.2em;
-    font-weight: bold;
+.wildcards {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    gap: vars.$gutter;
+
+    > * {
+        height: 2em;
+    }
 }

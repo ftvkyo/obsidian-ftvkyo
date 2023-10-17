@@ -1,4 +1,5 @@
 import {setIcon} from "obsidian";
+import {useCallback} from "react";
 
 
 export function populateIcons(
@@ -11,4 +12,11 @@ export function populateIcons(
         const name = icon.getAttribute("data-icon");
         name && setIcon(icon, name);
     });
+}
+
+
+export function useIcons() {
+    return useCallback((node: HTMLElement | null) => {
+        node && populateIcons(node);
+    }, []);
 }

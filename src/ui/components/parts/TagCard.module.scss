@@ -1,0 +1,9 @@
+@use "../list";
+
+
+.card {
+    @include list.card;
+
+    font-size: 1.2em;
+    font-weight: bold;
+}
