@@ -43,7 +43,8 @@ export default function NoteList({
 }) {
     const [filter, setFilter] = useState<Omit<NoteFilterType, "tag">>({
         title: TriState.Maybe,
-        wip: TriState.Maybe,
+        todos: TriState.Maybe,
+        locked: TriState.Maybe,
         invalid: TriState.Maybe,
         orderKey: "date",
         orderDir: "desc",

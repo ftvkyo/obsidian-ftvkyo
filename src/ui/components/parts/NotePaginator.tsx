@@ -27,6 +27,7 @@ export default function NotePaginator({
                 ...filter,
                 orderKey: orderKey as "date" | "title",
                 orderDir: orderDir as "asc" | "desc",
+                page: 0,
             });
         }}
     />;

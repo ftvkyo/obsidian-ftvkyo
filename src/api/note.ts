@@ -69,55 +69,6 @@ export default class ApiNote {
         return h1s.shift()?.heading.trim() ?? null;
     }
 
-    // Memoization for `dateInfo`.
-    // Does not need recalculating as it only depends on the basename.
-    #dateInfo: string | null = null;
-
-    // Pretty information about the date that identifies the note.
-    // Returns null if the date cannot be determined.
-    // Returns a pretty string for displaying.
-    get dateInfo() {
-        //
-        if (this.#dateInfo !== null) {
-            return this.#dateInfo;
-        }
-
-        // Date info is encoded in the basename.
-        // The basemanes are expected to be in the format:
-        // - YYYYMMDD
-        // - YYYYMMDD-HHmmss
-
-        const parts = this.base.split(/[-.]/);
-        const date = parts[0];
-        const time: string | undefined = parts[1];
-
-        if (!date || date.length !== 8) {
-            // Invalid date in basename
-            return null;
-        }
-
-        const Y = date.substring(0, 4);
-        const M = date.substring(4, 6);
-        const D = date.substring(6, 8);
-
-        if (!time) {
-            this.#dateInfo = `${Y}.${M}.${D}`;
-            return this.#dateInfo;
-        }
-
-        if (time.length !== 6) {
-            // Invalid time in basename
-            return null;
-        }
-
-        const h = time.substring(0, 2);
-        const m = time.substring(2, 4);
-        const s = time.substring(4, 6);
-
-        this.#dateInfo = `${Y}.${M}.${D} ${h}:${m}:${s}`;
-        return this.#dateInfo;
-    }
-
     /* =============== *
      * Tag information *
      * =============== */
@@ -135,9 +86,10 @@ export default class ApiNote {
      * Frontmatter *
      * =========== */
 
-    // Get the type of the note, if set.
-    get type(): string | null {
-        return this.fc?.frontmatter?.type ?? null;
+    // Get the note lock info if available
+    get locked(): string | null {
+        const fm = this.fc?.frontmatter;
+        return fm?.lock ?? fm?.locked ?? null;
     }
 
     /* ================ *
@@ -161,13 +113,13 @@ export default class ApiNote {
      * ============ */
 
     // Whether the note is work in progress.
-    get wip() {
+    get hasTodos() {
         return this.tasksUndone.length > 0;
     }
 
     // Whether the note is a root note.
     // Those notes have a tag as their title.
-    get root() {
+    get isRoot() {
         return RE_TITLE_ROOT.test(this.title ?? "");
     }
 
@@ -183,12 +135,12 @@ export default class ApiNote {
         // A note title can contain a tag or some text, but not both.
         // This simply checks that the title does not have the "#" symbol when
         // the note is not root, and this is good enough.
-        if (!this.root && this.title && this.title.search("#") !== -1) {
+        if (!this.isRoot && this.title && this.title.search("#") !== -1) {
             return "Note title has a '#' when the note is not a root note.";
         }
 
         // If a note is a root note, it can't have other tags.
-        if (this.root && this.tags.length > 1) {
+        if (this.isRoot && this.tags.length > 1) {
             return "Root notes can't have extra tags.";
         }
 

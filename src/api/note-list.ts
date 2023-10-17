@@ -73,11 +73,15 @@ export default class ApiNoteList {
         ).sort(([a], [b]) => a.localeCompare(b));
     }
 
+    // TODO: make the filter an class rather than just an object, so things like
+    // resetting the page on changing other filters are not forgotten at the usage site.
+
     // Filter the notes.
     where({
         tag = TagWildcard.All,
-        title: heading = TriState.Maybe,
-        wip = TriState.Maybe,
+        title = TriState.Maybe,
+        todos = TriState.Maybe,
+        locked = TriState.Maybe,
         invalid = TriState.Maybe,
         orderKey = "date",
         orderDir = "desc",
@@ -89,7 +93,9 @@ export default class ApiNoteList {
         // Heading presence
         title?: TriState,
         // Note status
-        wip?: TriState,
+        todos?: TriState,
+        // Whether the note is locked
+        locked?: TriState,
         // Note validity
         invalid?: TriState,
         // How to order the notes.
@@ -124,16 +130,22 @@ export default class ApiNoteList {
             });
         }
 
-        if (heading === TriState.On) {
+        if (title === TriState.On) {
             notes = notes.filter(note => note.title !== null);
-        } else if (heading === TriState.Off) {
+        } else if (title === TriState.Off) {
             notes = notes.filter(note => note.title === null);
         }
 
-        if (wip === TriState.On) {
-            notes = notes.filter(note => note.wip);
-        } else if (wip === TriState.Off) {
-            notes = notes.filter(note => !note.wip);
+        if (todos === TriState.On) {
+            notes = notes.filter(note => note.hasTodos);
+        } else if (todos === TriState.Off) {
+            notes = notes.filter(note => !note.hasTodos);
+        }
+
+        if (locked === TriState.On) {
+            notes = notes.filter(note => note.locked);
+        } else if (locked === TriState.Off) {
+            notes = notes.filter(note => !note.locked);
         }
 
         if (invalid === TriState.On) {

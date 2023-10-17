@@ -14,25 +14,31 @@ export default function NoteFilter({
     // Filtering notes with/without titles.
     const hasTitle = <TriToggle
         value={filter.title}
-        onChange={(v) => setFilter({...filter, title: v})}
+        onChange={(v) => setFilter({...filter, title: v, page: 0})}
     />;
 
     // Filtering WIP notes.
-    const isWip = <TriToggle
-        value={filter.wip}
-        onChange={(v) => setFilter({...filter, wip: v})}
+    const hasTodos = <TriToggle
+        value={filter.todos}
+        onChange={(v) => setFilter({...filter, todos: v, page: 0})}
+    />;
+
+    const isLocked = <TriToggle
+        value={filter.locked}
+        onChange={(v) => setFilter({...filter, locked: v, page: 0})}
     />;
 
     // Filtering invalid notes.
     const isInvalid = <TriToggle
         value={filter.invalid}
-        onChange={(v) => setFilter({...filter, invalid: v})}
+        onChange={(v) => setFilter({...filter, invalid: v, page: 0})}
     />;
 
     return <>
         <div className={styles.toggles}>
             <div>Title {hasTitle}</div>
-            <div>WIP {isWip}</div>
+            <div>TODOs {hasTodos}</div>
+            <div>Locked {isLocked}</div>
             <div>Invalid {isInvalid}</div>
         </div>
     </>;

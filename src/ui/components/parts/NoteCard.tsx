@@ -88,7 +88,7 @@ function Header({
         >
             {note.title
                 ? <Markdown>{note.title}</Markdown>
-                : "Untitled, " + (note.dateInfo || note.base)
+                : <code>{note.base}</code>
             }
         </a>
 
@@ -108,7 +108,7 @@ function Tags({
 }: {
     note: ApiNote,
 }): JSX.Element | null {
-    if (!note.root && note.tags) {
+    if (!note.isRoot && note.tags) {
         return <div className={styles.tags}>
             {note.tags.map((t) => "#" + t).join(", ")}
         </div>;
@@ -117,18 +117,18 @@ function Tags({
 }
 
 
-function Tasks({
+function State({
     note
 }: {
     note: ApiNote,
 }): JSX.Element | null {
     const undone = note.tasksUndone.length;
     const done = note.tasksDone.length;
+    const locked = note.locked;
 
+    let tasks = null;
     if (undone > 0 || done > 0) {
-        return <div
-            className={styles.tasks}
-        >
+        tasks = <>
             <div
                 className="clickable-icon"
                 data-icon="circle"
@@ -142,8 +142,32 @@ function Tasks({
             />
 
             {done}
-        </div>;
+        </>;
     }
+
+    let lock = null;
+    if (locked) {
+        lock = <>
+            <div
+                className="clickable-icon"
+                data-icon="lock"
+            />
+
+            <code>
+                {locked}
+            </code>
+        </>;
+    }
+
+    if (tasks || lock) {
+        return <div
+            className={styles.state}
+        >
+            {tasks}
+            {lock}
+        </div>
+    }
+
     return null;
 }
 
@@ -171,7 +195,7 @@ function Info({
         className={styles.info}
     >
         <Tags note={note}/>
-        <Tasks note={note}/>
+        <State note={note}/>
         <Invalid note={note}/>
     </div>;
 }
