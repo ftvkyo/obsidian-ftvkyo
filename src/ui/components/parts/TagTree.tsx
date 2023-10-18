@@ -62,6 +62,7 @@ export function TagTree({
         {tags.map(([id, info]) => {
             const fullId = prefix ? `${prefix}/${id}` : id;
             return <TagSingle
+                key={fullId}
                 id={fullId}
                 display={id}
                 count={info.notes.length}
