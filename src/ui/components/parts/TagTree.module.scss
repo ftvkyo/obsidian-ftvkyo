@@ -1,0 +1,25 @@
+@use "../../../vars";
+@use "../list";
+
+
+.card {
+    @include list.card;
+
+    display: flex;
+    flex-direction: column;
+    gap: vars.$gutter;
+
+    border: 1px solid black;
+}
+
+
+.single {
+    display: flex;
+    flex-direction: row;
+    gap: vars.$gutter;
+
+    .count {
+        flex: 1;
+        opacity: 60%;
+    }
+}

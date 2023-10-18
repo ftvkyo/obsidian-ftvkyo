@@ -4,16 +4,6 @@ import {TFile} from "obsidian";
 import ApiNote from "./note";
 
 
-// To be used by .filter() to get only unique values.
-function onlyUnique<T>(
-    value: T,
-    index: number,
-    array: T[],
-) {
-    return array.indexOf(value) === index;
-}
-
-
 export enum TagWildcard {
     All,
     Any,
@@ -35,6 +25,26 @@ export function tagDisplay(tag: string | TagWildcard) {
 }
 
 
+export type TagMap = {
+    [id: string]: {
+        notes: ApiNote[],
+        noteRoot?: ApiNote,
+    },
+};
+
+
+export type TagTree = {
+    // Unlike `TagMap`, this is a recursive
+    // structure, and the keys are path bits.
+    [bit: string]: {
+        notes: ApiNote[],
+        noteRoot?: ApiNote,
+        subtags: TagTree,
+    }
+};
+
+
+
 export default class ApiNoteList {
 
     constructor(
@@ -51,26 +61,59 @@ export default class ApiNoteList {
         return this.notes.length;
     }
 
-    // Get all unique tags of the notes.
-    get tags(): string[] {
+    // Get a map from tags to notes.
+    // Does not include subnotes into tag notes.
+    get tags() {
         return this.notes
-            .flatMap(note => note.tags)
-            .filter(onlyUnique)
-            .sort((a, b) => a.localeCompare(b));
+            .reduce((acc, note) => {
+                for (const tag of note.tags) {
+                    const tacc = acc[tag] ?? {
+                        notes: [],
+                    };
+                    acc[tag] = tacc;
+
+                    tacc.notes.push(note);
+                    if (note.isRoot && !note.invalid) {
+                        tacc.noteRoot = note;
+                    }
+                }
+                return acc;
+            }, {} as TagMap);
     }
 
-    // Get all unique tags of the notes,
-    // with the number of notes for each tag.
-    get tagsCounted(): [string, number][] {
-        const tags = this.notes
-            .flatMap(note => note.tags);
+    // Get a tree of maps from tags to their notes and children.
+    // Does include subnotes from child tags into tags' own notes.
+    get tagTree() {
+        const walkTagTree = (acc: TagTree, path: string[], info: TagMap[keyof TagMap]) => {
+            const bit = path.shift();
+            if (!bit) {
+                // Recursion stop
+                return;
+            }
 
-        return Object.entries(
-            tags.reduce((prev, curr) => {
-                prev[curr] = (prev[curr] ?? 0) + 1;
-                return prev;
-            }, {} as { [key: string]: number })
-        ).sort(([a], [b]) => a.localeCompare(b));
+            const tag = acc[bit] ?? {
+                notes: [],
+                subtags: {},
+            };
+            acc[bit] = tag;
+
+            tag.notes.push(...info.notes);
+            if (path.length === 0) {
+                // If we are at the bottom, also can add a root note
+                tag.noteRoot = info.noteRoot;
+            }
+
+            walkTagTree(tag.subtags, path, info);
+        };
+
+        const res = Object.entries(this.tags)
+            .reduce((acc, [id, info]) => {
+                const path = id.split("/");
+                walkTagTree(acc, path, info);
+                return acc;
+            }, {} as TagTree);
+
+        return res;
     }
 
     // TODO: make the filter an class rather than just an object, so things like

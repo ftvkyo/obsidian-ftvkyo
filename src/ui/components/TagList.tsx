@@ -1,6 +1,6 @@
 import ApiNoteList, { TagWildcard } from "@/api/note-list";
 import {useIcons} from "@/util/icons";
-import {TagCard} from "./parts/TagCard";
+import {TagTree} from "./parts/TagTree";
 
 import styles from "./TagList.module.scss";
 
@@ -37,10 +37,9 @@ export default function TagList({
             />
         </div>
 
-        {notes.tags.map((id) => <TagCard
-            key={id}
-            id={id}
+        <TagTree
+            tree={notes.tagTree}
             setTag={setTag}
-        />)}
+        />
     </div>;
 }

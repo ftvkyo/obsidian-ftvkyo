@@ -5,6 +5,12 @@
 .card {
     @include list.card;
 
+    box-shadow: 0.1em 0.1em 0.5em #000;
+
+    &.selected {
+		box-shadow: 0.1em 0.1em 0.5em gold;
+    }
+
     // We have nested stuff so we need to re-pad
     padding: 0;
 
