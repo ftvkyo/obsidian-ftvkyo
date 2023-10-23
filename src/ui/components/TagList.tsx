@@ -16,25 +16,29 @@ export default function TagList({
 
     return <div ref={updateRef} className={styles.list}>
         <div className={styles.wildcards}>
-            Wildcards:
             <div
                 className="clickable-icon"
-                data-icon="asterisk"
-                aria-label="All notes"
                 onClick={() => setTag(TagWildcard.All)}
-            />
+            >
+                <div data-icon="asterisk"/>
+                All notes
+            </div>
+
             <div
                 className="clickable-icon"
-                data-icon="hash"
-                aria-label="With tags"
                 onClick={() => setTag(TagWildcard.Any)}
-            />
+            >
+                <div data-icon="hash"/>
+                With tags
+            </div>
+
             <div
                 className="clickable-icon"
-                data-icon="circle-off"
-                aria-label="Without tags"
                 onClick={() => setTag(TagWildcard.None)}
-            />
+            >
+                <div data-icon="circle-off"/>
+                No tags
+            </div>
         </div>
 
         <TagTree

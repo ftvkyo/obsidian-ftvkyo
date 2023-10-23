@@ -10,13 +10,23 @@
 
 
 .wildcards {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
 
     gap: vars.$gutter;
 
     > * {
-        height: 2em;
+        aspect-ratio: 3 / 2;
+        padding: vars.$gutter;
+
+        border: 1px solid black;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: vars.$gutter;
+
+        text-wrap: nowrap;
     }
 }
