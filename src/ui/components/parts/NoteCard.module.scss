@@ -22,6 +22,7 @@
 
         display: flex;
         flex-direction: row;
+        gap: vars.$gutter;
 
         .title {
             flex: 1;
@@ -36,8 +37,9 @@
             }
         }
 
-        [data-icon="link"] {
+        :global(.clickable-icon) {
             aspect-ratio: 1 / 1;
+            height: fit-content;
         }
     }
 
@@ -64,8 +66,10 @@
             flex-direction: row;
             align-items: center;
 
-            [data-icon]:not(:first-of-type) {
-                margin-inline-start: 1em;
+            gap: vars.$gutter;
+
+            progress {
+                flex: 1;
             }
         }
 

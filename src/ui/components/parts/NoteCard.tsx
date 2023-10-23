@@ -109,47 +109,27 @@ function State({
 }: Props): JSX.Element | null {
     const undone = note.tasksUndone.length;
     const done = note.tasksDone.length;
-    const locked = note.locked;
 
     let tasks = null;
     if (undone > 0 || done > 0) {
+        const total = undone + done;
         tasks = <>
-            <div
-                className="clickable-icon"
-                data-icon="circle"
+            <div data-icon="check-circle"/>
+            {done} of {total}
+            <progress
+                value={done}
+                max={total}
             />
-
-            {undone}
-
-            <div
-                className="clickable-icon"
-                data-icon="check-circle"
-            />
-
-            {done}
         </>;
     }
 
-    let lock = null;
-    if (locked) {
-        lock = <>
-            <div
-                className="clickable-icon"
-                data-icon="lock"
-            />
+    // TODO: Frontmatter info here?
 
-            <code>
-                {locked}
-            </code>
-        </>;
-    }
-
-    if (tasks || lock) {
+    if (tasks) {
         return <div
             className={styles.state}
         >
             {tasks}
-            {lock}
         </div>
     }
 
@@ -175,8 +155,8 @@ function Info({
     return <div
         className={styles.info}
     >
-        <Tags note={note}/>
         <State note={note}/>
+        <Tags note={note}/>
         <Invalid note={note}/>
     </div>;
 }
