@@ -20,7 +20,7 @@ export default function TagList({
                 className="clickable-icon"
                 onClick={() => setTag(TagWildcard.All)}
             >
-                <div data-icon="asterisk"/>
+                <div data-icon="list"/>
                 All notes
             </div>
 
