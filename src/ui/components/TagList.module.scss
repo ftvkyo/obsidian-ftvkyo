@@ -17,22 +17,23 @@
     gap: vars.$gutter;
 
     > * {
-        aspect-ratio: 3 / 2;
-        padding: vars.$gutter;
+        @include list.card;
 
-        border: 1px solid var(--background-modifier-border);
+        aspect-ratio: 4 / 3;
 
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-items: center;
         gap: vars.$gutter;
 
         font-size: 0.8em;
         text-wrap: nowrap;
 
+        cursor: pointer;
+
         svg {
             height: var(--icon-xl);
-            
             width: var(--icon-xl);
         }
     }

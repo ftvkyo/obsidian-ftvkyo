@@ -5,8 +5,6 @@
 .card {
     @include list.card;
 
-    box-shadow: 0.1em 0.1em 0.5em #000;
-
     &.selected {
 		box-shadow: 0.1em 0.1em 0.5em gold;
     }
@@ -79,6 +77,10 @@
 
             progress[value]::-webkit-progress-value {
                 background: var(--background-modifier-border);
+            }
+
+            code {
+                opacity: 75%;
             }
         }
 

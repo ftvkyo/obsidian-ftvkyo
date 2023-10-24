@@ -13,8 +13,12 @@
 
 
 @mixin card {
-    padding: vars.$gutter;
+    border: 1px solid var(--background-modifier-border);
     border-radius: vars.$card-br;
+
+    box-shadow: 0.1em 0.1em 0.5em var(--background-modifier-box-shadow);
+
+    padding: vars.$gutter;
 
     background-color: var(--background-primary);
 }

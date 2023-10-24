@@ -9,7 +9,7 @@
     flex-direction: column;
     gap: vars.$gutter;
 
-    border: 1px solid black;
+    border: 1px solid var(--background-modifier-border);
 }
 
 
