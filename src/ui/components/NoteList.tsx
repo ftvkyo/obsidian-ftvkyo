@@ -46,7 +46,7 @@ export default function NoteList({
     const filterDefaults = {
         title: TriState.Maybe,
         todos: TriState.Maybe,
-        locked: TriState.Maybe,
+        date: TriState.Maybe,
         invalid: TriState.Maybe,
     }
 

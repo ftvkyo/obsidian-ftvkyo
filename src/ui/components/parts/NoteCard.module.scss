@@ -57,10 +57,6 @@
             pointer-events: none;
         }
 
-        .tags {
-            color: var(--tag-color);
-        }
-
         .state {
             display: flex;
             flex-direction: row;
@@ -71,6 +67,10 @@
             progress {
                 flex: 1;
             }
+        }
+
+        .tags {
+            color: var(--tag-color);
         }
 
         .invalid {

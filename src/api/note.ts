@@ -86,10 +86,10 @@ export default class ApiNote {
      * Frontmatter *
      * =========== */
 
-    // Get the note lock info if available
-    get locked(): string | null {
+    // Get the note date info if available
+    get date(): string | null {
         const fm = this.fc?.frontmatter;
-        return fm?.lock ?? fm?.locked ?? null;
+        return fm?.date ?? null;
     }
 
     /* ================ *

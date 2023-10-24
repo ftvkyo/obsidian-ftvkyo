@@ -124,7 +124,7 @@ export default class ApiNoteList {
         tag = TagWildcard.All,
         title = TriState.Maybe,
         todos = TriState.Maybe,
-        locked = TriState.Maybe,
+        date = TriState.Maybe,
         invalid = TriState.Maybe,
         orderKey = "date",
         orderDir = "desc",
@@ -136,8 +136,8 @@ export default class ApiNoteList {
         title?: TriState,
         // Note status
         todos?: TriState,
-        // Whether the note is locked
-        locked?: TriState,
+        // Whether the note has a date
+        date?: TriState,
         // Note validity
         invalid?: TriState,
         // How to order the notes.
@@ -183,10 +183,10 @@ export default class ApiNoteList {
             notes = notes.filter(note => !note.hasTodos);
         }
 
-        if (locked === TriState.On) {
-            notes = notes.filter(note => note.locked);
-        } else if (locked === TriState.Off) {
-            notes = notes.filter(note => !note.locked);
+        if (date === TriState.On) {
+            notes = notes.filter(note => note.date);
+        } else if (date === TriState.Off) {
+            notes = notes.filter(note => !note.date);
         }
 
         if (invalid === TriState.On) {

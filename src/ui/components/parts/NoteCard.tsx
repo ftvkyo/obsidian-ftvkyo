@@ -113,27 +113,30 @@ function State({
     let tasks = null;
     if (undone > 0 || done > 0) {
         const total = undone + done;
-        tasks = <>
+        tasks = <div className={styles.state}>
             <div data-icon="check-circle"/>
             {done} of {total}
             <progress
                 value={done}
                 max={total}
             />
-        </>;
+        </div>;
     }
 
-    // TODO: Frontmatter info here?
+    const dateInfo = note.date;
 
-    if (tasks) {
-        return <div
-            className={styles.state}
-        >
-            {tasks}
-        </div>
+    let date = null;
+    if (dateInfo) {
+        date = <div className={styles.state}>
+            <div data-icon="calendar"/>
+            <code>{dateInfo}</code>
+        </div>;
     }
 
-    return null;
+    return <>
+        {tasks}
+        {date}
+    </>;
 }
 
 

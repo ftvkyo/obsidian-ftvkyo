@@ -23,9 +23,9 @@ export default function NoteFilter({
         onChange={(v) => setFilter({...filter, todos: v, page: 0})}
     />;
 
-    const isLocked = <TriToggle
-        value={filter.locked}
-        onChange={(v) => setFilter({...filter, locked: v, page: 0})}
+    const hasDate = <TriToggle
+        value={filter.date}
+        onChange={(v) => setFilter({...filter, date: v, page: 0})}
     />;
 
     // Filtering invalid notes.
@@ -38,7 +38,7 @@ export default function NoteFilter({
         <div className={styles.toggles}>
             <div>Title {hasTitle}</div>
             <div>TODOs {hasTodos}</div>
-            <div>Locked {isLocked}</div>
+            <div>Dated {hasDate}</div>
             <div>Invalid {isInvalid}</div>
         </div>
     </>;
