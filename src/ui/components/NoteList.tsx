@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {clsx} from "clsx";
 
 import NoteCard from "./parts/NoteCard";
@@ -64,10 +64,16 @@ export default function NoteList({
 
     const updateRef = useIcons();
 
+    const listRef = useCallback((node: HTMLElement | null) => {
+        if (node) {
+            node.scrollTop = 0;
+        }
+    }, noteCards);
+
     return <>
         <div className={styles.controls}>
             <div
-            ref={updateRef}
+                ref={updateRef}
                 className={styles.tagHeader}
             >
                 <div
@@ -99,7 +105,10 @@ export default function NoteList({
                 setFilter={setFilter}
             />
         </div>
-        <div className={styles.list}>
+        <div
+            ref={listRef}
+            className={styles.list}
+        >
             {noteCards}
         </div>
     </>;
