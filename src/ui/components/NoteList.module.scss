@@ -3,12 +3,12 @@
 
 
 .controls {
-    padding: vars.$gutter;
+    padding: vars.$pad;
     border-bottom: 1px solid var(--background-modifier-border);
 
     display: flex;
     flex-direction: column;
-    gap: vars.$gutter;
+    gap: vars.$gap;
 
     --justify-content: end;
 
@@ -17,7 +17,7 @@
 
         display: flex;
         flex-direction: row;
-        gap: vars.$gutter;
+        gap: vars.$gap;
         justify-content: var(--justify-content);
         align-items: center;
     }

@@ -1,12 +1,16 @@
 @use "../../vars";
 
 
+$card-border-radius: 0.25rem;
+$card-box-shadow: 0.1rem 0.1rem 0.5rem var(--background-modifier-box-shadow);
+
+
 @mixin list {
-    padding: (vars.$gutter * 2) vars.$gutter;
+    padding: vars.$pad;
 
     display: flex;
     flex-direction: column;
-    gap: vars.$gutter * 2;
+    gap: vars.$gap;
 
     overflow-y: scroll;
 }
@@ -14,11 +18,11 @@
 
 @mixin card {
     border: 1px solid var(--background-modifier-border);
-    border-radius: vars.$card-br;
+    border-radius: $card-border-radius;
 
-    box-shadow: 0.1em 0.1em 0.5em var(--background-modifier-box-shadow);
+    box-shadow: $card-box-shadow;
 
-    padding: vars.$gutter;
+    padding: vars.$pad;
 
     background-color: var(--background-primary);
 }

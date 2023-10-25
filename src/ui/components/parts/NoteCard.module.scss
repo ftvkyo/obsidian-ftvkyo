@@ -5,22 +5,19 @@
 .card {
     @include list.card;
 
-    &.selected {
-		box-shadow: 0.1em 0.1em 0.5em gold;
-    }
-
     // We have nested stuff so we need to re-pad
     padding: 0;
 
     .header {
-        padding: vars.$gutter;
-        border-radius: vars.$card-br vars.$card-br 0 0;
+        padding: vars.$pad;
+        border-top-left-radius: list.$card-border-radius;
+        border-top-right-radius: list.$card-border-radius;
 
         background-color: var(--table-header-background);
 
         display: flex;
         flex-direction: row;
-        gap: vars.$gutter;
+        gap: vars.$gap;
 
         .title {
             flex: 1;
@@ -42,11 +39,11 @@
     }
 
     .info {
-        padding: vars.$gutter;
+        padding: vars.$pad;
 
         display: flex;
         flex-direction: column;
-        gap: vars.$gutter;
+        gap: vars.$gap;
 
         [data-icon] {
             // We are using `clickable-icon` class
@@ -60,7 +57,7 @@
             flex-direction: row;
             align-items: center;
 
-            gap: vars.$gutter;
+            gap: vars.$gap;
 
             progress {
                 appearance: none;

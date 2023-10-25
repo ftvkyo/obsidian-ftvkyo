@@ -1,7 +1,7 @@
 @use "../../../vars";
 
 .toggles {
-    gap: vars.$gutter * 2;
+    gap: vars.$gap;
     flex-wrap: wrap;
 
     > * {
