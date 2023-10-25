@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 
 import NoteCard from "./parts/NoteCard";
-import ApiNoteList, {NoteFilterType, TagWildcard, tagDisplay} from "@/api/note-list";
+import ApiNoteList, {NoteFilterType, Tag} from "@/api/note-list";
 import NoteFilter from "./parts/NoteFilter";
 import NotePaginator from "./parts/NotePaginator";
 import { TriState } from "./controls/TriToggle";
@@ -36,8 +36,8 @@ function NoteListControls({
     setFilter,
     found,
 }: {
-    tag: string | TagWildcard,
-    setTag: (t: string | TagWildcard | null) => void,
+    tag: Tag,
+    setTag: (t: Tag | null) => void,
     filter: Omit<NoteFilterType, "tag">,
     setFilter: (f: Omit<NoteFilterType, "tag">) => void,
     found: number,
@@ -50,7 +50,7 @@ function NoteListControls({
                 icon="arrow-left"
                 onClick={() => setTag(null)}
             />
-            <span>{tagDisplay(tag)}</span>
+            <span>{tag.display}</span>
             <Icon
                 icon={filter.orderKey === "date" ? "calendar" : "type"}
                 onClick={() => setFilter({
@@ -120,8 +120,8 @@ export default function NoteList({
     setTag,
     notes,
 }: {
-    tag: string | TagWildcard,
-    setTag: (t: string | TagWildcard | null) => void,
+    tag: Tag,
+    setTag: (t: Tag | null) => void,
     notes: ApiNoteList,
 }) {
     const [filter, setFilter] = useState<Omit<NoteFilterType, "tag">>({

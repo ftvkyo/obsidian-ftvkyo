@@ -11,17 +11,29 @@ export enum TagWildcard {
 }
 
 
-export function tagDisplay(tag: string | TagWildcard) {
-    if (tag === TagWildcard.All) {
-        return "All notes";
+export class Tag {
+    constructor(
+        public readonly raw: string | TagWildcard
+    ) {}
+
+    static all = new Tag(TagWildcard.All);
+
+    static any = new Tag(TagWildcard.Any);
+
+    static none = new Tag(TagWildcard.None);
+
+    get display() {
+        switch (this.raw) {
+            case TagWildcard.All:
+                return "All";
+            case TagWildcard.Any:
+                return "With tags";
+            case TagWildcard.None:
+                return "No tags";
+            default:
+                return "#" + this.raw;
+        }
     }
-    if (tag === TagWildcard.Any) {
-        return "Any tags";
-    }
-    if (tag === TagWildcard.None) {
-        return "Without tags";
-    }
-    return "#" + tag;
 }
 
 
@@ -121,7 +133,7 @@ export default class ApiNoteList {
 
     // Filter the notes.
     where({
-        tag = TagWildcard.All,
+        tag = Tag.all,
         title = TriState.Maybe,
         todos = TriState.Maybe,
         date = TriState.Maybe,
@@ -131,7 +143,7 @@ export default class ApiNoteList {
         page = undefined,
     }: {
         // What tag to require.
-        tag?: string | TagWildcard,
+        tag?: Tag,
         // Heading presence
         title?: TriState,
         // Note status
@@ -148,22 +160,22 @@ export default class ApiNoteList {
     }): {notes: ApiNoteList, found: number} {
         let notes = this.notes;
 
-        if (tag !== TagWildcard.All) {
+        if (tag !== Tag.all) {
             notes = notes.filter(note => {
                 // No tags.
-                if (tag === TagWildcard.None) {
+                if (tag === Tag.none) {
                     return note.tags.length === 0;
                 }
                 // At least some tags.
-                if (tag === TagWildcard.Any) {
+                if (tag === Tag.any) {
                     return note.tags.length !== 0;
                 }
                 // Include both tags themselves and their subtags
                 for (const nt of note.tags) {
-                    if (nt === tag) {
+                    if (nt === tag.raw) {
                         return true;
                     }
-                    if (nt.startsWith(tag + "/")) {
+                    if (nt.startsWith(tag.raw + "/")) {
                         return true;
                     }
                 }

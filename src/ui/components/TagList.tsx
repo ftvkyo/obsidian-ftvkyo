@@ -1,4 +1,4 @@
-import ApiNoteList, { TagWildcard } from "@/api/note-list";
+import ApiNoteList, { Tag } from "@/api/note-list";
 import Icon from "./controls/Icon";
 import {TagTree} from "./parts/TagTree";
 
@@ -10,38 +10,38 @@ export default function TagList({
     setTag,
 }: {
     notes: ApiNoteList,
-    setTag: (id: string | TagWildcard) => void,
+    setTag: (id: Tag) => void,
 }) {
     return <div className={styles.list}>
         <div className={styles.wildcards}>
             <div
                 className="clickable-icon"
-                onClick={() => setTag(TagWildcard.All)}
+                onClick={() => setTag(Tag.all)}
             >
                 <Icon icon="list"/>
-                All notes
+                {Tag.all.display}
             </div>
 
             <div
                 className="clickable-icon"
-                onClick={() => setTag(TagWildcard.Any)}
+                onClick={() => setTag(Tag.any)}
             >
                 <Icon icon="hash"/>
-                With tags
+                {Tag.any.display}
             </div>
 
             <div
                 className="clickable-icon"
-                onClick={() => setTag(TagWildcard.None)}
+                onClick={() => setTag(Tag.none)}
             >
                 <Icon icon="circle-off"/>
-                No tags
+                {Tag.none.display}
             </div>
         </div>
 
         <TagTree
             tree={notes.tagTree}
-            setTag={setTag}
+            setTag={(id: string) => setTag(new Tag(id))}
         />
     </div>;
 }

@@ -3,7 +3,7 @@ import {useState} from "react";
 import {type ViewElement} from "./view";
 import Logger from "@/util/logger";
 import NoteList from "../components/NoteList";
-import { TagWildcard } from "@/api/note-list";
+import { Tag } from "@/api/note-list";
 import TagList from "../components/TagList";
 
 
@@ -16,7 +16,7 @@ const ExploreView: ViewElement = {
             lg = ftvkyo.lg.sub("Explore");
         }
 
-        const [tag, setTag] = useState<string | TagWildcard | null>(null);
+        const [tag, setTag] = useState<Tag | null>(null);
 
         const notes = ftvkyo.api.source.cache.unique;
 
