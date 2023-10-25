@@ -9,6 +9,9 @@ export enum TriState {
     Maybe = "maybe",
 }
 
+type TS = TriState;
+const TS = TriState;
+
 
 export enum TagWildcard {
     All,
@@ -43,24 +46,250 @@ export class Tag {
 }
 
 
-export type TagMap = {
+export interface TagMap {
     [id: string]: {
         notes: ApiNote[],
         noteRoot?: ApiNote,
     },
-};
+}
 
 
-export type TagTree = {
+export interface TagTree {
     // Unlike `TagMap`, this is a recursive
     // structure, and the keys are path bits.
     [bit: string]: {
         notes: ApiNote[],
         noteRoot?: ApiNote,
         subtags: TagTree,
-    }
-};
+    },
+}
 
+
+interface WhereFilter {
+    title: TS,
+    todos: TS,
+    dated: TS,
+    broken: TS,
+}
+
+interface WhereOrder {
+    key: "base" | "title",
+    dir: "asc" | "desc",
+}
+
+
+export class ApiWhere {
+
+    constructor(
+        public readonly tag: Tag = Tag.all,
+        public readonly filter: WhereFilter = {
+            title: TS.Maybe,
+            todos: TS.Maybe,
+            dated: TS.Maybe,
+            broken: TS.Maybe,
+        },
+        public readonly order: WhereOrder = {
+            key: "base",
+            dir: "desc",
+        },
+        // TODO: Maybe page does not belong here, actually.
+        public readonly page: number | undefined = undefined,
+    ) {}
+
+    static default = new ApiWhere();
+
+    static init(tag: Tag) {
+        return ApiWhere.default.withTag(tag).withPage(0);
+    }
+
+    /* ================== *
+     * Flexible modifiers *
+     * ================== */
+
+    resetTag() {
+        return new ApiWhere(
+            ApiWhere.default.tag,
+            this.filter,
+            this.order,
+            this.pageZero,
+        );
+    }
+
+    withTag(tag: Tag) {
+        return new ApiWhere(
+            tag,
+            this.filter,
+            this.order,
+            this.pageZero,
+        );
+    }
+
+    resetOrder() {
+        return new ApiWhere(
+            this.tag,
+            this.filter,
+            ApiWhere.default.order,
+            this.pageZero,
+        );
+    }
+
+    withOrder(key: keyof WhereOrder, value: WhereOrder[typeof key]) {
+        return new ApiWhere(
+            this.tag,
+            this.filter,
+            {
+                ...this.order,
+                [key]: value,
+            },
+            this.pageZero,
+        );
+    }
+
+    resetFilter() {
+        return new ApiWhere(
+            this.tag,
+            ApiWhere.default.filter,
+            this.order,
+            this.pageZero,
+        );
+    }
+
+    withFilter(key: keyof WhereFilter, value: TriState) {
+        return new ApiWhere(
+            this.tag,
+            {
+                ...this.filter,
+                [key]: value,
+            },
+            this.order,
+            this.pageZero,
+        );
+    }
+
+    withPage(page: number | undefined) {
+        return new ApiWhere(
+            this.tag,
+            this.filter,
+            this.order,
+            page,
+        );
+    }
+
+    /* ================ *
+     * Filter shortcuts *
+     * ================ */
+
+    title(title: WhereFilter["title"]) {
+        return this.withFilter("title", title);
+    }
+
+    todos(todos: WhereFilter["todos"]) {
+        return this.withFilter("todos", todos);
+    }
+
+    dated(dated: WhereFilter["dated"]) {
+        return this.withFilter("dated", dated);
+    }
+
+    broken(broken: WhereFilter["broken"]) {
+        return this.withFilter("broken", broken);
+    }
+
+    /* =============== *
+     * Order shortcuts *
+     * =============== */
+
+    key(key: WhereOrder["key"]) {
+        return this.withOrder("key", key);
+    }
+
+    keyNext() {
+        switch (this.order.key) {
+            case "base":
+                return this.key("title");
+            case "title":
+                return this.key("base");
+            default:
+                throw new Error(`Unreachable: unknown key '${this.order.key}'`);
+        }
+    }
+
+    get keyIcon() {
+        switch (this.order.key) {
+            case "base":
+                return "list-tree";
+            case "title":
+                return "heading-1";
+            default:
+                throw new Error(`Unreachable: unknown key '${this.order.key}'`);
+        }
+    }
+
+    dir(dir: WhereOrder["dir"]) {
+        return this.withOrder("dir", dir);
+    }
+
+    dirNext() {
+        switch (this.order.dir) {
+            case "asc":
+                return this.dir("desc");
+            case "desc":
+                return this.dir("asc");
+            default:
+                throw new Error(`Unreachable: unknown dir '${this.order.dir}'`);
+        }
+    }
+
+    get dirIcon() {
+        switch (this.order.dir) {
+            case "asc":
+                return "sort-asc";
+            case "desc":
+                return "sort-desc";
+            default:
+                throw new Error(`Unreachable: unknown dir '${this.order.dir}'`);
+        }
+    }
+
+    /* ================ *
+     * Paging shortcuts *
+     * ================ */
+
+    // Get the page 0 if it's set and undefined otherwise.
+    get pageZero() {
+        return this.page === undefined ? undefined : 0;
+    }
+
+    // Assume that the page is set, get it, throw otherwise.
+    get pageSet() {
+        if (this.page === undefined) {
+            throw new Error("Page is not set");
+        }
+        return this.page;
+    }
+
+    pageNone() {
+        return this.withPage(undefined);
+    }
+
+    pageFirst() {
+        return this.withPage(this.pageZero);
+    }
+
+    pageNext() {
+        if (this.page === undefined) {
+            throw new Error("Can't increment page as it's not set");
+        }
+        return this.withPage(this.page + 1);
+    }
+
+    pagePrev() {
+        if (this.page === undefined) {
+            throw new Error("Can't decrement page as it's not set");
+        }
+        return this.withPage(this.page - 1);
+    }
+}
 
 
 export default class ApiNoteList {
@@ -134,36 +363,23 @@ export default class ApiNoteList {
         return res;
     }
 
-    // TODO: make the filter an class rather than just an object, so things like
-    // resetting the page on changing other filters are not forgotten at the usage site.
-
     // Filter the notes.
-    where({
-        tag = Tag.all,
-        title = TriState.Maybe,
-        todos = TriState.Maybe,
-        date = TriState.Maybe,
-        invalid = TriState.Maybe,
-        orderKey = "date",
-        orderDir = "desc",
-        page = undefined,
-    }: {
-        // What tag to require.
-        tag?: Tag,
-        // Heading presence
-        title?: TriState,
-        // Note status
-        todos?: TriState,
-        // Whether the note has a date
-        date?: TriState,
-        // Note validity
-        invalid?: TriState,
-        // How to order the notes.
-        orderKey?: "date" | "title",
-        orderDir?: "asc" | "desc",
-        // Pagination, undefined = all results
-        page?: number,
-    }): {notes: ApiNoteList, found: number} {
+    where(w: ApiWhere): {notes: ApiNoteList, found: number} {
+        const {
+            tag,
+            filter: {
+                title,
+                todos,
+                dated,
+                broken,
+            },
+            order: {
+                key,
+                dir,
+            },
+            page,
+        } = w;
+
         let notes = this.notes;
 
         if (tag !== Tag.all) {
@@ -189,37 +405,37 @@ export default class ApiNoteList {
             });
         }
 
-        if (title === TriState.On) {
+        if (title === TS.On) {
             notes = notes.filter(note => note.title !== null);
-        } else if (title === TriState.Off) {
+        } else if (title === TS.Off) {
             notes = notes.filter(note => note.title === null);
         }
 
-        if (todos === TriState.On) {
+        if (todos === TS.On) {
             notes = notes.filter(note => note.hasTodos);
-        } else if (todos === TriState.Off) {
+        } else if (todos === TS.Off) {
             notes = notes.filter(note => !note.hasTodos);
         }
 
-        if (date === TriState.On) {
+        if (dated === TS.On) {
             notes = notes.filter(note => note.date);
-        } else if (date === TriState.Off) {
+        } else if (dated === TS.Off) {
             notes = notes.filter(note => !note.date);
         }
 
-        if (invalid === TriState.On) {
+        if (broken === TS.On) {
             notes = notes.filter(note => note.invalid !== false);
-        } else if (invalid === TriState.Off) {
+        } else if (broken === TS.Off) {
             notes = notes.filter(note => note.invalid === false);
         }
 
-        const keyF = orderKey === "title"
+        const keyF = key === "title"
             ? (e: ApiNote) => e.title ?? e.base
             : (e: ApiNote) => e.base;
 
         notes = notes.sort((a, b) => keyF(a).localeCompare(keyF(b)));
 
-        if (orderDir === "desc") {
+        if (dir === "desc") {
             notes = notes.reverse();
         }
 
@@ -234,5 +450,3 @@ export default class ApiNoteList {
         return {notes: new ApiNoteList(notes), found: count};
     }
 }
-
-export type NoteFilterType = Required<Parameters<typeof ApiNoteList.prototype.where>[0]>;

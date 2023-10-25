@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 
 import NoteCard from "./parts/NoteCard";
-import ApiNoteList, {NoteFilterType, Tag, TriState} from "@/api/note-list";
+import ApiNoteList, {ApiWhere, Tag} from "@/api/note-list";
 import NoteFilter from "./parts/NoteFilter";
 import NotePaginator from "./parts/NotePaginator";
 
@@ -20,25 +20,15 @@ import Icon from "./controls/Icon";
 // - Other stuff :)
 
 
-const filterDefaults = {
-    title: TriState.Maybe,
-    todos: TriState.Maybe,
-    date: TriState.Maybe,
-    invalid: TriState.Maybe,
-};
-
-
 function NoteListControls({
-    tag,
-    setTag,
-    filter,
-    setFilter,
+    w,
+    setW,
     found,
+    goBack,
 }: {
-    tag: Tag,
-    setTag: (t: Tag | null) => void,
-    filter: Omit<NoteFilterType, "tag">,
-    setFilter: (f: Omit<NoteFilterType, "tag">) => void,
+    w: ApiWhere,
+    setW: (f: ApiWhere) => void,
+    goBack: () => void,
     found: number,
 }) {
     const [filtering, setFiltering] = useState(false);
@@ -47,44 +37,36 @@ function NoteListControls({
         <div className={styles.header}>
             <Icon
                 icon="arrow-left"
-                onClick={() => setTag(null)}
+                onClick={goBack}
             />
-            <span>{tag.display}</span>
+            <span>{w.tag.display}</span>
             <Icon
-                icon={filter.orderKey === "date" ? "calendar" : "type"}
-                onClick={() => setFilter({
-                    ...filter,
-                    orderKey: filter.orderKey === "date" ? "title" : "date",
-                    page: 0,
-                })}
+                icon={w.keyIcon}
+                onClick={() => setW(w.keyNext())}
             />
             <Icon
-                icon={"sort-" + filter.orderDir}
-                onClick={() => setFilter({
-                    ...filter,
-                    orderDir: filter.orderDir === "asc" ? "desc" : "asc",
-                    page: 0,
-                })}
+                icon={w.dirIcon}
+                onClick={() => setW(w.dirNext())}
             />
             <Icon
                 icon="filter"
                 pressed={filtering}
                 onClick={() => {
-                    setFilter({...filter, ...filterDefaults});
+                    setW(w.resetFilter());
                     setFiltering(!filtering);
                 }}
             />
         </div>
 
         {filtering ? <NoteFilter
-            filter={{...filter, tag}}
-            setFilter={setFilter}
+            w={w}
+            setW={setW}
         /> : null}
 
         <NotePaginator
             total={found}
-            filter={{...filter, tag}}
-            setFilter={setFilter}
+            w={w}
+            setW={setW}
         />
     </div>;
 }
@@ -116,28 +98,22 @@ function NoteCards({
 
 export default function NoteList({
     tag,
-    setTag,
+    goBack,
     notes,
 }: {
     tag: Tag,
-    setTag: (t: Tag | null) => void,
+    goBack: () => void,
     notes: ApiNoteList,
 }) {
-    const [filter, setFilter] = useState<Omit<NoteFilterType, "tag">>({
-        ...filterDefaults,
-        orderKey: "date",
-        orderDir: "desc",
-        page: 0,
-    });
+    const [where, setWhere] = useState(ApiWhere.default.withTag(tag).withPage(0));
 
-    const {notes: notesFiltered, found} = notes.where({...filter, tag});
+    const {notes: notesFiltered, found} = notes.where(where);
 
     return <>
         <NoteListControls
-            tag={tag}
-            setTag={setTag}
-            filter={filter}
-            setFilter={setFilter}
+            w={where}
+            setW={setWhere}
+            goBack={goBack}
             found={found}
         />
 

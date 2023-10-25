@@ -1,37 +1,36 @@
-import {NoteFilterType} from "@/api/note-list";
+import { ApiWhere } from "@/api/note-list";
 import TriToggle from "../controls/TriToggle";
-
 import styles from "./NoteFilter.module.scss";
 
 
 export default function NoteFilter({
-    filter,
-    setFilter,
+    w,
+    setW,
 }: {
-    filter: NoteFilterType,
-    setFilter: (filter: NoteFilterType) => void,
+    w: ApiWhere,
+    setW: (w: ApiWhere) => void,
 }) {
     // Filtering notes with/without titles.
     const hasTitle = <TriToggle
-        value={filter.title}
-        onChange={(v) => setFilter({...filter, title: v, page: 0})}
+        value={w.filter.title}
+        onChange={(v) => setW(w.title(v))}
     />;
 
     // Filtering WIP notes.
     const hasTodos = <TriToggle
-        value={filter.todos}
-        onChange={(v) => setFilter({...filter, todos: v, page: 0})}
+        value={w.filter.todos}
+        onChange={(v) => setW(w.todos(v))}
     />;
 
     const hasDate = <TriToggle
-        value={filter.date}
-        onChange={(v) => setFilter({...filter, date: v, page: 0})}
+        value={w.filter.dated}
+        onChange={(v) => setW(w.dated(v))}
     />;
 
-    // Filtering invalid notes.
-    const isInvalid = <TriToggle
-        value={filter.invalid}
-        onChange={(v) => setFilter({...filter, invalid: v, page: 0})}
+    // Filtering broken notes.
+    const isBroken = <TriToggle
+        value={w.filter.broken}
+        onChange={(v) => setW(w.broken(v))}
     />;
 
     return <>
@@ -39,7 +38,7 @@ export default function NoteFilter({
             <div>Title {hasTitle}</div>
             <div>TODOs {hasTodos}</div>
             <div>Dated {hasDate}</div>
-            <div>Invalid {isInvalid}</div>
+            <div>Broken {isBroken}</div>
         </div>
     </>;
 }

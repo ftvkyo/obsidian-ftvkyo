@@ -28,7 +28,7 @@ const ExploreView: ViewElement = {
         } else {
             return <NoteList
                 tag={tag}
-                setTag={setTag}
+                goBack={() => setTag(null)}
                 notes={notes}
             />;
         }

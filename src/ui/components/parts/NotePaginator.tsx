@@ -1,4 +1,4 @@
-import {NoteFilterType} from "@/api/note-list";
+import { ApiWhere } from "@/api/note-list";
 import Icon from "../controls/Icon";
 
 import styles from "./NotePaginator.module.scss";
@@ -6,38 +6,38 @@ import styles from "./NotePaginator.module.scss";
 
 export default function NotePaginator({
     total: found,
-    filter,
-    setFilter,
+    w,
+    setW,
 }: {
     total: number,
-    filter: NoteFilterType,
-    setFilter: (filter: NoteFilterType) => void,
+    w: ApiWhere,
+    setW: (w: ApiWhere) => void,
 }) {
     const pages = Math.ceil(found / ftvkyo.settings.resultsPerPage);
 
     const pagePrevBtn = <Icon
         icon="chevron-left"
-        disabled={filter.page < 1}
+        disabled={w.pageSet < 1}
         onClick={(e: React.MouseEvent) => {
             if (e.ctrlKey) {
-                setFilter({...filter, page: 0});
+                setW(w.pageFirst());
                 return;
             }
-            setFilter({...filter, page: filter.page - 1});
+            setW(w.pagePrev());
         }}
     />;
 
     const pageNextBtn = <Icon
         icon="chevron-right"
-        disabled={filter.page >= pages - 1}
+        disabled={w.pageSet >= pages - 1}
         onClick={() => {
-            setFilter({...filter, page: filter.page + 1});
+            setW(w.pageNext());
         }}
     />;
 
     return <div className={styles.paginator}>
         {pagePrevBtn}
-        <span>{filter.page + 1}/{pages} ({found})</span>
+        <span>{w.pageSet + 1}/{pages} ({found})</span>
         {pageNextBtn}
     </div>;
 }
