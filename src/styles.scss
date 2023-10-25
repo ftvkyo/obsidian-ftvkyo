@@ -13,17 +13,6 @@ div.workspace-leaf-content[data-type^="ftvkyo-"] {
         padding: vars.$gutter 1em;
     }
 
-    label {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 0.25em;
-
-        select {
-            flex-grow: 1;
-        }
-    }
-
     // Obsidain-provided class
     div.view-content {
         padding: 0;
