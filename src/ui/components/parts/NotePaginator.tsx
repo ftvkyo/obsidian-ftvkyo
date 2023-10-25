@@ -1,6 +1,7 @@
 import {NoteFilterType} from "@/api/note-list";
 import Icon from "../controls/Icon";
-import Selector from "../controls/Selector";
+
+import styles from "./NotePaginator.module.scss";
 
 
 export default function NotePaginator({
@@ -13,25 +14,6 @@ export default function NotePaginator({
     setFilter: (filter: NoteFilterType) => void,
 }) {
     const pages = Math.ceil(found / ftvkyo.settings.resultsPerPage);
-
-    const sortingSelector = <Selector
-        options={[
-            ["date-desc", "Date: New first"],
-            ["date-asc", "Date: Old first"],
-            ["title-asc", "Title: A-Z"],
-            ["title-desc", "Title: Z-A"],
-        ]}
-        value={`${filter.orderKey}-${filter.orderDir}`}
-        onChange={(v) => {
-            const [orderKey, orderDir] = v.split("-");
-            setFilter({
-                ...filter,
-                orderKey: orderKey as "date" | "title",
-                orderDir: orderDir as "asc" | "desc",
-                page: 0,
-            });
-        }}
-    />;
 
     const pagePrevBtn = <Icon
         icon="chevron-left"
@@ -53,10 +35,9 @@ export default function NotePaginator({
         }}
     />;
 
-    return <div>
-        {filter.page + 1}/{pages} ({found})
+    return <div className={styles.paginator}>
         {pagePrevBtn}
+        <span>{filter.page + 1}/{pages} ({found})</span>
         {pageNextBtn}
-        {sortingSelector}
     </div>;
 }

@@ -1,15 +1,8 @@
 import { clsx } from "clsx";
 import { setIcon } from "obsidian";
+import { useCallback } from "react";
 
 import styles from "./Icon.module.scss";
-
-
-function setIconCallback(node: HTMLElement | null) {
-    if (node) {
-        const name = node.getAttribute("data-icon");
-        name && setIcon(node, name);
-    }
-}
 
 
 export interface IconProps {
@@ -28,8 +21,15 @@ export default function Icon({
     disabled,
     onClick,
 }: IconProps) {
+    const updateIcon = useCallback((node: HTMLElement | null) => {
+        if (node) {
+            const name = node.getAttribute("data-icon");
+            name && setIcon(node, name);
+        }
+    }, [icon]);
+
     return <div
-        ref={setIconCallback}
+        ref={updateIcon}
 
         className={clsx(
             "clickable-icon", // General styling from obsidian

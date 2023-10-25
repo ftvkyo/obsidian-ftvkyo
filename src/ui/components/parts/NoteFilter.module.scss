@@ -1,8 +1,11 @@
 @use "../../../vars";
 
 .toggles {
-    gap: vars.$gap;
+    display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
+    justify-content: end;
+    gap: vars.$gap;
 
     > * {
         display: flex;

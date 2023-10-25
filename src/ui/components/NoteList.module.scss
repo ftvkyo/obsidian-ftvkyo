@@ -9,30 +9,13 @@
     display: flex;
     flex-direction: column;
     gap: vars.$gap;
-
-    --justify-content: end;
-
-    > * {
-        width: 100%;
-
-        display: flex;
-        flex-direction: row;
-        gap: vars.$gap;
-        justify-content: var(--justify-content);
-        align-items: center;
-    }
-
-    [data-icon] {
-        aspect-ratio: 1 / 1;
-    }
 }
 
-.tagHeader {
-    --justify-content: start;
-
+.header {
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: vars.$gap;
 
     > span {
         flex: 1;

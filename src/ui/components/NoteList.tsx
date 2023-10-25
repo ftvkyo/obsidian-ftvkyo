@@ -45,12 +45,28 @@ function NoteListControls({
     const [filtering, setFiltering] = useState(false);
 
     return <div className={styles.controls}>
-        <div className={styles.tagHeader}>
+        <div className={styles.header}>
             <Icon
                 icon="arrow-left"
                 onClick={() => setTag(null)}
             />
             <span>{tagDisplay(tag)}</span>
+            <Icon
+                icon={filter.orderKey === "date" ? "calendar" : "type"}
+                onClick={() => setFilter({
+                    ...filter,
+                    orderKey: filter.orderKey === "date" ? "title" : "date",
+                    page: 0,
+                })}
+            />
+            <Icon
+                icon={"sort-" + filter.orderDir}
+                onClick={() => setFilter({
+                    ...filter,
+                    orderDir: filter.orderDir === "asc" ? "desc" : "asc",
+                    page: 0,
+                })}
+            />
             <Icon
                 icon="filter"
                 pressed={filtering}
