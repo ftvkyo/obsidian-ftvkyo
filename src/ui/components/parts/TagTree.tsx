@@ -1,6 +1,6 @@
 import ApiNote from "@/api/note";
 import {TagTree} from "@/api/note-list";
-import {useIcons} from "@/util/icons";
+import Icon from "../controls/Icon";
 
 import styles from "./TagTree.module.scss";
 
@@ -20,12 +20,10 @@ function TagSingle({
     setTag: (id: string) => void,
     children?: React.ReactNode,
 }) {
-    const iconRef = useIcons();
-
     return <div
         className={styles.card}
     >
-        <div ref={iconRef} className={styles.single}>
+        <div className={styles.single}>
             <a onClick={() => setTag(id)}>
                 {display}
             </a>
@@ -34,10 +32,9 @@ function TagSingle({
                 ({count})
             </span>
 
-            {noteRoot && <div
-                className="clickable-icon"
-                data-icon="hash"
-                aria-label="Root note"
+            {noteRoot && <Icon
+                icon="hash"
+                label="Root note"
                 onClick={() => noteRoot.reveal()}
             />}
         </div>

@@ -1,5 +1,5 @@
 import ApiNoteList, { TagWildcard } from "@/api/note-list";
-import {useIcons} from "@/util/icons";
+import Icon from "./controls/Icon";
 import {TagTree} from "./parts/TagTree";
 
 import styles from "./TagList.module.scss";
@@ -12,15 +12,13 @@ export default function TagList({
     notes: ApiNoteList,
     setTag: (id: string | TagWildcard) => void,
 }) {
-    const updateRef = useIcons();
-
-    return <div ref={updateRef} className={styles.list}>
+    return <div className={styles.list}>
         <div className={styles.wildcards}>
             <div
                 className="clickable-icon"
                 onClick={() => setTag(TagWildcard.All)}
             >
-                <div data-icon="list"/>
+                <Icon icon="list"/>
                 All notes
             </div>
 
@@ -28,7 +26,7 @@ export default function TagList({
                 className="clickable-icon"
                 onClick={() => setTag(TagWildcard.Any)}
             >
-                <div data-icon="hash"/>
+                <Icon icon="hash"/>
                 With tags
             </div>
 
@@ -36,7 +34,7 @@ export default function TagList({
                 className="clickable-icon"
                 onClick={() => setTag(TagWildcard.None)}
             >
-                <div data-icon="circle-off"/>
+                <Icon icon="circle-off"/>
                 No tags
             </div>
         </div>

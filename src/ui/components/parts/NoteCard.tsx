@@ -5,7 +5,8 @@ import ApiNote from "@/api/note";
 import { toClipboard } from "@/util/clipboard";
 
 import styles from "./NoteCard.module.scss";
-import {useIcons} from "@/util/icons";
+import Icon from "../controls/Icon";
+import { useCallback } from "react";
 
 
 function onClick(
@@ -44,20 +45,6 @@ function onAuxClick(
 }
 
 
-function copy(
-    e: React.MouseEvent<HTMLAnchorElement>,
-) {
-    e.preventDefault();
-
-    const href = e.currentTarget.getAttribute("href");
-    if (!href) {
-        return;
-    }
-
-    toClipboard(href);
-}
-
-
 interface Props {
     note: ApiNote,
 }
@@ -66,6 +53,8 @@ interface Props {
 function Header({
     note
 }: Props): JSX.Element {
+    const copy = useCallback(() => toClipboard(`[[${note.base}]]`), [note.base]);
+
     return <div
         className={styles.header}
     >
@@ -81,11 +70,9 @@ function Header({
             }
         </a>
 
-        <a
-            className="clickable-icon"
-            data-icon="link"
-
-            href={`[[${note.base}]]`}
+        <Icon
+            icon="link"
+            label="Copy link"
             onClick={copy}
         />
     </div>;
@@ -114,7 +101,7 @@ function State({
     if (undone > 0 || done > 0) {
         const total = undone + done;
         tasks = <div className={styles.state}>
-            <div data-icon="check-circle"/>
+            <Icon icon="check-circle"/>
             {done} of {total}
             <progress
                 value={done}
@@ -128,7 +115,7 @@ function State({
     let date = null;
     if (dateInfo) {
         date = <div className={styles.state}>
-            <div data-icon="calendar"/>
+            <Icon icon="calendar"/>
             <code>{dateInfo}</code>
         </div>;
     }
@@ -155,9 +142,7 @@ function Invalid({
 function Info({
     note
 }: Props): JSX.Element {
-    return <div
-        className={styles.info}
-    >
+    return <div className={styles.info}>
         <State note={note}/>
         <Tags note={note}/>
         <Invalid note={note}/>
@@ -168,12 +153,7 @@ function Info({
 export default function NoteCard({
     note,
 }: Props) {
-    const updateRef = useIcons();
-
-    return <div
-        ref={updateRef}
-        className={styles.card}
-    >
+    return <div className={styles.card}>
         <Header note={note}/>
         <Info note={note}/>
     </div>

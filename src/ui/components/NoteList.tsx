@@ -1,14 +1,13 @@
 import { useCallback, useState } from "react";
-import {clsx} from "clsx";
 
 import NoteCard from "./parts/NoteCard";
 import ApiNoteList, {NoteFilterType, TagWildcard, tagDisplay} from "@/api/note-list";
 import NoteFilter from "./parts/NoteFilter";
 import NotePaginator from "./parts/NotePaginator";
 import { TriState } from "./controls/TriToggle";
-import {useIcons} from "@/util/icons";
 
 import styles from "./NoteList.module.scss";
+import Icon from "./controls/Icon";
 
 
 // TODO: Display a warning if there are notes with the same
@@ -62,8 +61,6 @@ export default function NoteList({
     const {notes: notesFiltered, found} = notes.where({...filter, tag});
     const noteCards = generateNoteCards(notesFiltered);
 
-    const updateRef = useIcons();
-
     const listRef = useCallback((node: HTMLElement | null) => {
         if (node) {
             node.scrollTop = 0;
@@ -72,26 +69,20 @@ export default function NoteList({
 
     return <>
         <div className={styles.controls}>
-            <div
-                ref={updateRef}
-                className={styles.tagHeader}
-            >
-                <div
-                    className="clickable-icon"
-                    data-icon="arrow-left"
-
+            <div className={styles.tagHeader}>
+                <Icon
+                    icon="arrow-left"
                     onClick={() => setTag(null)}
                 />
                 <span>{tagDisplay(tag)}</span>
-                <div
-                    className={clsx("clickable-icon", filtering && "is-active")}
-                    data-icon="filter"
-
+                <Icon
+                    icon="filter"
+                    active={filtering}
                     onClick={() => {
                         setFilter({...filter, ...filterDefaults});
                         setFiltering(!filtering);
-                    }}>
-                </div>
+                    }}
+                />
             </div>
 
             {filtering ? <NoteFilter
