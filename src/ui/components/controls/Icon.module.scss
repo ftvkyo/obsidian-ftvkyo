@@ -5,6 +5,11 @@
     width: fit-content;
 }
 
-.off {
+.disabled {
+    pointer-events: none;
+    opacity: 50%;
+}
+
+.passive {
     pointer-events: none;
 }

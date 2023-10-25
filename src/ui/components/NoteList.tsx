@@ -65,7 +65,7 @@ export default function NoteList({
         if (node) {
             node.scrollTop = 0;
         }
-    }, noteCards);
+    }, [noteCards]);
 
     return <>
         <div className={styles.controls}>
@@ -77,7 +77,7 @@ export default function NoteList({
                 <span>{tagDisplay(tag)}</span>
                 <Icon
                     icon="filter"
-                    active={filtering}
+                    pressed={filtering}
                     onClick={() => {
                         setFilter({...filter, ...filterDefaults});
                         setFiltering(!filtering);

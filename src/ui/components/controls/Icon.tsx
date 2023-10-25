@@ -15,15 +15,17 @@ function setIconCallback(node: HTMLElement | null) {
 export interface IconProps {
     icon: string,
     label?: string,
-    active?: boolean,
-    onClick?: () => void,
+    pressed?: boolean,
+    disabled?: boolean,
+    onClick?: (e: React.MouseEvent) => void,
 }
 
 
 export default function Icon({
     icon,
     label,
-    active,
+    pressed,
+    disabled,
     onClick,
 }: IconProps) {
     return <div
@@ -31,9 +33,10 @@ export default function Icon({
 
         className={clsx(
             "clickable-icon", // General styling from obsidian
-            active && "is-active", // When it's a toggle that is pressed
+            pressed && "is-active", // When it's a toggle that is pressed
             styles.icon, // Custom styling
-            !onClick && styles.off, // When the icon should not be interactive
+            disabled && styles.disabled,
+            !onClick && styles.passive, // When the icon should not be interactive
         )}
 
         data-icon={icon}

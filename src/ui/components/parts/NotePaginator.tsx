@@ -1,4 +1,5 @@
 import {NoteFilterType} from "@/api/note-list";
+import Icon from "../controls/Icon";
 import Selector from "../controls/Selector";
 
 
@@ -32,25 +33,25 @@ export default function NotePaginator({
         }}
     />;
 
-    const pagePrevBtn = <button
+    const pagePrevBtn = <Icon
+        icon="chevron-left"
         disabled={filter.page < 1}
-        onClick={(e) => {
+        onClick={(e: React.MouseEvent) => {
             if (e.ctrlKey) {
                 setFilter({...filter, page: 0});
                 return;
             }
-            setFilter({...filter, page: filter.page - 1})
+            setFilter({...filter, page: filter.page - 1});
         }}
-    >
-        {"<"}
-    </button>;
+    />;
 
-    const pageNextBtn = <button
+    const pageNextBtn = <Icon
+        icon="chevron-right"
         disabled={filter.page >= pages - 1}
-        onClick={() => {setFilter({...filter, page: filter.page + 1})}}
-    >
-        {">"}
-    </button>;
+        onClick={() => {
+            setFilter({...filter, page: filter.page + 1});
+        }}
+    />;
 
     return <div>
         {filter.page + 1}/{pages} ({found})
