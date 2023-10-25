@@ -1,7 +1,13 @@
-import { TriState } from "@/ui/components/controls/TriToggle";
 import {TFile} from "obsidian";
 
 import ApiNote from "./note";
+
+
+export enum TriState {
+    On = "on",
+    Off = "off",
+    Maybe = "maybe",
+}
 
 
 export enum TagWildcard {
