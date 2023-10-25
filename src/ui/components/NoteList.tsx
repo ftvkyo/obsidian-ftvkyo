@@ -21,16 +21,82 @@ import Icon from "./controls/Icon";
 // - Other stuff :)
 
 
-function generateNoteCards(
-    notes: ApiNoteList,
-) {
-    return notes
-        .notes
-        .map(note => <NoteCard
+const filterDefaults = {
+    title: TriState.Maybe,
+    todos: TriState.Maybe,
+    date: TriState.Maybe,
+    invalid: TriState.Maybe,
+};
+
+
+function NoteListControls({
+    tag,
+    setTag,
+    filter,
+    setFilter,
+    found,
+}: {
+    tag: string | TagWildcard,
+    setTag: (t: string | TagWildcard | null) => void,
+    filter: Omit<NoteFilterType, "tag">,
+    setFilter: (f: Omit<NoteFilterType, "tag">) => void,
+    found: number,
+}) {
+    const [filtering, setFiltering] = useState(false);
+
+    return <div className={styles.controls}>
+        <div className={styles.tagHeader}>
+            <Icon
+                icon="arrow-left"
+                onClick={() => setTag(null)}
+            />
+            <span>{tagDisplay(tag)}</span>
+            <Icon
+                icon="filter"
+                pressed={filtering}
+                onClick={() => {
+                    setFilter({...filter, ...filterDefaults});
+                    setFiltering(!filtering);
+                }}
+            />
+        </div>
+
+        {filtering ? <NoteFilter
+            filter={{...filter, tag}}
+            setFilter={setFilter}
+        /> : null}
+
+        <NotePaginator
+            total={found}
+            filter={{...filter, tag}}
+            setFilter={setFilter}
+        />
+    </div>;
+}
+
+
+function NoteCards({
+    notes
+}: {
+    notes: ApiNoteList
+}) {
+    const listRef = useCallback((node: HTMLElement | null) => {
+        if (node) {
+            node.scrollTop = 0;
+        }
+    }, [notes]);
+
+    return <div
+        ref={listRef}
+        className={styles.list}
+    >
+        {notes.notes.map(note => <NoteCard
             key={note.base}
             note={note}
-        />);
+        />)}
+    </div>;
 }
+
 
 
 export default function NoteList({
@@ -42,13 +108,6 @@ export default function NoteList({
     setTag: (t: string | TagWildcard | null) => void,
     notes: ApiNoteList,
 }) {
-    const filterDefaults = {
-        title: TriState.Maybe,
-        todos: TriState.Maybe,
-        date: TriState.Maybe,
-        invalid: TriState.Maybe,
-    }
-
     const [filter, setFilter] = useState<Omit<NoteFilterType, "tag">>({
         ...filterDefaults,
         orderKey: "date",
@@ -56,51 +115,19 @@ export default function NoteList({
         page: 0,
     });
 
-    const [filtering, setFiltering] = useState(false);
-
     const {notes: notesFiltered, found} = notes.where({...filter, tag});
-    const noteCards = generateNoteCards(notesFiltered);
-
-    const listRef = useCallback((node: HTMLElement | null) => {
-        if (node) {
-            node.scrollTop = 0;
-        }
-    }, [noteCards]);
 
     return <>
-        <div className={styles.controls}>
-            <div className={styles.tagHeader}>
-                <Icon
-                    icon="arrow-left"
-                    onClick={() => setTag(null)}
-                />
-                <span>{tagDisplay(tag)}</span>
-                <Icon
-                    icon="filter"
-                    pressed={filtering}
-                    onClick={() => {
-                        setFilter({...filter, ...filterDefaults});
-                        setFiltering(!filtering);
-                    }}
-                />
-            </div>
+        <NoteListControls
+            tag={tag}
+            setTag={setTag}
+            filter={filter}
+            setFilter={setFilter}
+            found={found}
+        />
 
-            {filtering ? <NoteFilter
-                filter={{...filter, tag}}
-                setFilter={setFilter}
-            /> : null}
-
-            <NotePaginator
-                total={found}
-                filter={{...filter, tag}}
-                setFilter={setFilter}
-            />
-        </div>
-        <div
-            ref={listRef}
-            className={styles.list}
-        >
-            {noteCards}
-        </div>
+        <NoteCards
+            notes={notesFiltered}
+        />
     </>;
 }
