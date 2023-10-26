@@ -82,16 +82,6 @@ export default class ApiNote {
             .filter(tag => !tag.startsWith("-")) ?? [];
     }
 
-    /* =========== *
-     * Frontmatter *
-     * =========== */
-
-    // Get the note date info if available
-    get date(): string | null {
-        const fm = this.fc?.frontmatter;
-        return fm?.date ?? null;
-    }
-
     /* ================ *
      * Task information *
      * ================ */
@@ -111,6 +101,10 @@ export default class ApiNote {
     /* ============ *
      * State checks *
      * ============ */
+
+    get isStatic(): boolean {
+        return this.fc?.frontmatter?.static ?? false;
+    }
 
     // Whether the note is work in progress.
     get hasTodos() {

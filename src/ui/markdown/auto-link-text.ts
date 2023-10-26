@@ -34,6 +34,7 @@ export default function AutoLinkText(
             continue;
         }
 
+        // TODO: provide path to the current note for correct path resolution
         const note = ApiNote.fromPath(filename);
 
         if (!note) {

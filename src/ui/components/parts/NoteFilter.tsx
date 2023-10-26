@@ -22,9 +22,9 @@ export default function NoteFilter({
         onChange={(v) => setW(w.todos(v))}
     />;
 
-    const hasDate = <TriToggle
-        value={w.filter.dated}
-        onChange={(v) => setW(w.dated(v))}
+    const isStatic = <TriToggle
+        value={w.filter.static}
+        onChange={(v) => setW(w.static(v))}
     />;
 
     // Filtering broken notes.
@@ -37,7 +37,7 @@ export default function NoteFilter({
         <div className={styles.toggles}>
             <div>Title {hasTitle}</div>
             <div>TODOs {hasTodos}</div>
-            <div>Dated {hasDate}</div>
+            <div>Static {isStatic}</div>
             <div>Broken {isBroken}</div>
         </div>
     </>;
