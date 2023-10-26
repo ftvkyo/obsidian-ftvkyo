@@ -1,4 +1,4 @@
-import { ListItemCache, TFile } from "obsidian";
+import { ListItemCache, TFile, moment } from "obsidian";
 
 
 const RE_TITLE_ROOT = /^#[\w-][\w-/]*$/
@@ -98,6 +98,29 @@ export default class ApiNote {
         return this.tasks.filter((val) => val.task !== " ");
     }
 
+    /* ================ *
+     * Date information *
+     * ================ */
+
+    // Try to parse the basename of the file into a date / datetime
+    get cdate(): string | null {
+        // Don't output time:
+        // - Some notes don't have a meaningful time
+        // - It creates extra visual clutter
+        const outputFormat = "ddd, ll";
+
+        const uniqueFormat = ftvkyo.deps.unique.options.format.split("/").last();
+
+        if (uniqueFormat) {
+            const uniqueDate = moment(this.base, uniqueFormat, true);
+            if (uniqueDate.isValid()) {
+                return uniqueDate.format(outputFormat);
+            }
+        }
+
+        return null;
+    }
+
     /* ============ *
      * State checks *
      * ============ */
@@ -136,6 +159,11 @@ export default class ApiNote {
         // If a note is a root note, it can't have other tags.
         if (this.isRoot && this.tags.length > 1) {
             return "Root notes can't have extra tags.";
+        }
+
+        // If the filename can't be parsed into a date.
+        if (!this.cdate) {
+            return "The note's date can't be parsed.";
         }
 
         return false;

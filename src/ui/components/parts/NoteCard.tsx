@@ -114,7 +114,7 @@ function State({
     if (note.isStatic) {
         date = <div className={styles.state}>
             <Icon icon="calendar"/>
-            <code>{note.base}</code>
+            <code>{note.cdate}</code>
         </div>;
     }
 

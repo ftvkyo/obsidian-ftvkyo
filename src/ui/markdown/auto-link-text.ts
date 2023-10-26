@@ -47,8 +47,13 @@ export default function AutoLinkText(
             continue;
         }
 
-        lg.debug(`Found h1 "${note.title}"`);
+        let title = note.title;
+        if (note.isStatic) {
+            title += ` (${note.cdate})`;
+        }
 
-        context.addChild(new Replacer(link, note.title));
+        lg.debug(`Using title "${title}"`);
+
+        context.addChild(new Replacer(link, title));
     }
 }
