@@ -19,7 +19,7 @@ function onClick(
         return;
     }
 
-    const note = ApiNoteUnique.fromPath(href);
+    const note = ftvkyo.api.source.byPath(href);
     if (!note) {
         return;
     }

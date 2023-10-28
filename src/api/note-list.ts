@@ -1,6 +1,4 @@
-import { TFile } from "obsidian";
-
-import { ApiNotePeriodic, ApiNoteUnique } from "./note";
+import { ApiNote, ApiNotePeriodic, ApiNoteUnique } from "./note";
 
 
 export enum TriState {
@@ -292,7 +290,7 @@ export class ApiWhere {
 }
 
 
-export abstract class ApiNoteList<Note> {
+export abstract class ApiNoteList<Note extends ApiNote> {
 
     constructor(
         public readonly notes: Note[],
@@ -301,16 +299,18 @@ export abstract class ApiNoteList<Note> {
     get length() {
         return this.notes.length;
     }
+
+    find(predicate: (note: Note) => boolean) {
+        return this.notes.find(predicate) ?? null;
+    }
+
+    map<Res>(f: (note: Note) => Res): Res[] {
+        return this.notes.map(f);
+    }
 }
 
 
 export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
-
-    static from(files: TFile[]) {
-        return new ApiNoteUniqueList(
-            files.map(ApiNoteUnique.from)
-        );
-    }
 
     // Get a map from tags to notes.
     // Does not include subnotes into tag notes.

@@ -35,11 +35,15 @@ export default function AutoLinkText(
         }
 
         // TODO: provide path to the current note for correct path resolution
-        // TODO: get it from ApiSource, as it could be a link to a periodic note.
-        const note = ApiNoteUnique.fromPath(filename);
+        const note = ftvkyo.api.source.byPath(filename);
 
         if (!note) {
             lg.debug(`Note not found`);
+            continue;
+        }
+
+        if (!(note instanceof ApiNoteUnique)) {
+            lg.debug(`Note found is not a unique note`);
             continue;
         }
 

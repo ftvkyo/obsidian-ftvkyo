@@ -65,22 +65,6 @@ export class ApiNoteUnique extends ApiNote {
 
     static RE_TITLE_ROOT = /^#[\w-][\w-/]*$/;
 
-    // Convenience factory.
-    static from(tf: TFile) {
-        return new ApiNoteUnique(tf);
-    }
-
-    // Try to get a note from a path.
-    // Returns null if the path is not found or is not a note.
-    // If `from` is specified, the path is resolved relative to `from`.
-    static fromPath(
-        path: string,
-        from: string = "",
-    ) {
-        const tf = app.metadataCache.getFirstLinkpathDest(path, from);
-        return tf ? ApiNoteUnique.from(tf) : null;
-    }
-
     /* ================= *
      * Title information *
      * ================= */
