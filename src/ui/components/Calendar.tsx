@@ -5,6 +5,7 @@ import { ApiNote } from "@/api/note";
 
 import styles from "./Calendar.module.scss";
 import { clsx } from "clsx";
+import { ApiNotePeriodicList } from "@/api/note-list";
 
 
 function reset() {
@@ -219,7 +220,11 @@ const weekOffsets = [
 ];
 
 
-export default function Calendar() {
+export default function Calendar({
+    notes,
+}: {
+    notes: ApiNotePeriodicList,
+}) {
     const today = moment();
 
     // What date to center the calendar around.

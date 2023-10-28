@@ -19,25 +19,23 @@ const ExploreView: ViewElement = {
 
         const [tag, setTag] = useState<Tag | null>(null);
 
-        const notes = ftvkyo.api.source.cache.unique;
-
-        let content;
-        if (tag === null) {
-            content = <TagList
-                setTag={setTag}
-                notes={notes}
-            />;
-        } else {
-            content = <NoteList
-                tag={tag}
-                goBack={() => setTag(null)}
-                notes={notes}
-            />;
-        }
+        const unique = ftvkyo.api.source.cache.unique;
+        const periodic = ftvkyo.api.source.cache.periodic;
 
         return <>
-            <Calendar/>
-            {content}
+            <Calendar
+                notes={periodic}
+            />
+            {tag
+            ? <NoteList
+                tag={tag}
+                goBack={() => setTag(null)}
+                notes={unique}
+            />
+            : <TagList
+                setTag={setTag}
+                notes={unique}
+            />}
         </>;
     },
     short: "nav",
