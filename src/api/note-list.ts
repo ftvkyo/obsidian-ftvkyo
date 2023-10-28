@@ -66,7 +66,7 @@ export interface TagTree {
 
 interface WhereFilter {
     title: TS,
-    todos: TS,
+    tasks: TS,
     dated: TS,
     broken: TS,
 }
@@ -83,7 +83,7 @@ export class ApiWhere {
         public readonly tag: Tag = Tag.all,
         public readonly filter: WhereFilter = {
             title: TS.Maybe,
-            todos: TS.Maybe,
+            tasks: TS.Maybe,
             dated: TS.Maybe,
             broken: TS.Maybe,
         },
@@ -182,8 +182,8 @@ export class ApiWhere {
         return this.withFilter("title", title);
     }
 
-    todos(todos: WhereFilter["todos"]) {
-        return this.withFilter("todos", todos);
+    tasks(todos: WhereFilter["tasks"]) {
+        return this.withFilter("tasks", todos);
     }
 
     dated(dated: WhereFilter["dated"]) {
@@ -374,7 +374,7 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
             tag,
             filter: {
                 title,
-                todos,
+                tasks,
                 dated,
                 broken,
             },
@@ -416,10 +416,10 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
             notes = notes.filter(note => note.title === null);
         }
 
-        if (todos === TS.On) {
-            notes = notes.filter(note => note.hasTodos);
-        } else if (todos === TS.Off) {
-            notes = notes.filter(note => !note.hasTodos);
+        if (tasks === TS.On) {
+            notes = notes.filter(note => note.hasTasks);
+        } else if (tasks === TS.Off) {
+            notes = notes.filter(note => !note.hasTasks);
         }
 
         if (dated === TS.On) {

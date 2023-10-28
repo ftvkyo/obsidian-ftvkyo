@@ -17,9 +17,9 @@ export default function NoteFilter({
     />;
 
     // Filtering WIP notes.
-    const hasTodos = <TriToggle
-        value={w.filter.todos}
-        onChange={(v) => setW(w.todos(v))}
+    const hasTasks = <TriToggle
+        value={w.filter.tasks}
+        onChange={(v) => setW(w.tasks(v))}
     />;
 
     const isDated = <TriToggle
@@ -36,7 +36,7 @@ export default function NoteFilter({
     return <>
         <div className={styles.toggles}>
             <div>Title {hasTitle}</div>
-            <div>TODOs {hasTodos}</div>
+            <div>Tasks {hasTasks}</div>
             <div>Dated {isDated}</div>
             <div>Broken {isBroken}</div>
         </div>

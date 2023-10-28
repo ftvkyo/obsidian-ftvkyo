@@ -163,7 +163,7 @@ export class ApiNoteUnique extends ApiNote {
     }
 
     // Whether the note is work in progress.
-    get hasTodos() {
+    get hasTasks() {
         return this.tasksUndone.length > 0;
     }
 
