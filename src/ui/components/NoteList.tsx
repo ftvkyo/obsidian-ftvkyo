@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import NoteCard from "./parts/NoteCard";
 import ApiNoteList, {ApiWhere, Tag} from "@/api/note-list";
@@ -77,11 +77,16 @@ function NoteCards({
 }: {
     notes: ApiNoteList
 }) {
-    const listRef = useCallback((node: HTMLElement | null) => {
-        if (node) {
-            node.scrollTop = 0;
+    const listRef = useRef<HTMLDivElement | null>(null);
+
+    // Only scroll to top when the notes displayed actually change.
+    // useEffect's deps are checked by Object.is, so we can't just pass an array.
+    const noteBases = JSON.stringify(notes.notes.map((note) => note.base));
+    useEffect(() => {
+        if (listRef.current) {
+            listRef.current.scrollTop = 0;
         }
-    }, [notes]);
+    }, [noteBases]);
 
     return <div
         ref={listRef}
