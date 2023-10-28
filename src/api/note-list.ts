@@ -1,6 +1,6 @@
-import {TFile} from "obsidian";
+import { TFile } from "obsidian";
 
-import ApiNote from "./note";
+import { ApiNote } from "./note";
 
 
 export enum TriState {

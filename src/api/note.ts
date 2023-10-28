@@ -11,7 +11,7 @@ const RE_TITLE_ROOT = /^#[\w-][\w-/]*$/
 //
 // Contracts:
 // - TFile must be valid when the object is accessed.
-export default class ApiNote {
+export class ApiNote {
 
     constructor(
         // Note identification

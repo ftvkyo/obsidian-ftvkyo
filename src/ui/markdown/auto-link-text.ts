@@ -2,7 +2,7 @@ import { MarkdownPostProcessorContext } from "obsidian";
 
 import Logger from "@/util/logger";
 
-import ApiNote from "@/api/note";
+import { ApiNote } from "@/api/note";
 import Replacer from "./Replacer";
 
 

@@ -1,7 +1,7 @@
 import { moment } from "obsidian";
 import { useState } from "react";
 import Icon from "./controls/Icon";
-import ApiNote from "@/api/note";
+import { ApiNote } from "@/api/note";
 
 import styles from "./Calendar.module.scss";
 import { clsx } from "clsx";

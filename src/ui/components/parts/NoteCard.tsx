@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 import Markdown from "react-markdown";
 
-import ApiNote from "@/api/note";
+import { ApiNote } from "@/api/note";
 import { toClipboard } from "@/util/clipboard";
 
 import styles from "./NoteCard.module.scss";

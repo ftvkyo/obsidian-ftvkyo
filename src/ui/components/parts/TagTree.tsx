@@ -1,5 +1,5 @@
-import ApiNote from "@/api/note";
-import {TagTree} from "@/api/note-list";
+import { ApiNote } from "@/api/note";
+import { TagTree } from "@/api/note-list";
 import Icon from "../controls/Icon";
 
 import styles from "./TagTree.module.scss";
