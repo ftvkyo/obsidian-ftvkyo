@@ -142,7 +142,8 @@ export class ApiNoteUnique extends ApiNote {
         // - It creates extra visual clutter
 
         // const outputFormat = "ddd, ll";
-        const outputFormat = "ddd,[&nbsp;]DD[&nbsp;]MMM[&nbsp;]YYYY";
+        // "\xa0" = nbsp
+        const outputFormat = "ddd,[\xa0]DD[\xa0]MMM[\xa0]YYYY";
 
         const matter = this.dateMatter;
         if (matter === "auto") {
