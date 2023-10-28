@@ -1,16 +1,23 @@
 @use "sass:math";
 
 .triToggle {
-    $height: 1.5rem;
+    $height: 1.5em;
     $width: $height;
-    $slider-factor: 0.8;
+    $slider-factor: 0.7;
 
     position: relative;
-    background-color: var(--color-base-20);
+
+    box-sizing: content-box;
 
     height: $height;
     width: $width * 3;
+
+    border: 2px solid var(--background-modifier-border);
     border-radius: math.div($height, 2);
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
     .slider {
         position: absolute;
@@ -20,7 +27,7 @@
         width: $height * $slider-factor;
 
         margin: math.div(((1 - $slider-factor) * $height), 2);
-        border-radius: math.div($height * $slider-factor, 2);
+        border-radius: 50%;
 
         transition: 0.1s all ease-in-out;
 
@@ -31,7 +38,7 @@
 
         &.maybe {
             left: 33%;
-            background-color: var(--color-base-40);
+            background-color: var(--color-yellow);
         }
 
         &.on {
@@ -42,8 +49,8 @@
 
     input[type="radio"] {
         appearance: none;
-
         margin: 0;
+
         height: $height;
         width: $width;
     }
