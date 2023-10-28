@@ -10,7 +10,8 @@ import { ApiNotePeriodic } from "@/api/note";
 
 
 function reset() {
-    return moment().weekday(0).hour(0).minute(0).second(0);
+    const firstDayOfWeek = 1; // Monday
+    return moment().day(firstDayOfWeek).hour(0).minute(0).second(0);
 }
 
 
