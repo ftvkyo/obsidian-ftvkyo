@@ -9,6 +9,8 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
     display: flex;
     flex-direction: column;
     gap: $gap;
+
+    border-bottom: 1px solid var(--background-modifier-border);
 }
 
 .header {
@@ -62,10 +64,21 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
     padding: $pad;
 
     &.year {
+        color: var(--interactive-accent);
         font-weight: bold;
     }
 
     &.week {
-        font-style: italic;
+        color: var(--italic-color);
+    }
+
+    &.day {
+        &.current {
+            font-weight: bold;
+        }
+
+        &.otherMonth {
+            opacity: 50%;
+        }
     }
 }

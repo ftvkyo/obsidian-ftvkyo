@@ -12,6 +12,32 @@ function reset() {
 }
 
 
+const dateComponents = [
+    "year",
+    "quarter",
+    "month",
+    "week",
+    "day",
+] as const;
+
+
+function isToday(
+    date: moment.Moment,
+    today: moment.Moment,
+    upTo: typeof dateComponents[number],
+) {
+    for (const component of dateComponents) {
+        if (date[component]() !== today[component]()) {
+            return false;
+        }
+        if (component === upTo) {
+            break;
+        }
+    }
+    return true;
+}
+
+
 function NoteAny({
     className,
     note,
@@ -30,13 +56,20 @@ function NoteAny({
 }
 
 
+interface NoteDateProps {
+    date: moment.Moment,
+    today: moment.Moment,
+}
+
+
 function NoteYear({
     date,
-}: {
-    date: moment.Moment,
-}) {
+    today,
+}: NoteDateProps) {
+    const current = isToday(date, today, "year");
+
     return <NoteAny
-        className={styles.year}
+        className={clsx(styles.year, current && styles.current)}
     >
         {date.format("Y")}
     </NoteAny>;
@@ -45,10 +78,13 @@ function NoteYear({
 
 function NoteQuarter({
     date,
-}: {
-    date: moment.Moment,
-}) {
-    return <NoteAny>
+    today,
+}: NoteDateProps) {
+    const current = isToday(date, today, "quarter");
+
+    return <NoteAny
+        className={clsx(styles.quarter, current && styles.current)}
+    >
         {date.format("[Q]Q")}
     </NoteAny>;
 }
@@ -56,10 +92,13 @@ function NoteQuarter({
 
 function NoteMonth({
     date,
-}: {
-    date: moment.Moment,
-}) {
-    return <NoteAny>
+    today,
+}: NoteDateProps) {
+    const current = isToday(date, today, "month");
+
+    return <NoteAny
+        className={clsx(styles.month, current && styles.current)}
+    >
         {date.format("MMM")}
     </NoteAny>;
 }
@@ -67,11 +106,12 @@ function NoteMonth({
 
 function NoteWeek({
     date,
-}: {
-    date: moment.Moment,
-}) {
+    today,
+}: NoteDateProps) {
+    const current = isToday(date, today, "week");
+
     return <NoteAny
-        className={styles.week}
+        className={clsx(styles.week, current && styles.current)}
     >
         {date.format("w")}
     </NoteAny>;
@@ -80,10 +120,22 @@ function NoteWeek({
 
 function NoteDay({
     date,
-}: {
-    date: moment.Moment,
+    today,
+    showingMonth, // We need to darken days of other months
+}: NoteDateProps & {
+    showingMonth: moment.Moment,
 }) {
-    return <NoteAny>
+    const current = isToday(date, today, "day");
+
+    const otherMonth = !isToday(date, showingMonth, "month");
+
+    return <NoteAny
+        className={clsx(
+            styles.day,
+            current && styles.current,
+            otherMonth && styles.otherMonth,
+        )}
+    >
         {date.format("D")}
     </NoteAny>;
 }
@@ -91,15 +143,15 @@ function NoteDay({
 
 function CalendarHeader({
     date,
-    setDate
-}: {
-    date: moment.Moment,
+    today,
+    setDate,
+}: NoteDateProps & {
     setDate: (date: moment.Moment) => void,
 }) {
     return <div className={styles.header}>
-        <NoteMonth date={date}/>
-        <NoteYear date={date}/>
-        <NoteQuarter date={date}/>
+        <NoteMonth date={date} today={today}/>
+        <NoteYear date={date} today={today}/>
+        <NoteQuarter date={date} today={today}/>
 
         <div className={styles.controls}>
             <Icon
@@ -123,10 +175,8 @@ const weekdayOffsets = [...Array(7).keys()];
 
 
 function CalendarWeekHeader({
-    start,
-}: {
-    start: moment.Moment,
-}) {
+    date, // Expected to be the first day of the week
+}: Omit<NoteDateProps, "today">) {
     return <div className={styles.weekHeader}>
         <div>
             W
@@ -134,22 +184,29 @@ function CalendarWeekHeader({
         {weekdayOffsets.map(offset => <div
             key={offset}
         >
-            {start.clone().add(offset, "days").format("ddd")}
+            {date.clone().add(offset, "days").format("ddd")}
         </div>)}
     </div>;
 }
 
 
 function CalendarWeek({
-    start,
-}: {
-    start: moment.Moment,
+    date, // Expected to be the first day of the week
+    today,
+    showingMonth,
+}: NoteDateProps & {
+    showingMonth: moment.Moment,
 }) {
     return <div className={styles.weekRow}>
-        <NoteWeek date={start}/>
+        <NoteWeek
+            date={date}
+            today={today}
+        />
         {weekdayOffsets.map(offset => <NoteDay
             key={offset}
-            date={start.clone().add(offset, "days")}
+            date={date.clone().add(offset, "days")}
+            today={today}
+            showingMonth={showingMonth}
         />)}
     </div>;
 }
@@ -163,16 +220,26 @@ const weekOffsets = [
 
 
 export default function Calendar() {
+    const today = moment();
+
     // What date to center the calendar around.
     // .weekday is locale-aware.
     const [date, setDate] = useState(reset());
 
     return <div className={styles.calendar}>
-        <CalendarHeader date={date} setDate={setDate}/>
-        <CalendarWeekHeader start={date}/>
+        <CalendarHeader
+            date={date}
+            today={today}
+            setDate={setDate}
+        />
+        <CalendarWeekHeader
+            date={date}
+        />
         {weekOffsets.map(offset => <CalendarWeek
             key={offset}
-            start={date.clone().add(offset, "days")}
+            date={date.clone().add(offset, "days")}
+            today={today}
+            showingMonth={date}
         />)}
     </div>;
 }
