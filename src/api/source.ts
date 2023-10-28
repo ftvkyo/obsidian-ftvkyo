@@ -1,3 +1,4 @@
+import { NoteType } from "@/util/dependencies";
 import { TFile } from "obsidian";
 import { ApiNote, ApiNotePeriodic, ApiNoteUnique } from "./note";
 import { ApiNotePeriodicList, ApiNoteUniqueList } from "./note-list";
@@ -23,20 +24,20 @@ export default class ApiSource {
 
         const mdfs = ftvkyo.app.vault.getMarkdownFiles();
 
-        const unique = mdfs.filter((v) => v.path.startsWith(ftvkyo.deps.unique.options.folder));
+        const notesWithInfo = mdfs
+            .map(tf => [tf, ftvkyo.deps.determineNote(tf.path)] as const)
+            .filter(([, info]) => !!info) as [TFile, [NoteType, moment.Moment]][];
 
-        const periodic = mdfs.filter((v) => {
-            for (const p of Object.values(ftvkyo.deps.periodic.settings)) {
-                if (p.enabled && v.path.startsWith(p.folder)) {
-                    return true;
-                }
-            }
-            return false;
-        });
+        const notes = notesWithInfo
+            .map(([tf, [type, date]]) =>
+                type === "unique"
+                    ? new ApiNoteUnique(tf, date)
+                    : new ApiNotePeriodic(tf, date, type)
+            );
 
         this.cache = {
-            unique: new ApiNoteUniqueList(unique.map(tf => new ApiNoteUnique(tf))),
-            periodic: new ApiNotePeriodicList(periodic.map(tf => new ApiNotePeriodic(tf))),
+            unique: new ApiNoteUniqueList(notes.filter(n => n instanceof ApiNoteUnique) as ApiNoteUnique[]),
+            periodic: new ApiNotePeriodicList(notes.filter(n => n instanceof ApiNotePeriodic) as ApiNotePeriodic[]),
         };
 
         this.#et.dispatchEvent(new Event("updated"));

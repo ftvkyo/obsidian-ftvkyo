@@ -464,11 +464,7 @@ export class ApiNotePeriodicList extends ApiNoteList<ApiNotePeriodic> {
         date: moment.Moment,
     ) {
         return this.find((note) => {
-            const p = note.period;
-            if (!p) {
-                return false;
-            }
-            const [np, nd] = p;
+            const { period: np, date: nd } = note;
             return np === period && equalUpTo(nd, date, period);
         });
     }

@@ -1,3 +1,4 @@
+import { moment, TFile } from "obsidian";
 import { MomentPeriods } from "./date";
 
 
@@ -15,7 +16,7 @@ export interface MaybeEnabled {
 export type PeriodicNotesPeriods = "yearly" | "quarterly" | "monthly" | "weekly" | "daily";
 
 export interface PeriodicNotesPlugin {
-    settings: Record<PeriodicNotesPeriods, SingleNoteTypeSetting & MaybeEnabled>;
+    settings: Record<PeriodicNotesPeriods, (SingleNoteTypeSetting & MaybeEnabled) | undefined>;
 }
 
 
@@ -24,40 +25,115 @@ export interface UniqueNotesPlugin {
 }
 
 
-export class Dependencies {
+export type NoteType = "unique" | MomentPeriods;
 
-    uniqueFormat: string | null;
 
-    periodicFormats: Record<MomentPeriods, string | null>;
+// TODO: merge this with ApiSource if I just stop depending on the unique and periodic notes plugins...
+export default class Dependencies {
 
     constructor(
-        readonly periodic: PeriodicNotesPlugin,
-        readonly unique: UniqueNotesPlugin,
-    ) {
-        const reformat = (ofmt?: { format: string }) => ofmt?.format.split("/").last() ?? null;
-
-        this.periodicFormats = {
-            "year": reformat(periodic.settings.yearly),
-            "quarter": reformat(periodic.settings.quarterly),
-            "month": reformat(periodic.settings.monthly),
-            "week": reformat(periodic.settings.weekly),
-            "day": reformat(periodic.settings.daily),
-        };
-
-        this.uniqueFormat = reformat(unique.options);
-    }
+        public readonly unique: SingleNoteTypeSetting,
+        public readonly periodic: {
+            [K in MomentPeriods]: SingleNoteTypeSetting | null;
+        },
+    ) {}
 
     static load(): Dependencies {
-        const periodic = (<any>ftvkyo.app).plugins.getPlugin("periodic-notes");
-        if (!periodic) {
-            throw new Error("Plugin 'Periodic Notes' not found/loaded");
-        }
+        const app = ftvkyo.app as unknown as {
+            plugins: { getPlugin: (name: "periodic-notes") => (PeriodicNotesPlugin | undefined) },
+            internalPlugins: { getEnabledPluginById: (name: "zk-prefixer") => (UniqueNotesPlugin | undefined) },
+        };
 
-        const unique = (<any>ftvkyo.app).internalPlugins.getEnabledPluginById("zk-prefixer");
+        const unique = app.internalPlugins.getEnabledPluginById("zk-prefixer");
         if (!unique) {
             throw new Error("Plugin 'Unique Note Creator' not found/loaded");
         }
 
-        return new Dependencies(periodic, unique);
+        const periodic = app.plugins.getPlugin("periodic-notes");
+        if (!periodic) {
+            throw new Error("Plugin 'Periodic Notes' not found/loaded");
+        }
+
+        const pps = periodic.settings;
+
+        return new Dependencies(
+            unique.options,
+            {
+                "day": pps.daily?.enabled && pps.daily || null,
+                "week": pps.weekly?.enabled && pps.weekly || null,
+                "month": pps.monthly?.enabled && pps.monthly || null,
+                "quarter": pps.quarterly?.enabled && pps.quarterly || null,
+                "year": pps.yearly?.enabled && pps.yearly || null,
+            }
+        );
+    }
+
+    getConfig(type: NoteType): SingleNoteTypeSetting | null {
+        return type === "unique" ? this.unique : this.periodic[type];
+    }
+
+    getBasenameFormat(type: NoteType): string | null {
+        const config = this.getConfig(type);
+        return config?.format.split("/").last() ?? null;
+    }
+
+    getTemplate(type: NoteType): TFile | null {
+        const config = this.getConfig(type);
+        const taf = config ? ftvkyo.app.vault.getAbstractFileByPath(config.template) : null;
+        if (taf && taf instanceof TFile) {
+            return taf;
+        }
+        return null;
+    }
+
+    generatePathFormat(config: SingleNoteTypeSetting): string {
+        const {folder = "", format } = config;
+        return (folder ? `[${folder}]/` : "") + format + "[.md]";
+    }
+
+    generatePath(config: SingleNoteTypeSetting, date: moment.Moment): string {
+        return date.format(this.generatePathFormat(config));
+    }
+
+    determineNote(path: string): [NoteType, moment.Moment] | null {
+        const order = [
+            "unique",
+            "day",
+            "week",
+            "month",
+            "quarter",
+            "year",
+        ] as const;
+
+        for (const type of order) {
+            const config = this.getConfig(type);
+            if (config) {
+                const fmt = this.generatePathFormat(config);
+                const date = moment(path, fmt, true);
+                if (date.isValid()) {
+                    return [type, date];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    async createNote(type: NoteType, date: moment.Moment): Promise<TFile> {
+        const config = this.getConfig(type);
+
+        if (!config) {
+            throw new Error(`Note type ${type} is not configured`);
+        }
+
+        const path = this.generatePath(config, date);
+
+        const template = this.getTemplate(type);
+
+        if (!template) {
+            throw new Error(`Could not load template for type ${type}`);
+        }
+
+        return await ftvkyo.app.vault.copy(template, path);
     }
 }

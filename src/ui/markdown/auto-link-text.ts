@@ -54,7 +54,7 @@ export default function AutoLinkText(
 
         let title = note.title;
         if (note.isStatic) {
-            title += ` (${note.cdate})`;
+            title += ` (${note.dateInfo})`;
         }
 
         lg.debug(`Using title "${title}"`);

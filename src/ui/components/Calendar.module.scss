@@ -91,4 +91,8 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
             font-weight: bold;
         }
     }
+
+    &.disabled {
+        pointer-events: none;
+    }
 }

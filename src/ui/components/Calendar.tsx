@@ -6,10 +6,11 @@ import { ApiNotePeriodicList } from "@/api/note-list";
 import { equalUpTo, MomentPeriods } from "@/util/date";
 
 import styles from "./Calendar.module.scss";
+import { ApiNotePeriodic } from "@/api/note";
 
 
 function reset() {
-    return moment().weekday(0);
+    return moment().weekday(0).hour(0).minute(0).second(0);
 }
 
 
@@ -26,6 +27,7 @@ function NoteAny({
     notes: ApiNotePeriodicList,
     children: React.ReactNode,
 }) {
+    const periodConfig = ftvkyo.deps.periodic[period];
     const note = notes.getThe(period, date);
 
     return <div
@@ -34,8 +36,17 @@ function NoteAny({
             styles.note,
             className,
             note && styles.exists,
+            !periodConfig && styles.disabled,
         )}
-        onClick={note ? () => note.reveal() : undefined}
+        onClick={note
+            ? () => note.reveal()
+            : periodConfig
+                ? async () => {
+                    const newNote = await ftvkyo.deps.createNote(period, date);
+                    new ApiNotePeriodic(newNote, date, period).reveal();
+                }
+                : undefined
+        }
     >
         {children}
     </div>;

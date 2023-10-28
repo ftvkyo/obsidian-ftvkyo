@@ -1,4 +1,3 @@
-import { MomentPeriods } from "@/util/date";
 import { ListItemCache, TFile, moment } from "obsidian";
 
 
@@ -14,6 +13,8 @@ export abstract class ApiNote {
     constructor(
         // Note identification
         public readonly tf: TFile,
+        // Note moment (creation or what it's related to)
+        public readonly date: moment.Moment,
     ) {}
 
     /* ================ *
@@ -115,23 +116,13 @@ export class ApiNoteUnique extends ApiNote {
      * Date information *
      * ================ */
 
-    // Try to parse the basename of the file into a date / datetime
-    get cdate(): string | null {
+    // Get pretty date info about the note
+    get dateInfo(): string | null {
         // Don't output time:
         // - Some notes don't have a meaningful time
         // - It creates extra visual clutter
         const outputFormat = "ddd, ll";
-
-        const uniqueFormat = ftvkyo.deps.uniqueFormat;
-
-        if (uniqueFormat) {
-            const uniqueDate = moment(this.base, uniqueFormat, true);
-            if (uniqueDate.isValid()) {
-                return uniqueDate.format(outputFormat);
-            }
-        }
-
-        return null;
+        return this.date.format(outputFormat);
     }
 
     /* ============ *
@@ -175,7 +166,7 @@ export class ApiNoteUnique extends ApiNote {
         }
 
         // If the filename can't be parsed into a date.
-        if (!this.cdate) {
+        if (!this.dateInfo) {
             return "The note's date can't be parsed.";
         }
 
@@ -186,16 +177,13 @@ export class ApiNoteUnique extends ApiNote {
 
 export class ApiNotePeriodic extends ApiNote {
 
-    // Determine note period based on its basename and periodic notes formats
-    get period(): [MomentPeriods, moment.Moment] | null {
-        for (const [period, fmt] of Object.entries(ftvkyo.deps.periodicFormats)) {
-            if (fmt) {
-                const date = moment(this.base, fmt, true);
-                if (date.isValid()) {
-                    return [period as keyof typeof ftvkyo.deps.periodicFormats, date];
-                }
-            }
-        }
-        return null;
+    constructor(
+        public readonly tf: TFile,
+        public readonly date: moment.Moment,
+        public readonly period: string,
+    ) {
+        super(tf, date);
+
+        date.hour(0).minute(0).second(0);
     }
 }

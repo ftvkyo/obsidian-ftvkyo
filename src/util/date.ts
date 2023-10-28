@@ -7,7 +7,7 @@ const periods = [
 ] as const;
 
 
-export type MomentPeriods = typeof periods[number][1];
+export type MomentPeriods = typeof periods[number];
 
 
 export function equalUpTo(

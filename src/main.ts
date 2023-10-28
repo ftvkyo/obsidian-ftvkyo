@@ -17,7 +17,7 @@ import ExploreView from "@/ui/views/Explore";
 import {DEFAULT_SETTINGS, OFSettingTab, Settings} from "./ui/settings";
 
 import "./styles.scss";
-import { Dependencies } from "./util/dependencies";
+import Dependencies from "./util/dependencies";
 
 
 declare global {
@@ -64,9 +64,6 @@ export default class ObsidianFtvkyo extends Plugin {
         // Make the plugin available globally
         globalThis.ftvkyo = this;
 
-        // Load the Api (may depend on the plugin being global)
-        this.api = new Api();
-
         this.lg.important(`Loading obsidian-ftvkyo`);
 
         await this.loadSettings();
@@ -106,6 +103,13 @@ export default class ObsidianFtvkyo extends Plugin {
     // in which case this plugin should be unloaded.
     private afterLayoutReady() {
         this.loadDependencies();
+
+        // Load the Api.
+        // May depend on:
+        // - the plugin being global
+        // - dependencies being loaded
+        this.api = new Api();
+
         this.loadCommands();
         this.loadMarkdown();
         this.loadViews();
