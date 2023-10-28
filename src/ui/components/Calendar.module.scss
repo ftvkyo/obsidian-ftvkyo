@@ -87,6 +87,10 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
 
     &.week {
         color: var(--italic-color);
+
+        &:active {
+            color: var(--icon-color-focused);
+        }
     }
 
     &.day.otherMonth {
