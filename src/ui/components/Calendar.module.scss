@@ -17,8 +17,6 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
     display: flex;
     align-items: center;
 
-    font-size: 1.25em;
-
     .break {
         margin: 0 ($gap / 2);
 
@@ -67,6 +65,7 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
 
     border-bottom: 1px solid var(--background-modifier-border);
 
+    font-size: 0.8em;
     text-transform: uppercase;
 
     > * {
@@ -78,7 +77,7 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
     padding: $pad;
 
     &.exists {
-        font-weight: bold;
+        text-shadow: 0 0 0.5em currentColor;
     }
 
     &.year {

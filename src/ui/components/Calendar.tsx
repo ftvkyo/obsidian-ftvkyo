@@ -135,7 +135,7 @@ function NoteWeek({
         date={date}
         notes={notes}
     >
-        {extended && "Week "}
+        {extended && "W"}
         {date.format("w")}
     </NoteAny>;
 }
