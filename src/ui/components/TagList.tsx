@@ -17,25 +17,28 @@ export default function TagList({
             <div
                 className="clickable-icon"
                 onClick={() => setTag(Tag.all)}
+
+                aria-label={Tag.all.display}
             >
                 <Icon icon="list"/>
-                {Tag.all.display}
             </div>
 
             <div
                 className="clickable-icon"
                 onClick={() => setTag(Tag.any)}
+
+                aria-label={Tag.any.display}
             >
                 <Icon icon="hash"/>
-                {Tag.any.display}
             </div>
 
             <div
                 className="clickable-icon"
                 onClick={() => setTag(Tag.none)}
+
+                aria-label={Tag.none.display}
             >
                 <Icon icon="circle-off"/>
-                {Tag.none.display}
             </div>
         </div>
 
