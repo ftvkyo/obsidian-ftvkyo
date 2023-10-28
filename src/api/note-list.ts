@@ -456,7 +456,6 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
 }
 
 
-
 export class ApiNotePeriodicList extends ApiNoteList<ApiNotePeriodic> {
 
 }

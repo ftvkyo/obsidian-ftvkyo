@@ -121,7 +121,7 @@ export class ApiNoteUnique extends ApiNote {
         // - It creates extra visual clutter
         const outputFormat = "ddd, ll";
 
-        const uniqueFormat = ftvkyo.deps.unique.options.format.split("/").last();
+        const uniqueFormat = ftvkyo.deps.uniqueFormat;
 
         if (uniqueFormat) {
             const uniqueDate = moment(this.base, uniqueFormat, true);
@@ -185,4 +185,15 @@ export class ApiNoteUnique extends ApiNote {
 
 export class ApiNotePeriodic extends ApiNote {
 
+    get period() {
+        for (const [period, fmt] of Object.entries(ftvkyo.deps.periodicFormats)) {
+            if (fmt) {
+                const date = moment(this.base, fmt, true);
+                if (date.isValid()) {
+                    return period;
+                }
+            }
+        }
+        return null;
+    }
 }

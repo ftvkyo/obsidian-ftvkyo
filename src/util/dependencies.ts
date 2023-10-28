@@ -9,7 +9,16 @@ export interface MaybeEnabled {
 }
 
 
-export type PeriodicNotesPeriods = "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
+const periodicNotesPeriods = [
+    "daily",
+    "weekly",
+    "monthly",
+    "quarterly",
+    "yearly",
+] as const;
+
+
+export type PeriodicNotesPeriods = typeof periodicNotesPeriods[number];
 
 export interface PeriodicNotesPlugin {
     settings: Record<PeriodicNotesPeriods, SingleNoteTypeSetting & MaybeEnabled>;
@@ -23,10 +32,26 @@ export interface UniqueNotesPlugin {
 
 export class Dependencies {
 
+    uniqueFormat: string | null;
+
+    periodicFormats: Record<PeriodicNotesPeriods, string | null>;
+
     constructor(
         readonly periodic: PeriodicNotesPlugin,
         readonly unique: UniqueNotesPlugin,
-    ) {}
+    ) {
+        const reformat = (ofmt?: { format: string }) => ofmt?.format.split("/").last() ?? null;
+
+        this.periodicFormats = {
+            "yearly": reformat(periodic.settings.yearly),
+            "quarterly": reformat(periodic.settings.quarterly),
+            "monthly": reformat(periodic.settings.monthly),
+            "weekly": reformat(periodic.settings.weekly),
+            "daily": reformat(periodic.settings.daily),
+        };
+
+        this.uniqueFormat = reformat(unique.options);
+    }
 
     static load(): Dependencies {
         const periodic = (<any>ftvkyo.app).plugins.getPlugin("periodic-notes");
