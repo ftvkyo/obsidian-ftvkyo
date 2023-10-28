@@ -5,6 +5,7 @@ import Logger from "@/util/logger";
 import NoteList from "../components/NoteList";
 import { Tag } from "@/api/note-list";
 import TagList from "../components/TagList";
+import Calendar from "../components/Calendar";
 
 
 let lg: Logger | undefined = undefined;
@@ -20,18 +21,24 @@ const ExploreView: ViewElement = {
 
         const notes = ftvkyo.api.source.cache.unique;
 
+        let content;
         if (tag === null) {
-            return <TagList
+            content = <TagList
                 setTag={setTag}
                 notes={notes}
-            />
+            />;
         } else {
-            return <NoteList
+            content = <NoteList
                 tag={tag}
                 goBack={() => setTag(null)}
                 notes={notes}
             />;
         }
+
+        return <>
+            <Calendar/>
+            {content}
+        </>;
     },
     short: "nav",
     viewType: "ftvkyo-explore",

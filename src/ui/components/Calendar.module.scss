@@ -1,0 +1,71 @@
+@use "../../vars";
+
+$gap: vars.$gap / 2;
+$pad: (vars.$pad / 2) (vars.$pad / 4);
+
+.calendar {
+    padding: vars.$pad;
+
+    display: flex;
+    flex-direction: column;
+    gap: $gap;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: $gap;
+
+    .controls {
+        flex: 1;
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: $gap;
+    }
+}
+
+.weekRow {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: $gap;
+
+    justify-items: center;
+
+    > * {
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: smaller;
+    }
+}
+
+.weekHeader {
+    @extend .weekRow;
+
+    border-bottom: 1px solid var(--background-modifier-border);
+
+    text-transform: uppercase;
+
+    > * {
+        opacity: 50%;
+    }
+}
+
+.note {
+    padding: $pad;
+
+    &.year {
+        font-weight: bold;
+    }
+
+    &.week {
+        font-style: italic;
+    }
+}
