@@ -67,7 +67,7 @@ export interface TagTree {
 interface WhereFilter {
     title: TS,
     todos: TS,
-    static: TS,
+    dated: TS,
     broken: TS,
 }
 
@@ -84,7 +84,7 @@ export class ApiWhere {
         public readonly filter: WhereFilter = {
             title: TS.Maybe,
             todos: TS.Maybe,
-            static: TS.Maybe,
+            dated: TS.Maybe,
             broken: TS.Maybe,
         },
         public readonly order: WhereOrder = {
@@ -186,8 +186,8 @@ export class ApiWhere {
         return this.withFilter("todos", todos);
     }
 
-    static(dated: WhereFilter["static"]) {
-        return this.withFilter("static", dated);
+    dated(dated: WhereFilter["dated"]) {
+        return this.withFilter("dated", dated);
     }
 
     broken(broken: WhereFilter["broken"]) {
@@ -375,7 +375,7 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
             filter: {
                 title,
                 todos,
-                static: _static,
+                dated,
                 broken,
             },
             order: {
@@ -422,10 +422,10 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
             notes = notes.filter(note => !note.hasTodos);
         }
 
-        if (_static === TS.On) {
-            notes = notes.filter(note => note.isStatic);
-        } else if (_static === TS.Off) {
-            notes = notes.filter(note => !note.isStatic);
+        if (dated === TS.On) {
+            notes = notes.filter(note => note.isDated);
+        } else if (dated === TS.Off) {
+            notes = notes.filter(note => !note.isDated);
         }
 
         if (broken === TS.On) {

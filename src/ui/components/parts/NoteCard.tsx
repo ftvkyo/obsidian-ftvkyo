@@ -110,17 +110,8 @@ function State({
         </div>;
     }
 
-    let date = null;
-    if (note.isStatic) {
-        date = <div className={styles.state}>
-            <Icon icon="calendar"/>
-            <code>{note.dateInfo}</code>
-        </div>;
-    }
-
     return <>
         {tasks}
-        {date}
     </>;
 }
 

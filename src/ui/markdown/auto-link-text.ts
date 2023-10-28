@@ -52,13 +52,8 @@ export default function AutoLinkText(
             continue;
         }
 
-        let title = note.title;
-        if (note.isStatic) {
-            title += ` (${note.dateInfo})`;
-        }
+        lg.debug(`Using title "${note.title}"`);
 
-        lg.debug(`Using title "${title}"`);
-
-        context.addChild(new Replacer(link, title));
+        context.addChild(new Replacer(link, note.title));
     }
 }

@@ -77,10 +77,18 @@ export class ApiNoteUnique extends ApiNote {
     get title(): string | null {
         const hs = this.fc?.headings ?? [];
         const h1s = hs.filter(h => h.level === 1);
+
         if (h1s.length >= 2) {
             return null;
         }
-        return h1s.shift()?.heading.trim() ?? null;
+
+        const h1 = h1s.first()?.heading.trim() ?? null;
+
+        if (h1 && this.isDated) {
+            return `${h1} (${this.dateInfo})`;
+        }
+
+        return h1;
     }
 
     /* =============== *
@@ -116,21 +124,41 @@ export class ApiNoteUnique extends ApiNote {
      * Date information *
      * ================ */
 
-    // Get pretty date info about the note
-    get dateInfo(): string | null {
+    // Return `date` from the frontmatter.
+    //
+    // Accepted fronmatter `date` values:
+    // - string with a date in the format `YYYYMMDD-HHmmss`
+    // - string with a date in the format `YYYYMMDD`
+    // - string "auto"
+    // - not set
+    get dateMatter(): string | null {
+        return this.fc?.frontmatter?.date ?? null;
+    }
+
+    // Get pretty date info about the note.
+    get dateInfo(): string {
         // Don't output time:
         // - Some notes don't have a meaningful time
         // - It creates extra visual clutter
-        const outputFormat = "ddd, ll";
-        return this.date.format(outputFormat);
+
+        // const outputFormat = "ddd, ll";
+        const outputFormat = "ddd,[&nbsp;]DD[&nbsp;]MMM[&nbsp;]YYYY";
+
+        const matter = this.dateMatter;
+        if (matter === "auto") {
+            return this.date.format(outputFormat);
+        }
+
+        // Try parsing the frontmatter
+        return moment(matter, ["YYYYMMDD-HHmmss", "YYYYMMDD"], true).format(outputFormat);
     }
 
     /* ============ *
      * State checks *
      * ============ */
 
-    get isStatic(): boolean {
-        return this.fc?.frontmatter?.static ?? false;
+    get isDated(): boolean {
+        return this.dateMatter !== null;
     }
 
     // Whether the note is work in progress.
