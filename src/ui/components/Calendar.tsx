@@ -73,7 +73,7 @@ function NoteYear({
     const current = equalUpTo(date, today, "year");
 
     return <NoteAny
-        className={clsx(styles.year, current && styles.current)}
+        className={clsx(styles.year, current && styles.today)}
         period={"year"}
         date={date}
         notes={notes}
@@ -91,7 +91,7 @@ function NoteQuarter({
     const current = equalUpTo(date, today, "quarter");
 
     return <NoteAny
-        className={clsx(styles.quarter, current && styles.current)}
+        className={clsx(styles.quarter, current && styles.today)}
         period={"quarter"}
         date={date}
         notes={notes}
@@ -109,7 +109,7 @@ function NoteMonth({
     const current = equalUpTo(date, today, "month");
 
     return <NoteAny
-        className={clsx(styles.month, current && styles.current)}
+        className={clsx(styles.month, current && styles.today)}
         period={"month"}
         date={date}
         notes={notes}
@@ -123,15 +123,19 @@ function NoteWeek({
     date,
     today,
     notes,
-}: NoteDateProps & NotesTakerProps) {
+    extended,
+}: NoteDateProps & NotesTakerProps & {
+    extended?: boolean,
+}) {
     const current = equalUpTo(date, today, "week");
 
     return <NoteAny
-        className={clsx(styles.week, current && styles.current)}
+        className={clsx(styles.week, current && styles.today)}
         period={"week"}
         date={date}
         notes={notes}
     >
+        {extended && "Week "}
         {date.format("w")}
     </NoteAny>;
 }
@@ -152,7 +156,7 @@ function NoteDay({
     return <NoteAny
         className={clsx(
             styles.day,
-            current && styles.current,
+            current && styles.today,
             otherMonth && styles.otherMonth,
         )}
         period={"day"}
@@ -169,13 +173,18 @@ function CalendarHeader({
     today,
     setDate,
     notes,
+    collapse,
 }: NoteDateProps & NotesTakerProps & {
     setDate: (date: moment.Moment) => void,
+    collapse: () => void,
 }) {
     return <div className={styles.header}>
-        <NoteMonth date={date} today={today} notes={notes}/>
         <NoteYear date={date} today={today} notes={notes}/>
         <NoteQuarter date={date} today={today} notes={notes}/>
+
+        <div className={styles.break}/>
+
+        <NoteMonth date={date} today={today} notes={notes}/>
 
         <div className={styles.controls}>
             <Icon
@@ -189,6 +198,10 @@ function CalendarHeader({
             <Icon
                 icon="chevron-down"
                 onClick={() => setDate(date.clone().add(+7, "days"))}
+            />
+            <Icon
+                icon="calendar-minus"
+                onClick={collapse}
             />
         </div>
     </div>;
@@ -239,6 +252,37 @@ function CalendarWeek({
 }
 
 
+function CalendarCompact({
+    date,
+    today,
+    notes,
+    expand,
+}: NoteDateProps & NotesTakerProps & {
+    expand: () => void,
+}) {
+    return <div className={styles.header}>
+        <NoteYear date={date} today={today} notes={notes}/>
+        <NoteQuarter date={date} today={today} notes={notes}/>
+
+        <div className={styles.break}/>
+
+        <NoteMonth date={date} today={today} notes={notes}/>
+        <NoteDay date={today} today={today} notes={notes} showingMonth={today}/>
+
+        <div className={styles.break}/>
+
+        <NoteWeek date={date} today={today} notes={notes} extended/>
+
+        <div className={styles.controls}>
+            <Icon
+                icon="calendar-plus"
+                onClick={expand}
+            />
+        </div>
+    </div>;
+}
+
+
 const weekOffsets = [
     -7,
     0,
@@ -251,9 +295,22 @@ export default function Calendar({
 }: NotesTakerProps) {
     const today = moment();
 
+    const [compact, setCompact] = useState(true);
+
     // What date to center the calendar around.
     // .weekday is locale-aware.
     const [date, setDate] = useState(reset());
+
+    if (compact) {
+        return <div className={styles.calendar}>
+            <CalendarCompact
+                date={date}
+                today={today}
+                notes={notes}
+                expand={() => setCompact(false)}
+            />
+        </div>;
+    }
 
     return <div className={styles.calendar}>
         <CalendarHeader
@@ -261,6 +318,7 @@ export default function Calendar({
             today={today}
             setDate={setDate}
             notes={notes}
+            collapse={() => setCompact(true)}
         />
         <CalendarWeekHeader
             date={date}

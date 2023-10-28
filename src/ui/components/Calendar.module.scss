@@ -16,9 +16,17 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
 .header {
     display: flex;
     align-items: center;
-    gap: $gap;
 
     font-size: 1.25em;
+
+    .break {
+        margin: 0 ($gap / 2);
+
+        width: 0;
+        height: 100%;
+
+        border-left: 1px solid var(--background-modifier-border);
+    }
 
     .controls {
         flex: 1;
@@ -48,6 +56,10 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
 
         font-size: smaller;
     }
+
+    .note.today {
+        border: 2px solid var(--background-modifier-border);
+    }
 }
 
 .weekHeader {
@@ -65,31 +77,20 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
 .note {
     padding: $pad;
 
-    // text-shadow: 0 0 3px currentcolor;
+    &.exists {
+        font-weight: bold;
+    }
 
     &.year {
         color: var(--interactive-accent);
-        font-weight: bold;
     }
 
     &.week {
         color: var(--italic-color);
     }
 
-    &.day {
-        &.otherMonth {
-            opacity: 50%;
-        }
-    }
-
-    &.day, &.week {
-        &.current {
-            border: 2px solid var(--background-modifier-border);
-        }
-
-        &.exists {
-            font-weight: bold;
-        }
+    &.day.otherMonth {
+        opacity: 50%;
     }
 
     &.disabled {
