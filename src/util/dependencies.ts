@@ -1,3 +1,6 @@
+import { MomentPeriods } from "./date";
+
+
 export interface SingleNoteTypeSetting {
     format: string,
     template: string,
@@ -9,16 +12,7 @@ export interface MaybeEnabled {
 }
 
 
-const periodicNotesPeriods = [
-    "daily",
-    "weekly",
-    "monthly",
-    "quarterly",
-    "yearly",
-] as const;
-
-
-export type PeriodicNotesPeriods = typeof periodicNotesPeriods[number];
+export type PeriodicNotesPeriods = "yearly" | "quarterly" | "monthly" | "weekly" | "daily";
 
 export interface PeriodicNotesPlugin {
     settings: Record<PeriodicNotesPeriods, SingleNoteTypeSetting & MaybeEnabled>;
@@ -34,7 +28,7 @@ export class Dependencies {
 
     uniqueFormat: string | null;
 
-    periodicFormats: Record<PeriodicNotesPeriods, string | null>;
+    periodicFormats: Record<MomentPeriods, string | null>;
 
     constructor(
         readonly periodic: PeriodicNotesPlugin,
@@ -43,11 +37,11 @@ export class Dependencies {
         const reformat = (ofmt?: { format: string }) => ofmt?.format.split("/").last() ?? null;
 
         this.periodicFormats = {
-            "yearly": reformat(periodic.settings.yearly),
-            "quarterly": reformat(periodic.settings.quarterly),
-            "monthly": reformat(periodic.settings.monthly),
-            "weekly": reformat(periodic.settings.weekly),
-            "daily": reformat(periodic.settings.daily),
+            "year": reformat(periodic.settings.yearly),
+            "quarter": reformat(periodic.settings.quarterly),
+            "month": reformat(periodic.settings.monthly),
+            "week": reformat(periodic.settings.weekly),
+            "day": reformat(periodic.settings.daily),
         };
 
         this.uniqueFormat = reformat(unique.options);

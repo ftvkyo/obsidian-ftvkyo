@@ -1,3 +1,4 @@
+import { MomentPeriods } from "@/util/date";
 import { ListItemCache, TFile, moment } from "obsidian";
 
 
@@ -185,12 +186,13 @@ export class ApiNoteUnique extends ApiNote {
 
 export class ApiNotePeriodic extends ApiNote {
 
-    get period() {
+    // Determine note period based on its basename and periodic notes formats
+    get period(): [MomentPeriods, moment.Moment] | null {
         for (const [period, fmt] of Object.entries(ftvkyo.deps.periodicFormats)) {
             if (fmt) {
                 const date = moment(this.base, fmt, true);
                 if (date.isValid()) {
-                    return period;
+                    return [period as keyof typeof ftvkyo.deps.periodicFormats, date];
                 }
             }
         }

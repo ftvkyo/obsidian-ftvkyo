@@ -1,11 +1,11 @@
 import { moment } from "obsidian";
 import { useState } from "react";
 import Icon from "./controls/Icon";
-import { ApiNote } from "@/api/note";
-
-import styles from "./Calendar.module.scss";
 import { clsx } from "clsx";
 import { ApiNotePeriodicList } from "@/api/note-list";
+import { equalUpTo, MomentPeriods } from "@/util/date";
+
+import styles from "./Calendar.module.scss";
 
 
 function reset() {
@@ -13,43 +13,28 @@ function reset() {
 }
 
 
-const dateComponents = [
-    "year",
-    "quarter",
-    "month",
-    "week",
-    "day",
-] as const;
-
-
-function isToday(
-    date: moment.Moment,
-    today: moment.Moment,
-    upTo: typeof dateComponents[number],
-) {
-    for (const component of dateComponents) {
-        if (date[component]() !== today[component]()) {
-            return false;
-        }
-        if (component === upTo) {
-            break;
-        }
-    }
-    return true;
-}
-
-
 function NoteAny({
     className,
-    note,
+    period,
+    date,
+    notes,
     children,
 }: {
     className?: string,
-    note?: ApiNote,
+    period: MomentPeriods,
+    date: moment.Moment,
+    notes: ApiNotePeriodicList,
     children: React.ReactNode,
 }) {
+    const note = notes.getThe(period, date);
+
     return <div
-        className={clsx(styles.note, className, "clickable-icon")}
+        className={clsx(
+            "clickable-icon",
+            styles.note,
+            className,
+            note && styles.exists,
+        )}
         onClick={note ? () => note.reveal() : undefined}
     >
         {children}
@@ -63,14 +48,23 @@ interface NoteDateProps {
 }
 
 
+interface NotesTakerProps {
+    notes: ApiNotePeriodicList,
+}
+
+
 function NoteYear({
     date,
     today,
-}: NoteDateProps) {
-    const current = isToday(date, today, "year");
+    notes,
+}: NoteDateProps & NotesTakerProps) {
+    const current = equalUpTo(date, today, "year");
 
     return <NoteAny
         className={clsx(styles.year, current && styles.current)}
+        period={"year"}
+        date={date}
+        notes={notes}
     >
         {date.format("Y")}
     </NoteAny>;
@@ -80,11 +74,15 @@ function NoteYear({
 function NoteQuarter({
     date,
     today,
-}: NoteDateProps) {
-    const current = isToday(date, today, "quarter");
+    notes,
+}: NoteDateProps & NotesTakerProps) {
+    const current = equalUpTo(date, today, "quarter");
 
     return <NoteAny
         className={clsx(styles.quarter, current && styles.current)}
+        period={"quarter"}
+        date={date}
+        notes={notes}
     >
         {date.format("[Q]Q")}
     </NoteAny>;
@@ -94,11 +92,15 @@ function NoteQuarter({
 function NoteMonth({
     date,
     today,
-}: NoteDateProps) {
-    const current = isToday(date, today, "month");
+    notes,
+}: NoteDateProps & NotesTakerProps) {
+    const current = equalUpTo(date, today, "month");
 
     return <NoteAny
         className={clsx(styles.month, current && styles.current)}
+        period={"month"}
+        date={date}
+        notes={notes}
     >
         {date.format("MMM")}
     </NoteAny>;
@@ -108,11 +110,15 @@ function NoteMonth({
 function NoteWeek({
     date,
     today,
-}: NoteDateProps) {
-    const current = isToday(date, today, "week");
+    notes,
+}: NoteDateProps & NotesTakerProps) {
+    const current = equalUpTo(date, today, "week");
 
     return <NoteAny
         className={clsx(styles.week, current && styles.current)}
+        period={"week"}
+        date={date}
+        notes={notes}
     >
         {date.format("w")}
     </NoteAny>;
@@ -123,12 +129,13 @@ function NoteDay({
     date,
     today,
     showingMonth, // We need to darken days of other months
-}: NoteDateProps & {
+    notes,
+}: NoteDateProps & NotesTakerProps & {
     showingMonth: moment.Moment,
 }) {
-    const current = isToday(date, today, "day");
+    const current = equalUpTo(date, today, "day");
 
-    const otherMonth = !isToday(date, showingMonth, "month");
+    const otherMonth = !equalUpTo(date, showingMonth, "month");
 
     return <NoteAny
         className={clsx(
@@ -136,6 +143,9 @@ function NoteDay({
             current && styles.current,
             otherMonth && styles.otherMonth,
         )}
+        period={"day"}
+        date={date}
+        notes={notes}
     >
         {date.format("D")}
     </NoteAny>;
@@ -146,13 +156,14 @@ function CalendarHeader({
     date,
     today,
     setDate,
-}: NoteDateProps & {
+    notes,
+}: NoteDateProps & NotesTakerProps & {
     setDate: (date: moment.Moment) => void,
 }) {
     return <div className={styles.header}>
-        <NoteMonth date={date} today={today}/>
-        <NoteYear date={date} today={today}/>
-        <NoteQuarter date={date} today={today}/>
+        <NoteMonth date={date} today={today} notes={notes}/>
+        <NoteYear date={date} today={today} notes={notes}/>
+        <NoteQuarter date={date} today={today} notes={notes}/>
 
         <div className={styles.controls}>
             <Icon
@@ -195,19 +206,22 @@ function CalendarWeek({
     date, // Expected to be the first day of the week
     today,
     showingMonth,
-}: NoteDateProps & {
+    notes,
+}: NoteDateProps & NotesTakerProps & {
     showingMonth: moment.Moment,
 }) {
     return <div className={styles.weekRow}>
         <NoteWeek
             date={date}
             today={today}
+            notes={notes}
         />
         {weekdayOffsets.map(offset => <NoteDay
             key={offset}
             date={date.clone().add(offset, "days")}
             today={today}
             showingMonth={showingMonth}
+            notes={notes}
         />)}
     </div>;
 }
@@ -222,9 +236,7 @@ const weekOffsets = [
 
 export default function Calendar({
     notes,
-}: {
-    notes: ApiNotePeriodicList,
-}) {
+}: NotesTakerProps) {
     const today = moment();
 
     // What date to center the calendar around.
@@ -236,6 +248,7 @@ export default function Calendar({
             date={date}
             today={today}
             setDate={setDate}
+            notes={notes}
         />
         <CalendarWeekHeader
             date={date}
@@ -245,6 +258,7 @@ export default function Calendar({
             date={date.clone().add(offset, "days")}
             today={today}
             showingMonth={date}
+            notes={notes}
         />)}
     </div>;
 }

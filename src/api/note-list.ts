@@ -1,3 +1,4 @@
+import { equalUpTo, MomentPeriods } from "@/util/date";
 import { ApiNote, ApiNotePeriodic, ApiNoteUnique } from "./note";
 
 
@@ -458,4 +459,17 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
 
 export class ApiNotePeriodicList extends ApiNoteList<ApiNotePeriodic> {
 
+    getThe(
+        period: MomentPeriods,
+        date: moment.Moment,
+    ) {
+        return this.find((note) => {
+            const p = note.period;
+            if (!p) {
+                return false;
+            }
+            const [np, nd] = p;
+            return np === period && equalUpTo(nd, date, period);
+        });
+    }
 }

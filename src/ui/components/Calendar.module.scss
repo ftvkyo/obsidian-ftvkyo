@@ -18,6 +18,8 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
     align-items: center;
     gap: $gap;
 
+    font-size: 1.25em;
+
     .controls {
         flex: 1;
 
@@ -63,6 +65,8 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
 .note {
     padding: $pad;
 
+    // text-shadow: 0 0 3px currentcolor;
+
     &.year {
         color: var(--interactive-accent);
         font-weight: bold;
@@ -70,19 +74,21 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
 
     &.week {
         color: var(--italic-color);
-
-        &.current {
-            font-weight: bold;
-        }
     }
 
     &.day {
-        &.current {
-            font-weight: bold;
-        }
-
         &.otherMonth {
             opacity: 50%;
+        }
+    }
+
+    &.day, &.week {
+        &.current {
+            border: 2px solid var(--background-modifier-border);
+        }
+
+        &.exists {
+            font-weight: bold;
         }
     }
 }
