@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 import Markdown from "react-markdown";
 
-import { ApiNote } from "@/api/note";
+import { ApiNoteUnique } from "@/api/note";
 import { toClipboard } from "@/util/clipboard";
 
 import styles from "./NoteCard.module.scss";
@@ -19,7 +19,7 @@ function onClick(
         return;
     }
 
-    const note = ApiNote.fromPath(href);
+    const note = ApiNoteUnique.fromPath(href);
     if (!note) {
         return;
     }
@@ -46,7 +46,7 @@ function onAuxClick(
 
 
 interface Props {
-    note: ApiNote,
+    note: ApiNoteUnique,
 }
 
 

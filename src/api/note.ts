@@ -1,9 +1,6 @@
 import { ListItemCache, TFile, moment } from "obsidian";
 
 
-const RE_TITLE_ROOT = /^#[\w-][\w-/]*$/
-
-
 // A note in the vault.
 //
 // Identified by its TFile.
@@ -11,28 +8,12 @@ const RE_TITLE_ROOT = /^#[\w-][\w-/]*$/
 //
 // Contracts:
 // - TFile must be valid when the object is accessed.
-export class ApiNote {
+export abstract class ApiNote {
 
     constructor(
         // Note identification
         public readonly tf: TFile,
     ) {}
-
-    // Convenience factory.
-    static from(tf: TFile) {
-        return new ApiNote(tf);
-    }
-
-    // Try to get a note from a path.
-    // Returns null if the path is not found or is not a note.
-    // If `from` is specified, the path is resolved relative to `from`.
-    static fromPath(
-        path: string,
-        from: string = "",
-    ) {
-        const tf = app.metadataCache.getFirstLinkpathDest(path, from);
-        return tf ? ApiNote.from(tf) : null;
-    }
 
     /* ================ *
      * Filesystem stuff *
@@ -51,6 +32,53 @@ export class ApiNote {
     // File cache of the note.
     get fc() {
         return app.metadataCache.getFileCache(this.tf);
+    }
+
+    /* ======= *
+     * Actions *
+     * ======= */
+
+    // Reveal the note.
+    async reveal({
+        // What mode to open the note in.
+        mode = "preview",
+        // Whether to replace the current workspace leaf.
+        replace = false,
+    }: {
+        mode?: "preview" | "source",
+        replace?: boolean,
+    } = {}) {
+        const current = app.workspace.getActiveFile();
+        const shouldReplace = replace || current === null;
+
+        const leaf = app.workspace.getLeaf(!shouldReplace);
+        await leaf.openFile(this.tf, {
+            state: { mode },
+        });
+
+        return leaf;
+    }
+}
+
+
+export class ApiNoteUnique extends ApiNote {
+
+    static RE_TITLE_ROOT = /^#[\w-][\w-/]*$/;
+
+    // Convenience factory.
+    static from(tf: TFile) {
+        return new ApiNoteUnique(tf);
+    }
+
+    // Try to get a note from a path.
+    // Returns null if the path is not found or is not a note.
+    // If `from` is specified, the path is resolved relative to `from`.
+    static fromPath(
+        path: string,
+        from: string = "",
+    ) {
+        const tf = app.metadataCache.getFirstLinkpathDest(path, from);
+        return tf ? ApiNoteUnique.from(tf) : null;
     }
 
     /* ================= *
@@ -137,7 +165,7 @@ export class ApiNote {
     // Whether the note is a root note.
     // Those notes have a tag as their title.
     get isRoot() {
-        return RE_TITLE_ROOT.test(this.title ?? "");
+        return ApiNoteUnique.RE_TITLE_ROOT.test(this.title ?? "");
     }
 
     // Check if the note is invalid.
@@ -168,29 +196,9 @@ export class ApiNote {
 
         return false;
     }
+}
 
-    /* ======= *
-     * Actions *
-     * ======= */
 
-    // Reveal the note.
-    async reveal({
-        // What mode to open the note in.
-        mode = "preview",
-        // Whether to replace the current workspace leaf.
-        replace = false,
-    }: {
-        mode?: "preview" | "source",
-        replace?: boolean,
-    } = {}) {
-        const current = app.workspace.getActiveFile();
-        const shouldReplace = replace || current === null;
+export class ApiNotePeriodic extends ApiNote {
 
-        const leaf = app.workspace.getLeaf(!shouldReplace);
-        await leaf.openFile(this.tf, {
-            state: { mode },
-        });
-
-        return leaf;
-    }
 }

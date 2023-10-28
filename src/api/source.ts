@@ -1,12 +1,12 @@
-import ApiNoteList from "./note-list";
+import { ApiNotePeriodicList, ApiNoteUniqueList } from "./note-list";
 
 export default class ApiSource {
 
     #et = new EventTarget();
 
     cache: {
-        unique: ApiNoteList,
-        periodic: ApiNoteList,
+        unique: ApiNoteUniqueList,
+        periodic: ApiNotePeriodicList,
     };
 
     constructor() {
@@ -33,8 +33,8 @@ export default class ApiSource {
         });
 
         this.cache = {
-            unique: ApiNoteList.from(unique),
-            periodic: ApiNoteList.from(periodic),
+            unique: ApiNoteUniqueList.from(unique),
+            periodic: ApiNoteUniqueList.from(periodic),
         };
 
         this.#et.dispatchEvent(new Event("updated"));

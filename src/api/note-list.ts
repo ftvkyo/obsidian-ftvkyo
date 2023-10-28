@@ -1,6 +1,6 @@
 import { TFile } from "obsidian";
 
-import { ApiNote } from "./note";
+import { ApiNotePeriodic, ApiNoteUnique } from "./note";
 
 
 export enum TriState {
@@ -48,8 +48,8 @@ export class Tag {
 
 export interface TagMap {
     [id: string]: {
-        notes: ApiNote[],
-        noteRoot?: ApiNote,
+        notes: ApiNoteUnique[],
+        noteRoot?: ApiNoteUnique,
     },
 }
 
@@ -58,8 +58,8 @@ export interface TagTree {
     // Unlike `TagMap`, this is a recursive
     // structure, and the keys are path bits.
     [bit: string]: {
-        notes: ApiNote[],
-        noteRoot?: ApiNote,
+        notes: ApiNoteUnique[],
+        noteRoot?: ApiNoteUnique,
         subtags: TagTree,
     },
 }
@@ -292,20 +292,24 @@ export class ApiWhere {
 }
 
 
-export default class ApiNoteList {
+export abstract class ApiNoteList<Note> {
 
     constructor(
-        public readonly notes: ApiNote[],
+        public readonly notes: Note[],
     ) {}
-
-    static from(files: TFile[]) {
-        return new ApiNoteList(
-            files.map(ApiNote.from)
-        );
-    }
 
     get length() {
         return this.notes.length;
+    }
+}
+
+
+export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
+
+    static from(files: TFile[]) {
+        return new ApiNoteUniqueList(
+            files.map(ApiNoteUnique.from)
+        );
     }
 
     // Get a map from tags to notes.
@@ -364,7 +368,7 @@ export default class ApiNoteList {
     }
 
     // Filter the notes.
-    where(w: ApiWhere): {notes: ApiNoteList, found: number} {
+    where(w: ApiWhere): {notes: ApiNoteUniqueList, found: number} {
         const {
             tag,
             filter: {
@@ -430,8 +434,8 @@ export default class ApiNoteList {
         }
 
         const keyF = key === "title"
-            ? (e: ApiNote) => e.title ?? e.base
-            : (e: ApiNote) => e.base;
+            ? (e: ApiNoteUnique) => e.title ?? e.base
+            : (e: ApiNoteUnique) => e.base;
 
         notes = notes.sort((a, b) => keyF(a).localeCompare(keyF(b)));
 
@@ -447,6 +451,12 @@ export default class ApiNoteList {
             notes = notes.slice(start, end);
         }
 
-        return {notes: new ApiNoteList(notes), found: count};
+        return {notes: new ApiNoteUniqueList(notes), found: count};
     }
+}
+
+
+
+export class ApiNotePeriodicList extends ApiNoteList<ApiNotePeriodic> {
+
 }

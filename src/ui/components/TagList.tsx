@@ -1,4 +1,4 @@
-import ApiNoteList, { Tag } from "@/api/note-list";
+import { ApiNoteUniqueList, Tag } from "@/api/note-list";
 import Icon from "./controls/Icon";
 import {TagTree} from "./parts/TagTree";
 
@@ -9,7 +9,7 @@ export default function TagList({
     notes,
     setTag,
 }: {
-    notes: ApiNoteList,
+    notes: ApiNoteUniqueList,
     setTag: (id: Tag) => void,
 }) {
     return <div className={styles.list}>

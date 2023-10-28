@@ -2,7 +2,7 @@ import { MarkdownPostProcessorContext } from "obsidian";
 
 import Logger from "@/util/logger";
 
-import { ApiNote } from "@/api/note";
+import { ApiNoteUnique } from "@/api/note";
 import Replacer from "./Replacer";
 
 
@@ -35,7 +35,8 @@ export default function AutoLinkText(
         }
 
         // TODO: provide path to the current note for correct path resolution
-        const note = ApiNote.fromPath(filename);
+        // TODO: get it from ApiSource, as it could be a link to a periodic note.
+        const note = ApiNoteUnique.fromPath(filename);
 
         if (!note) {
             lg.debug(`Note not found`);
