@@ -111,8 +111,6 @@ export default class Dependencies {
                 const fmt = this.generatePathFormat(config);
                 const date = ftvkyo.momentParse(path, fmt);
                 if (date.isValid()) {
-                    console.log(`Path ${path} identified as ${type} with date ${date.format()}`);
-
                     return [type, date];
                 }
             }
