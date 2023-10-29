@@ -1,5 +1,5 @@
 import { moment } from "obsidian";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Icon from "./controls/Icon";
 import { clsx } from "clsx";
 import { ApiNotePeriodicList } from "@/api/note-list";
@@ -35,6 +35,17 @@ function NoteAny({
     const periodConfig = ftvkyo.deps.periodic[period];
     const note = notes.getThe(period, date);
 
+    const onClick = useCallback(async (
+        replace: boolean,
+    ) => {
+        if (note) {
+            note.reveal({ replace });
+        } else {
+            const newNote = await ftvkyo.deps.createNote(period, date);
+            new ApiNotePeriodic(newNote, date, period).reveal({ replace });
+        }
+    }, [note]);
+
     return <div
         className={clsx(
             "clickable-icon",
@@ -43,15 +54,8 @@ function NoteAny({
             note && styles.exists,
             !periodConfig && styles.disabled,
         )}
-        onClick={note
-            ? () => note.reveal()
-            : periodConfig
-                ? async () => {
-                    const newNote = await ftvkyo.deps.createNote(period, date);
-                    new ApiNotePeriodic(newNote, date, period).reveal();
-                }
-                : undefined
-        }
+        onClick={(e) => onClick(!e.ctrlKey)}
+        onAuxClick={(e) => (e.button === 1) && onClick(false)}
     >
         {children}
     </div>;
