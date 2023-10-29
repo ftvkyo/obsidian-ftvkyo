@@ -2,14 +2,9 @@
 @use "./list";
 
 
-.list {
-    @include list.list;
-
-    font-size: 1.25em;
-}
-
-
 .wildcards {
+    padding: vars.$pad;
+
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: auto;

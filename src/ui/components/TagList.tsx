@@ -12,7 +12,7 @@ export default function TagList({
     notes: ApiNoteUniqueList,
     setTag: (id: Tag) => void,
 }) {
-    return <div className={styles.list}>
+    return <>
         <div className={styles.wildcards}>
             <div
                 className="clickable-icon"
@@ -43,8 +43,9 @@ export default function TagList({
         </div>
 
         <TagTree
+            root
             tree={notes.tagTree}
             setTag={(id: string) => setTag(new Tag(id))}
         />
-    </div>;
+    </>;
 }

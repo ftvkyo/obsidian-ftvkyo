@@ -27,4 +27,6 @@
 
 .list {
     @include list.list;
+    padding: vars.$pad;
+    overflow-y: scroll;
 }

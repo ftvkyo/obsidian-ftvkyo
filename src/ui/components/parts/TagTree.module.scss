@@ -2,24 +2,47 @@
 @use "../list";
 
 
-.card {
-    @include list.card;
+.list {
+    @include list.list;
+    padding-left: vars.$pad;
+    gap: vars.$gap / 4;
 
+    &.root {
+        padding: vars.$pad;
+        overflow-y: scroll;
+    }
+}
+
+
+.card {
     display: flex;
     flex-direction: column;
-    gap: vars.$gap;
-
-    border: 1px solid var(--background-modifier-border);
+    gap: vars.$gap / 4;
 }
 
 
 .single {
     display: flex;
     flex-direction: row;
-    gap: vars.$gap;
+    align-items: center;
+    gap: vars.$gap / 2;
+
+    padding: vars.$pad / 4;
+    padding-right: vars.$pad / 2;
+    border-radius: list.$card-border-radius;
+
+    &:hover {
+        background-color: var(--background-modifier-hover);
+    }
+
+    a {
+        flex: 1;
+        font-family: var(--font-monospace);
+    }
 
     .count {
-        flex: 1;
         opacity: 60%;
+        width: 3ch;
+        text-align: right;
     }
 }
