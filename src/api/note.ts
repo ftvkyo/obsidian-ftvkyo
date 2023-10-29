@@ -151,7 +151,7 @@ export class ApiNoteUnique extends ApiNote {
         }
 
         // Try parsing the frontmatter
-        return moment(matter, ["YYYYMMDD-HHmmss", "YYYYMMDD"], true).format(outputFormat);
+        return moment(matter, ["YYYYMMDD-HHmmss", "YYYYMMDD"], true).locale(ftvkyo.momentLocale).format(outputFormat);
     }
 
     /* ============ *

@@ -109,7 +109,7 @@ export default class Dependencies {
             const config = this.getConfig(type);
             if (config) {
                 const fmt = this.generatePathFormat(config);
-                const date = moment(path, fmt, true);
+                const date = moment(path, fmt, true).locale(ftvkyo.momentLocale);
                 if (date.isValid()) {
                     return [type, date];
                 }

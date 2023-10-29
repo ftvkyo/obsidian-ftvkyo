@@ -9,9 +9,13 @@ import styles from "./Calendar.module.scss";
 import { ApiNotePeriodic } from "@/api/note";
 
 
-function reset() {
-    const firstDayOfWeek = 1; // Monday
-    return moment().day(firstDayOfWeek).hour(0).minute(0).second(0);
+function dateToday(locale: moment.LocaleSpecifier) {
+    return moment().locale(locale).hour(0).minute(0).second(0);
+}
+
+
+function dateWeekStart(locale: moment.LocaleSpecifier) {
+    return dateToday(locale).weekday(0);
 }
 
 
@@ -189,15 +193,15 @@ function CalendarHeader({
         <div className={styles.controls}>
             <Icon
                 icon="chevron-up"
-                onClick={() => setDate(date.clone().add(-7, "days"))}
+                onClick={() => setDate(date.clone().add(-1, "week"))}
             />
             <Icon
                 icon="reset"
-                onClick={() => setDate(reset())}
+                onClick={() => setDate(dateWeekStart(ftvkyo.momentLocale))}
             />
             <Icon
                 icon="chevron-down"
-                onClick={() => setDate(date.clone().add(+7, "days"))}
+                onClick={() => setDate(date.clone().add(+1, "week"))}
             />
             <Icon
                 icon="calendar-minus"
@@ -284,22 +288,22 @@ function CalendarCompact({
 
 
 const weekOffsets = [
-    -7,
+    -1,
     0,
-    7,
+    1,
 ];
 
 
 export default function Calendar({
     notes,
 }: NotesTakerProps) {
-    const today = moment();
+    const today = dateToday(ftvkyo.momentLocale);
 
     const [compact, setCompact] = useState(true);
 
     // What date to center the calendar around.
     // .weekday is locale-aware.
-    const [date, setDate] = useState(reset());
+    const [date, setDate] = useState(dateWeekStart(ftvkyo.momentLocale));
 
     if (compact) {
         return <div className={styles.calendar}>
@@ -325,7 +329,7 @@ export default function Calendar({
         />
         {weekOffsets.map(offset => <CalendarWeek
             key={offset}
-            date={date.clone().add(offset, "days")}
+            date={date.clone().add(offset, "week")}
             today={today}
             showingMonth={date}
             notes={notes}

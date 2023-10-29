@@ -50,6 +50,8 @@ export default class ObsidianFtvkyo extends Plugin {
 
     api: Api;
 
+    momentLocale = "en-gb";
+
     /* ======== *
      * Settings *
      * ======== */
