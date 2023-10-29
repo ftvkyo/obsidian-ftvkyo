@@ -1,4 +1,4 @@
-import { Command, Plugin } from "obsidian";
+import { Command, Plugin, moment } from "obsidian";
 
 import Logger from "@/util/logger";
 
@@ -50,7 +50,15 @@ export default class ObsidianFtvkyo extends Plugin {
 
     api: Api;
 
-    momentLocale = "en-gb";
+    #momentLocale = "en-gb";
+
+    momentParse(date: string, format: string | string[]) {
+        return moment(date, format, this.#momentLocale, /* strict */ true);
+    }
+
+    moment() {
+        return moment().locale(this.#momentLocale);
+    }
 
     /* ======== *
      * Settings *

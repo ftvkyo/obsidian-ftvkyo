@@ -109,8 +109,10 @@ export default class Dependencies {
             const config = this.getConfig(type);
             if (config) {
                 const fmt = this.generatePathFormat(config);
-                const date = moment(path, fmt, true).locale(ftvkyo.momentLocale);
+                const date = ftvkyo.momentParse(path, fmt);
                 if (date.isValid()) {
+                    console.log(`Path ${path} identified as ${type} with date ${date.format()}`);
+
                     return [type, date];
                 }
             }

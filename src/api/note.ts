@@ -136,7 +136,7 @@ export class ApiNoteUnique extends ApiNote {
     }
 
     // Get pretty date info about the note.
-    get dateInfo(): string {
+    get dateInfo(): string | null {
         // Don't output time:
         // - Some notes don't have a meaningful time
         // - It creates extra visual clutter
@@ -146,12 +146,12 @@ export class ApiNoteUnique extends ApiNote {
         const outputFormat = "ddd,[\xa0]DD[\xa0]MMM[\xa0]YYYY";
 
         const matter = this.dateMatter;
-        if (matter === "auto") {
+        if (matter === "auto" || matter === null) {
             return this.date.format(outputFormat);
         }
 
         // Try parsing the frontmatter
-        return moment(matter, ["YYYYMMDD-HHmmss", "YYYYMMDD"], true).locale(ftvkyo.momentLocale).format(outputFormat);
+        return ftvkyo.momentParse(matter, ["YYYYMMDD-HHmmss", "YYYYMMDD"]).format(outputFormat);
     }
 
     /* ============ *

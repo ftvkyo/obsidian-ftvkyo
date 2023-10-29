@@ -1,4 +1,3 @@
-import { moment } from "obsidian";
 import { useCallback, useState } from "react";
 import Icon from "./controls/Icon";
 import { clsx } from "clsx";
@@ -9,13 +8,13 @@ import styles from "./Calendar.module.scss";
 import { ApiNotePeriodic } from "@/api/note";
 
 
-function dateToday(locale: moment.LocaleSpecifier) {
-    return moment().locale(locale).hour(0).minute(0).second(0);
+function dateToday() {
+    return ftvkyo.moment().hour(0).minute(0).second(0);
 }
 
 
-function dateWeekStart(locale: moment.LocaleSpecifier) {
-    return dateToday(locale).weekday(0);
+function dateWeekStart() {
+    return dateToday().weekday(0);
 }
 
 
@@ -201,7 +200,7 @@ function CalendarHeader({
             />
             <Icon
                 icon="reset"
-                onClick={() => setDate(dateWeekStart(ftvkyo.momentLocale))}
+                onClick={() => setDate(dateWeekStart())}
             />
             <Icon
                 icon="chevron-down"
@@ -301,13 +300,13 @@ const weekOffsets = [
 export default function Calendar({
     notes,
 }: NotesTakerProps) {
-    const today = dateToday(ftvkyo.momentLocale);
+    const today = dateToday();
 
     const [compact, setCompact] = useState(true);
 
     // What date to center the calendar around.
     // .weekday is locale-aware.
-    const [date, setDate] = useState(dateWeekStart(ftvkyo.momentLocale));
+    const [date, setDate] = useState(dateWeekStart());
 
     if (compact) {
         return <div className={styles.calendar}>
