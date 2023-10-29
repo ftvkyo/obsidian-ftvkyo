@@ -1,7 +1,7 @@
 import { ApiNote } from "@/api/note";
 import { TagTree } from "@/api/note-list";
 import { clsx } from "clsx";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Icon from "../controls/Icon";
 
 import styles from "./TagTree.module.scss";
@@ -24,6 +24,10 @@ function TagSingle({
 }) {
     const [expand, setExpand] = useState(false);
 
+    const onRootClick = useCallback((replace: boolean) => {
+        noteRoot?.reveal({ replace });
+    }, [noteRoot?.base]);
+
     const tagHeader = <div className={styles.single}>
         <Icon
             icon={subtree
@@ -43,7 +47,8 @@ function TagSingle({
         {noteRoot && <Icon
             icon="hash"
             label="Root note"
-            onClick={() => noteRoot.reveal()}
+            onClick={(e) => onRootClick(!e.ctrlKey)}
+            onAuxClick={(e) => (e.button === 1) && onRootClick(false)}
         />}
 
         <span className={styles.count}>

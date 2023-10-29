@@ -11,6 +11,7 @@ export interface IconProps {
     pressed?: boolean,
     disabled?: boolean,
     onClick?: (e: React.MouseEvent) => void,
+    onAuxClick?: (e: React.MouseEvent) => void,
 }
 
 
@@ -20,6 +21,7 @@ export default function Icon({
     pressed,
     disabled,
     onClick,
+    onAuxClick,
 }: IconProps) {
     const updateIcon = useCallback((node: HTMLElement | null) => {
         if (node) {
@@ -43,5 +45,6 @@ export default function Icon({
         aria-label={label}
 
         onClick={onClick}
+        onAuxClick={onAuxClick}
     />;
 }
