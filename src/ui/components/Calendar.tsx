@@ -151,14 +151,12 @@ function NoteWeek({
 function NoteDay({
     date,
     today,
-    showingMonth, // We need to darken days of other months
     notes,
-}: NoteDateProps & NotesTakerProps & {
-    showingMonth: moment.Moment,
-}) {
+}: NoteDateProps & NotesTakerProps) {
     const current = equalUpTo(date, today, "day");
 
-    const otherMonth = !equalUpTo(date, showingMonth, "month");
+    // We need to darken days of other months
+    const otherMonth = !equalUpTo(date, today, "month");
 
     return <NoteAny
         className={clsx(
@@ -252,7 +250,6 @@ function CalendarWeek({
             key={offset}
             date={date.clone().add(offset, "days")}
             today={today}
-            showingMonth={showingMonth}
             notes={notes}
         />)}
     </div>;
@@ -274,7 +271,7 @@ function CalendarCompact({
         <div className={styles.break}/>
 
         <NoteMonth date={date} today={today} notes={notes}/>
-        <NoteDay date={today} today={today} notes={notes} showingMonth={today}/>
+        <NoteDay date={today} today={today} notes={notes}/>
 
         <div className={styles.break}/>
 
