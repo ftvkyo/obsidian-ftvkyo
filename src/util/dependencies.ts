@@ -59,7 +59,7 @@ export default class Dependencies {
         return new Dependencies(
             unique.options,
             {
-                "day": pps.daily?.enabled && pps.daily || null,
+                "date": pps.daily?.enabled && pps.daily || null,
                 "week": pps.weekly?.enabled && pps.weekly || null,
                 "month": pps.monthly?.enabled && pps.monthly || null,
                 "quarter": pps.quarterly?.enabled && pps.quarterly || null,
@@ -98,7 +98,7 @@ export default class Dependencies {
     determineNote(path: string): [NoteType, moment.Moment] | null {
         const order = [
             "unique",
-            "day",
+            "date",
             "week",
             "month",
             "quarter",

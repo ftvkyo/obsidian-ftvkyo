@@ -3,7 +3,7 @@ const periods = [
     "quarter",
     "month",
     "week",
-    "day",
+    "date",
 ] as const;
 
 
@@ -14,8 +14,21 @@ export function equalUpTo(
     date1: moment.Moment,
     date2: moment.Moment,
     upTo: MomentPeriods,
-) {
-    for (const p of periods) {
+): boolean {
+    // These need to be processed separately:
+    // - Year -> Quarter -> Month -> Day
+    // - Year -> Week
+
+    if (upTo === "week") {
+        return equalUpTo(date1, date2, "year") && date1.week() === date2.week();
+    }
+
+    if (upTo === "date") {
+        // Note: day is about weekdays...
+        return equalUpTo(date1, date2, "month") && date1.date() === date2.date();
+    }
+
+    for (const p of ["year", "quarter", "month"] as const) {
         if (date1[p]() !== date2[p]()) {
             return false;
         }

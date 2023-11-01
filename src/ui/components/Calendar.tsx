@@ -62,7 +62,9 @@ function NoteAny({
 
 
 interface NoteDateProps {
-    date: moment.Moment,
+    // Expected to be the Monday of the week we are displaying
+    week: moment.Moment,
+    // Expected to be today
     today: moment.Moment,
 }
 
@@ -73,77 +75,86 @@ interface NotesTakerProps {
 
 
 function NoteYear({
-    date,
+    week,
     today,
     notes,
 }: NoteDateProps & NotesTakerProps) {
-    const current = equalUpTo(date, today, "year");
+    const current = equalUpTo(week, today, "year");
 
     return <NoteAny
         className={clsx(styles.year, current && styles.today)}
         period={"year"}
-        date={date}
+        date={week}
         notes={notes}
     >
-        {date.format("Y")}
+        {week.format("Y")}
     </NoteAny>;
 }
 
 
 function NoteQuarter({
-    date,
+    week,
     today,
     notes,
 }: NoteDateProps & NotesTakerProps) {
-    const current = equalUpTo(date, today, "quarter");
+    const current = equalUpTo(week, today, "quarter");
 
     return <NoteAny
         className={clsx(styles.quarter, current && styles.today)}
         period={"quarter"}
-        date={date}
+        date={week}
         notes={notes}
     >
-        {date.format("[Q]Q")}
+        {week.format("[Q]Q")}
     </NoteAny>;
 }
 
 
 function NoteMonth({
-    date,
+    week,
     today,
     notes,
 }: NoteDateProps & NotesTakerProps) {
-    const current = equalUpTo(date, today, "month");
+    // This is tricky, as the calendar is week-centric rather than month-centric.
+    // A week may have days from 2 different months in it.
+    // So which month we want to display depends on the today date.
+    // However, we want to display the month of monday when we scroll up/down.
+    // So the solution would be to check whether `today` and `date` are in the same week.
+
+    const displayingTodayWeek = equalUpTo(week, today, "week");
+    const displayingMonthFor = displayingTodayWeek ? today : week;
+
+    const current = equalUpTo(week, today, "month");
 
     return <NoteAny
         className={clsx(styles.month, current && styles.today)}
         period={"month"}
-        date={date}
+        date={displayingMonthFor}
         notes={notes}
     >
-        {date.format("MMM")}
+        {displayingMonthFor.format("MMM")}
     </NoteAny>;
 }
 
 
 function NoteWeek({
-    date,
+    week,
     today,
     notes,
     extended,
 }: NoteDateProps & NotesTakerProps & {
     extended?: boolean,
 }) {
-    const current = equalUpTo(date, today, "week");
+    const current = equalUpTo(week, today, "week");
 
     return <NoteAny
         className={clsx(styles.week, current && styles.today)}
         period={"week"}
-        date={date}
+        date={week}
         notes={notes}
     >
         {extended && "W"}
-        {date.format("w")}
+        {week.format("w")}
     </NoteAny>;
 }
 
@@ -152,8 +163,11 @@ function NoteDay({
     date,
     today,
     notes,
-}: NoteDateProps & NotesTakerProps) {
-    const current = equalUpTo(date, today, "day");
+}: NotesTakerProps & {
+    date: moment.Moment,
+    today: moment.Moment,
+}) {
+    const current = equalUpTo(date, today, "date");
 
     // We need to darken days of other months
     const otherMonth = !equalUpTo(date, today, "month");
@@ -164,7 +178,7 @@ function NoteDay({
             current && styles.today,
             otherMonth && styles.otherMonth,
         )}
-        period={"day"}
+        period={"date"}
         date={date}
         notes={notes}
     >
@@ -174,27 +188,27 @@ function NoteDay({
 
 
 function CalendarHeader({
-    date,
+    week,
     today,
-    setDate,
+    setWeek: setDate,
     notes,
     collapse,
 }: NoteDateProps & NotesTakerProps & {
-    setDate: (date: moment.Moment) => void,
+    setWeek: (date: moment.Moment) => void,
     collapse: () => void,
 }) {
     return <div className={styles.header}>
-        <NoteYear date={date} today={today} notes={notes}/>
-        <NoteQuarter date={date} today={today} notes={notes}/>
+        <NoteYear week={week} today={today} notes={notes}/>
+        <NoteQuarter week={week} today={today} notes={notes}/>
 
         <div className={styles.break}/>
 
-        <NoteMonth date={date} today={today} notes={notes}/>
+        <NoteMonth week={week} today={today} notes={notes}/>
 
         <div className={styles.controls}>
             <Icon
                 icon="chevron-up"
-                onClick={() => setDate(date.clone().add(-1, "week"))}
+                onClick={() => setDate(week.clone().add(-1, "week"))}
             />
             <Icon
                 icon="reset"
@@ -202,7 +216,7 @@ function CalendarHeader({
             />
             <Icon
                 icon="chevron-down"
-                onClick={() => setDate(date.clone().add(+1, "week"))}
+                onClick={() => setDate(week.clone().add(+1, "week"))}
             />
             <Icon
                 icon="calendar-minus"
@@ -217,7 +231,7 @@ const weekdayOffsets = [...Array(7).keys()];
 
 
 function CalendarWeekHeader({
-    date, // Expected to be the first day of the week
+    week,
 }: Omit<NoteDateProps, "today">) {
     return <div className={styles.weekHeader}>
         <div>
@@ -226,29 +240,26 @@ function CalendarWeekHeader({
         {weekdayOffsets.map(offset => <div
             key={offset}
         >
-            {date.clone().add(offset, "days").format("ddd")}
+            {week.clone().add(offset, "days").format("ddd")}
         </div>)}
     </div>;
 }
 
 
 function CalendarWeek({
-    date, // Expected to be the first day of the week
+    week,
     today,
-    showingMonth,
     notes,
-}: NoteDateProps & NotesTakerProps & {
-    showingMonth: moment.Moment,
-}) {
+}: NoteDateProps & NotesTakerProps) {
     return <div className={styles.weekRow}>
         <NoteWeek
-            date={date}
+            week={week}
             today={today}
             notes={notes}
         />
         {weekdayOffsets.map(offset => <NoteDay
             key={offset}
-            date={date.clone().add(offset, "days")}
+            date={week.clone().add(offset, "days")}
             today={today}
             notes={notes}
         />)}
@@ -257,7 +268,7 @@ function CalendarWeek({
 
 
 function CalendarCompact({
-    date,
+    week,
     today,
     notes,
     expand,
@@ -265,17 +276,17 @@ function CalendarCompact({
     expand: () => void,
 }) {
     return <div className={styles.header}>
-        <NoteYear date={date} today={today} notes={notes}/>
-        <NoteQuarter date={date} today={today} notes={notes}/>
+        <NoteYear week={week} today={today} notes={notes}/>
+        <NoteQuarter week={week} today={today} notes={notes}/>
 
         <div className={styles.break}/>
 
-        <NoteMonth date={date} today={today} notes={notes}/>
+        <NoteMonth week={week} today={today} notes={notes}/>
         <NoteDay date={today} today={today} notes={notes}/>
 
         <div className={styles.break}/>
 
-        <NoteWeek date={date} today={today} notes={notes} extended/>
+        <NoteWeek week={week} today={today} notes={notes} extended/>
 
         <div className={styles.controls}>
             <Icon
@@ -303,12 +314,12 @@ export default function Calendar({
 
     // What date to center the calendar around.
     // .weekday is locale-aware.
-    const [date, setDate] = useState(dateWeekStart());
+    const [week, setWeek] = useState(dateWeekStart());
 
     if (compact) {
         return <div className={styles.calendar}>
             <CalendarCompact
-                date={date}
+                week={week}
                 today={today}
                 notes={notes}
                 expand={() => setCompact(false)}
@@ -318,20 +329,19 @@ export default function Calendar({
 
     return <div className={styles.calendar}>
         <CalendarHeader
-            date={date}
+            week={week}
             today={today}
-            setDate={setDate}
+            setWeek={setWeek}
             notes={notes}
             collapse={() => setCompact(true)}
         />
         <CalendarWeekHeader
-            date={date}
+            week={week}
         />
         {weekOffsets.map(offset => <CalendarWeek
             key={offset}
-            date={date.clone().add(offset, "week")}
+            week={week.clone().add(offset, "week")}
             today={today}
-            showingMonth={date}
             notes={notes}
         />)}
     </div>;
