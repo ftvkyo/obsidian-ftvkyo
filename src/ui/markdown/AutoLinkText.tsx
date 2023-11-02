@@ -1,12 +1,38 @@
-import { MarkdownPostProcessorContext } from "obsidian";
-
-import Logger from "@/util/logger";
+import { MarkdownPostProcessorContext, MarkdownRenderChild } from "obsidian";
+import { createRoot, Root } from "react-dom/client";
 
 import { ApiNoteUnique } from "@/api/note";
-import MarkdownReplacer from "./MarkdownLinkReplacer";
+import MarkdownWrapper from "./MarkdownWrapper";
+import Logger from "@/util/logger";
+
+import styles from "./AutoLinkText.module.scss";
 
 
 let lg: Logger | undefined = undefined;
+
+
+class MarkdownLink extends MarkdownRenderChild {
+    root: Root;
+
+    constructor(
+        readonly containerEl: HTMLElement,
+        readonly text: string,
+        readonly sensitive?: boolean,
+    ) {
+        super(containerEl);
+        this.root = createRoot(containerEl);
+    }
+
+    onload() {
+        if (this.sensitive && styles.sensitive) {
+            this.containerEl.addClass(styles.sensitive);
+        }
+
+        this.root.render(<MarkdownWrapper>
+            {this.text}
+        </MarkdownWrapper>);
+    }
+}
 
 
 export default function AutoLinkText(
@@ -54,6 +80,6 @@ export default function AutoLinkText(
 
         lg.debug(`Using title "${note.title}"`);
 
-        context.addChild(new MarkdownReplacer(link, note.title));
+        context.addChild(new MarkdownLink(link, note.title, note.isSensitive));
     }
 }

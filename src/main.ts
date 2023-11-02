@@ -8,7 +8,7 @@ import { sendError } from "./ui/builtin/notice";
 
 import CopyLink from "./ui/commands/copy-link";
 
-import AutoLinkText from "@/ui/markdown/auto-link-text";
+import AutoLinkText from "@/ui/markdown/AutoLinkText";
 import PlanCallout from "./ui/markdown/plan-callout";
 
 import ObsidianFtvkyoView from "@/ui/views/view";

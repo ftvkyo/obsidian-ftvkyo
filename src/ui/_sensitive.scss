@@ -1,0 +1,4 @@
+@mixin blurry-text($color) {
+    color: transparent;
+    text-shadow: 0 0 0.5em $color;
+}

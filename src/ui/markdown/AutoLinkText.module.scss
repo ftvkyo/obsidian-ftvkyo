@@ -1,0 +1,6 @@
+@use "../sensitive";
+
+
+.sensitive:not(:hover) {
+    @include sensitive.blurry-text(var(--link-color));
+}

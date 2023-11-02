@@ -201,6 +201,17 @@ export class ApiNoteUnique extends ApiNote {
 
         return false;
     }
+
+    get isSensitive(): boolean {
+        return !!this.tags.find(tag => {
+            for (const sensitive of ftvkyo.settings.sensitiveTags) {
+                if (tag === sensitive || tag.startsWith(sensitive + "/")) {
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
 }
 
 

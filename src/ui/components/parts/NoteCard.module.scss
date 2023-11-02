@@ -1,5 +1,6 @@
 @use "../../../vars";
-@use "../list";
+@use "../../list";
+@use "../../sensitive";
 
 
 .card {
@@ -25,6 +26,10 @@
             font-family: var(--h1-font);
             font-style: var(--h1-style);
             font-variant: var(--h1-variant);
+
+            &.sensitive:not(:hover) {
+                @include sensitive.blurry-text(var(--link-color));
+            }
         }
     }
 

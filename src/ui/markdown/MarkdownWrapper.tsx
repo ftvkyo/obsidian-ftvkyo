@@ -1,9 +1,11 @@
 import Markdown, { Options } from "react-markdown";
 
-const MarkdownWithoutP = (opts: Options) => <Markdown
+// Disable "p"
+
+const MarkdownWrapper = (opts: Options) => <Markdown
     {...opts}
     disallowedElements={['p']}
     unwrapDisallowed
 />;
 
-export default MarkdownWithoutP;
+export default MarkdownWrapper;

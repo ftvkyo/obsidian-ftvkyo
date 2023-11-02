@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { ApiNoteUnique } from "@/api/note";
 import { toClipboard } from "@/util/clipboard";
 import Icon from "../controls/Icon";
-import MarkdownWithoutP from "@/ui/markdown/MarkdownWithoutP";
+import MarkdownWrapper from "@/ui/markdown/MarkdownWrapper";
 
 import styles from "./NoteCard.module.scss";
 
@@ -59,13 +59,16 @@ function Header({
         className={styles.header}
     >
         <a
-            className={clsx(styles.title, note.title && styles.h1)}
+            className={clsx(
+                styles.title,
+                note.isSensitive && styles.sensitive,
+            )}
             href={note.path}
             onClick={onClick}
             onAuxClick={onAuxClick}
         >
             {note.title
-                ? <MarkdownWithoutP>{note.title}</MarkdownWithoutP>
+                ? <MarkdownWrapper>{note.title}</MarkdownWrapper>
                 : <code>{note.base}</code>
             }
         </a>
