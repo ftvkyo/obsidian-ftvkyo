@@ -3,7 +3,7 @@ import { MarkdownPostProcessorContext } from "obsidian";
 import Logger from "@/util/logger";
 
 import { ApiNoteUnique } from "@/api/note";
-import Replacer from "./Replacer";
+import MarkdownReplacer from "./MarkdownLinkReplacer";
 
 
 let lg: Logger | undefined = undefined;
@@ -54,6 +54,6 @@ export default function AutoLinkText(
 
         lg.debug(`Using title "${note.title}"`);
 
-        context.addChild(new Replacer(link, note.title));
+        context.addChild(new MarkdownReplacer(link, note.title));
     }
 }

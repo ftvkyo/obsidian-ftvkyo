@@ -1,12 +1,12 @@
 import { clsx } from "clsx";
-import Markdown from "react-markdown";
+import { useCallback } from "react";
 
 import { ApiNoteUnique } from "@/api/note";
 import { toClipboard } from "@/util/clipboard";
+import Icon from "../controls/Icon";
+import MarkdownWithoutP from "@/ui/markdown/MarkdownWithoutP";
 
 import styles from "./NoteCard.module.scss";
-import Icon from "../controls/Icon";
-import { useCallback } from "react";
 
 
 function onClick(
@@ -65,7 +65,7 @@ function Header({
             onAuxClick={onAuxClick}
         >
             {note.title
-                ? <Markdown>{note.title}</Markdown>
+                ? <MarkdownWithoutP>{note.title}</MarkdownWithoutP>
                 : <code>{note.base}</code>
             }
         </a>
