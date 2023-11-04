@@ -61,11 +61,11 @@ const fmtAllWeeksInMonth: Formatter = (date, fmt, mod) => {
     const weeks: string[] = [];
     date.date(1);
     while (date.month() === month) {
-        date.add(1, "day");
         const dateText = date.format(fmt);
         if (!weeks.includes(dateText)) {
             weeks.push(dateText);
         }
+        date.add(1, "day");
     }
     return weeks.map(weekText => prefix + weekText + suffix).join(separator);
 };
