@@ -162,20 +162,24 @@ function NoteWeek({
 function NoteDay({
     date,
     today,
+    centerWeek,
     notes,
 }: NotesTakerProps & {
     date: moment.Moment,
     today: moment.Moment,
+    centerWeek: moment.Moment,
 }) {
-    const current = equalUpTo(date, today, "date");
+    const isToday = equalUpTo(date, today, "date");
+
+    const centerMonth = equalUpTo(centerWeek, today, "week") ? today : centerWeek;
 
     // We need to darken days of other months
-    const otherMonth = !equalUpTo(date, today, "month");
+    const otherMonth = !equalUpTo(date, centerMonth, "month");
 
     return <NoteAny
         className={clsx(
             styles.day,
-            current && styles.today,
+            isToday && styles.today,
             otherMonth && styles.otherMonth,
         )}
         period={"date"}
@@ -249,8 +253,11 @@ function CalendarWeekHeader({
 function CalendarWeek({
     week,
     today,
+    centerWeek,
     notes,
-}: NoteDateProps & NotesTakerProps) {
+}: NoteDateProps & NotesTakerProps & {
+    centerWeek: moment.Moment,
+}) {
     return <div className={styles.weekRow}>
         <NoteWeek
             week={week}
@@ -261,6 +268,7 @@ function CalendarWeek({
             key={offset}
             date={week.clone().add(offset, "days")}
             today={today}
+            centerWeek={centerWeek}
             notes={notes}
         />)}
     </div>;
@@ -282,7 +290,7 @@ function CalendarCompact({
         <div className={styles.break}/>
 
         <NoteMonth week={week} today={today} notes={notes}/>
-        <NoteDay date={today} today={today} notes={notes}/>
+        <NoteDay date={today} today={today} centerWeek={week} notes={notes}/>
 
         <div className={styles.break}/>
 
@@ -342,6 +350,7 @@ export default function Calendar({
             key={offset}
             week={week.clone().add(offset, "week")}
             today={today}
+            centerWeek={week}
             notes={notes}
         />)}
     </div>;
