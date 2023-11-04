@@ -2,6 +2,7 @@
 
 $gap: vars.$gap / 2;
 $pad: (vars.$pad / 2) (vars.$pad / 4);
+$today-br: 2px;
 
 .calendar {
     padding: vars.$pad;
@@ -56,7 +57,7 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
     }
 
     .note.today {
-        border: 2px solid var(--background-modifier-border);
+        border: $today-br solid var(--background-modifier-border);
     }
 }
 
@@ -75,6 +76,10 @@ $pad: (vars.$pad / 2) (vars.$pad / 4);
 
 .note {
     padding: $pad;
+
+    // Do this so all the notes have the same dimensions.
+    // We are expecting auto placement and sizing, so this is easier.
+    border: $today-br solid transparent;
 
     &.exists {
         text-shadow: 0 0 0.5em currentColor;
