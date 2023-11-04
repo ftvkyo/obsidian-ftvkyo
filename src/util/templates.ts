@@ -2,7 +2,7 @@ import { TFile } from "obsidian";
 import { NoteType } from "./dependencies";
 
 
-const RE_TEMPLATE = /{{(?<what>.*?):(?<fmt>.*?)}}/gm;
+const RE_TEMPLATE = /{{(?<what>.+?):(?<fmt>.+?)}}/gm;
 
 
 /* ========== *
