@@ -43,7 +43,7 @@ function NoteAny({
             const newNote = await ftvkyo.deps.createNote(period, date);
             new ApiNotePeriodic(newNote, date, period).reveal({ replace });
         }
-    }, [note]);
+    }, [note, period, date]);
 
     return <div
         className={clsx(

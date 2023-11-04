@@ -2,6 +2,13 @@ import { TFile } from "obsidian";
 import { MomentPeriods } from "./date";
 import { replaceTemplates } from "./templates";
 
+import Logger from "@/util/logger";
+
+//import ApiNote from "@/api/note";
+
+
+let lg: Logger | undefined = undefined;
+
 
 export interface SingleNoteTypeSetting {
     format: string,
@@ -37,7 +44,11 @@ export default class Dependencies {
         public readonly periodic: {
             [K in MomentPeriods]: SingleNoteTypeSetting | null;
         },
-    ) {}
+    ) {
+        if (!lg) {
+            lg = ftvkyo.lg.sub("dependencies");
+        }
+    }
 
     static load(): Dependencies {
         const app = ftvkyo.app as unknown as {
@@ -126,6 +137,8 @@ export default class Dependencies {
         if (!config) {
             throw new Error(`Note type ${type} is not configured`);
         }
+
+        lg?.debug(`Creating a note of type ${type} for date ${date.format()}`)
 
         const path = this.generatePath(config, date);
 
