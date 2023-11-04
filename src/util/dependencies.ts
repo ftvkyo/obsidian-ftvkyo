@@ -1,5 +1,6 @@
-import { moment, TFile } from "obsidian";
+import { TFile } from "obsidian";
 import { MomentPeriods } from "./date";
+import { replaceTemplates } from "./templates";
 
 
 export interface SingleNoteTypeSetting {
@@ -134,6 +135,12 @@ export default class Dependencies {
             throw new Error(`Could not load template for type ${type}`);
         }
 
-        return await ftvkyo.app.vault.copy(template, path);
+        // Create the note
+        const newNote = await app.vault.copy(template, path);
+
+        // Process the templates inside
+        await replaceTemplates(type, date, newNote);
+
+        return newNote;
     }
 }
