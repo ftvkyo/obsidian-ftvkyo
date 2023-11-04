@@ -41,7 +41,8 @@ type FormatConfig = {
  * ==================== */
 
 const fmtIdentity: Formatter = (date, fmt) => date.format(fmt);
-const fmtWeekday: (day: 0 | 1 | 2 | 3 | 4 | 5 | 6) => Formatter = (day) => (date, fmt) => date.clone().weekday(day).format(fmt);
+// Days in week start at 0
+const fmtWeekday: (day: 0 | 1 | 2 | 3 | 4 | 5 | 6) => Formatter = (day) => (date, fmt) => date.weekday(day).format(fmt);
 
 const FMT: FormatConfig = {
     unique: {
@@ -55,6 +56,10 @@ const FMT: FormatConfig = {
     },
     month: {
         date: fmtIdentity,
+        // Dates in month start at 1
+        first: (date, fmt) => date.date(1).format(fmt),
+        // Months have variable lengths, so go to the next month and underflow.
+        last: (date, fmt) => date.add(1, "month").date(0).format(fmt),
     },
     week: {
         date: fmtIdentity,
@@ -76,7 +81,7 @@ function fmtTemplate(type: NoteType, date: moment.Moment, what: string, fmt: str
     const noteFmts = FMT[type];
     const whatFmt = noteFmts[what]
     if (whatFmt) {
-        return whatFmt(date, fmt);
+        return whatFmt(date.clone(), fmt);
     }
     return `\`unknown formatter '${what}'\``;
 }
