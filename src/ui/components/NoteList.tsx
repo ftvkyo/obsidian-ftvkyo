@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import NoteCard from "./parts/NoteCard";
-import {ApiNoteUniqueList, ApiWhere, Tag} from "@/api/note-list";
+import {ApiNoteUniqueList, ApiWhere, Tag, TriState} from "@/api/note-list";
 import NoteFilter from "./parts/NoteFilter";
 import NotePaginator from "./parts/NotePaginator";
 
@@ -110,7 +110,12 @@ export default function NoteList({
     goBack: () => void,
     notes: ApiNoteUniqueList,
 }) {
-    const [where, setWhere] = useState(ApiWhere.default.withTag(tag).withPage(0));
+    const [where, setWhere] = useState(
+        ApiWhere.default
+            .withTag(tag)
+            .withPage(0)
+            .root(TriState.Off)
+    );
 
     const {notes: notesFiltered, found} = notes.where(where);
 
