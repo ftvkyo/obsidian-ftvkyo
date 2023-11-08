@@ -7,6 +7,7 @@ import Api from "@/api/api";
 import { sendError } from "./ui/builtin/notice";
 
 import CopyLink from "./ui/commands/copy-link";
+import CreateUniqueNote from "./ui/commands/create-unique-note";
 
 import AutoLinkText from "@/ui/markdown/AutoLinkText";
 import PlanCallout from "./ui/markdown/plan-callout";
@@ -27,7 +28,8 @@ declare global {
 
 
 const commands: Command[] = [
-    CopyLink
+    CopyLink,
+    CreateUniqueNote,
 ];
 
 const markdown = [
