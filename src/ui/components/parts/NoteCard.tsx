@@ -85,7 +85,7 @@ function Header({
 function Tags({
     note
 }: Props): JSX.Element | null {
-    if (!note.isRoot && note.tags) {
+    if (note.tags) {
         return <div className={styles.tags}>
             {note.tags.map((t) => "#" + t).join(", ")}
         </div>;
@@ -122,9 +122,9 @@ function State({
 function Invalid({
     note
 }: Props): JSX.Element | null {
-    if (note.invalid) {
+    if (note.broken) {
         return <div className={styles.invalid}>
-            {note.invalid}
+            {note.broken}
         </div>;
     }
     return null;

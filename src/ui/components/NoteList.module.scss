@@ -17,11 +17,17 @@
     align-items: center;
     gap: vars.$gap / 2;
 
-    > span {
+    .rootBroken {
+        color: var(--red);
+    }
+
+    span.displayingWhat {
+        color: var(--tag-color);
+    }
+
+    .displayingWhat {
         width: 100%;
         overflow-x: clip;
-
-        color: var(--tag-color);
     }
 }
 

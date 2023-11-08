@@ -331,7 +331,7 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
                     acc[tag] = tacc;
 
                     tacc.notes.push(note);
-                    if (note.isRoot && !note.invalid) {
+                    if (note.rootFor && !note.broken) {
                         tacc.noteRoot = note;
                     }
                 }
@@ -436,15 +436,15 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
         }
 
         if (broken === TS.On) {
-            notes = notes.filter(note => note.invalid !== false);
+            notes = notes.filter(note => note.broken !== false);
         } else if (broken === TS.Off) {
-            notes = notes.filter(note => note.invalid === false);
+            notes = notes.filter(note => note.broken === false);
         }
 
         if (root === TS.On) {
-            notes = notes.filter(note => note.isRoot);
+            notes = notes.filter(note => note.rootFor);
         } else if (root == TS.Off) {
-            notes = notes.filter(note => !note.isRoot);
+            notes = notes.filter(note => !note.rootFor);
         }
 
         const keyF = key === "title"

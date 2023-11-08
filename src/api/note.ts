@@ -169,13 +169,13 @@ export class ApiNoteUnique extends ApiNote {
 
     // Whether the note is a root note.
     // Those notes have a tag as their title.
-    get isRoot() {
-        return ApiNoteUnique.RE_TITLE_ROOT.test(this.title ?? "");
+    get rootFor() {
+        return ApiNoteUnique.RE_TITLE_ROOT.test(this.title ?? "") && this.tags.length === 1 && this.tags[0] || null;
     }
 
     // Check if the note is invalid.
     // If invalid, reason is provided.
-    get invalid(): false | string {
+    get broken(): false | string {
         const hs = this.fc?.headings ?? [];
         const h1s = hs.filter(h => h.level === 1);
         if (h1s.length >= 2) {
@@ -185,12 +185,12 @@ export class ApiNoteUnique extends ApiNote {
         // A note title can contain a tag or some text, but not both.
         // This simply checks that the title does not have the "#" symbol when
         // the note is not root, and this is good enough.
-        if (!this.isRoot && this.title && this.title.search("#") !== -1) {
+        if (!this.rootFor && this.title && this.title.search("#") !== -1) {
             return "Note title has a '#' when the note is not a root note.";
         }
 
         // If a note is a root note, it can't have other tags.
-        if (this.isRoot && this.tags.length > 1) {
+        if (this.rootFor && this.tags.length > 1) {
             return "Root notes can't have extra tags.";
         }
 

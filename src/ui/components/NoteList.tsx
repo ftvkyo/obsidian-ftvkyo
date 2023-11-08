@@ -7,6 +7,9 @@ import NotePaginator from "./parts/NotePaginator";
 
 import styles from "./NoteList.module.scss";
 import Icon from "./controls/Icon";
+import { ApiNoteUnique } from "@/api/note";
+import { useOnNoteClick } from "@/util/note-click";
+import { clsx } from "clsx";
 
 
 // TODO: Display a warning if there are notes with the same
@@ -25,13 +28,31 @@ function NoteListControls({
     setW,
     found,
     goBack,
+    rootNote,
 }: {
     w: ApiWhere,
     setW: (f: ApiWhere) => void,
-    goBack: () => void,
     found: number,
+    goBack: () => void,
+    rootNote: ApiNoteUnique | undefined,
 }) {
     const [filtering, setFiltering] = useState(false);
+
+    const {onClick: rootOnC, onAuxClick: rootOnAC} = useOnNoteClick(rootNote);
+    const rootBroken = rootNote?.broken;
+    const rootLink = rootNote
+        ? <a
+            onClick={rootOnC}
+            onAuxClick={rootOnAC}
+
+            className={clsx(styles.displayingWhat, rootBroken && styles.rootBroken)}
+            aria-label={rootBroken || undefined}
+        >
+            {w.tag.display}
+        </a>
+        : <span className={styles.displayingWhat}>
+            {w.tag.display}
+        </span>;
 
     return <div className={styles.controls}>
         <div className={styles.header}>
@@ -39,7 +60,7 @@ function NoteListControls({
                 icon="arrow-left"
                 onClick={goBack}
             />
-            <span>{w.tag.display}</span>
+            {rootLink}
             <Icon
                 icon={w.keyIcon}
                 onClick={() => setW(w.keyNext())}
@@ -117,14 +138,16 @@ export default function NoteList({
             .root(TriState.Off)
     );
 
+    const rootNote = notes.find(note => note.rootFor === tag.raw);
     const {notes: notesFiltered, found} = notes.where(where);
 
     return <>
         <NoteListControls
             w={where}
             setW={setWhere}
-            goBack={goBack}
             found={found}
+            goBack={goBack}
+            rootNote={rootNote ?? undefined}
         />
 
         <NoteCards
