@@ -170,7 +170,7 @@ export class ApiNoteUnique extends ApiNote {
     // Whether the note is a root note.
     // Those notes have a tag as their title.
     get rootFor() {
-        return ApiNoteUnique.RE_TITLE_ROOT.test(this.title ?? "") && this.tags.length === 1 && this.tags[0] || null;
+        return ApiNoteUnique.RE_TITLE_ROOT.test(this.title ?? "") && this.title?.slice(1) /* remove # */ || null;
     }
 
     // Check if the note is invalid.
