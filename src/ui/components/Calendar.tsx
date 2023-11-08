@@ -39,11 +39,11 @@ function NoteAny({
     ) => {
         if (note) {
             note.reveal({ replace });
-        } else {
+        } else if (periodTemplate) {
             const newNote = await ftvkyo.api.source.createNote(period, date);
             new ApiNotePeriodic(newNote, date, period).reveal({ replace });
         }
-    }, [note, period, date]);
+    }, [note, period, date, periodTemplate?.path]);
 
     return <div
         className={clsx(
@@ -51,7 +51,7 @@ function NoteAny({
             styles.note,
             className,
             note && styles.exists,
-            !periodTemplate && styles.disabled,
+            !(periodTemplate || note) && styles.disabled,
         )}
         onClick={(e) => onClick(!e.ctrlKey)}
         onAuxClick={(e) => (e.button === 1) && onClick(false)}
