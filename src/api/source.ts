@@ -1,4 +1,4 @@
-import { TFile } from "obsidian";
+import { TFile, TFolder } from "obsidian";
 import { ApiNote, ApiNotePeriodic, ApiNoteUnique } from "./note";
 import { ApiNotePeriodicList, ApiNoteUniqueList } from "./note-list";
 import { MomentPeriods } from "../util/date";
@@ -181,6 +181,15 @@ export default class ApiSource {
 
         const path = this.generatePath(noteType, date);
 
+        await this.ensureFolderFor(path);
+
+        // Check if the file already exists
+        const existing = app.vault.getAbstractFileByPath(path);
+
+        if (existing) {
+            throw Error(`Tried to create a file "${path}", but it already exists.`);
+        }
+
         // Create the note
         const newNote = await app.vault.copy(template, path);
 
@@ -188,5 +197,22 @@ export default class ApiSource {
         await replaceTemplates(noteType, date, newNote);
 
         return newNote;
+    }
+
+    async ensureFolderFor(notePath: string) {
+        const folderPath = notePath.substring(0, notePath.lastIndexOf("/"));
+
+        // Check if it exists
+        const existing = app.vault.getAbstractFileByPath(folderPath);
+
+        if (existing) {
+            if (existing instanceof TFolder) {
+                return;
+            }
+            throw Error(`Tried to create a folder "${folderPath}", but a file exists at this path.`);
+        }
+
+        // TODO: check if this creates folders recursively
+        return app.vault.createFolder(folderPath);
     }
 }
