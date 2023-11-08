@@ -63,6 +63,11 @@ export abstract class ApiNote {
 }
 
 
+const DATE_TODO_MARKERS = ["to-do", "todo", "future"];
+
+const DATE_AUTO_MARKER = "auto";
+
+
 export class ApiNoteUnique extends ApiNote {
 
     static RE_TITLE_ROOT = /^#[\w-][\w-/]*$/;
@@ -146,7 +151,12 @@ export class ApiNoteUnique extends ApiNote {
         const outputFormat = "ddd,[\xa0]DD[\xa0]MMM[\xa0]YYYY";
 
         const matter = this.dateMatter;
-        if (matter === "auto" || matter === null) {
+
+        if (matter && DATE_TODO_MARKERS.includes(matter)) {
+            return "to-do";
+        }
+
+        if (matter === DATE_AUTO_MARKER || matter === null) {
             return this.date.format(outputFormat);
         }
 
@@ -164,7 +174,7 @@ export class ApiNoteUnique extends ApiNote {
 
     // Whether the note is work in progress.
     get hasTasks() {
-        return this.tasksUndone.length > 0;
+        return this.tasksUndone.length > 0 || (this.dateMatter && DATE_TODO_MARKERS.includes(this.dateMatter));
     }
 
     // Whether the note is a root note.
