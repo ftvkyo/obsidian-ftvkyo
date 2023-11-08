@@ -7,6 +7,12 @@ export interface Settings {
     resultsPerPage: 10 | 25 | 50;
 
     sensitiveTags: string[];
+
+    folderUnique: string,
+    folderPeriodic: string,
+    folderTemplates: string,
+
+    groupByYear: boolean,
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -15,6 +21,12 @@ export const DEFAULT_SETTINGS: Settings = {
     resultsPerPage: 25,
 
     sensitiveTags: [],
+
+    folderPeriodic: "",
+    folderUnique: "",
+    folderTemplates: "",
+
+    groupByYear: true,
 };
 
 
@@ -39,6 +51,48 @@ export class OFSettingTab extends PluginSettingTab {
                         "10": "10",
                         "25": "25",
                         "50": "50",
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("Folder for periodic notes")
+            .addText((t) =>
+                t.setValue(ftvkyo.settings.folderPeriodic)
+                    .onChange(async (value) => {
+                        ftvkyo.settings.folderPeriodic = value;
+                        await ftvkyo.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("Folder for unique notes")
+            .addText((t) =>
+                t.setValue(ftvkyo.settings.folderUnique)
+                    .onChange(async (value) => {
+                        ftvkyo.settings.folderUnique = value;
+                        await ftvkyo.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("Folder with templates")
+            .setDesc("Allowed templates are 'unique', 'date', 'week', 'month', 'quarter', 'year' files with '.md' extensions")
+            .addText((t) =>
+                t.setValue(ftvkyo.settings.folderTemplates)
+                    .onChange(async (value) => {
+                        ftvkyo.settings.folderTemplates = value;
+                        await ftvkyo.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("Group notes by year")
+            .setDesc("Create subfolders for every year")
+            .addToggle((t) =>
+                t.setValue(ftvkyo.settings.groupByYear)
+                    .onChange(async (value) => {
+                        ftvkyo.settings.groupByYear = value;
+                        await ftvkyo.saveSettings();
                     })
             );
 
