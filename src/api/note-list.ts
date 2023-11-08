@@ -69,6 +69,7 @@ interface WhereFilter {
     tasks: TS,
     dated: TS,
     broken: TS,
+    root: TS,
 }
 
 interface WhereOrder {
@@ -86,6 +87,7 @@ export class ApiWhere {
             tasks: TS.Maybe,
             dated: TS.Maybe,
             broken: TS.Maybe,
+            root: TS.Maybe,
         },
         public readonly order: WhereOrder = {
             key: "base",
@@ -132,13 +134,13 @@ export class ApiWhere {
         );
     }
 
-    withOrder(key: keyof WhereOrder, value: WhereOrder[typeof key]) {
+    withOrder(order: Partial<WhereOrder>) {
         return new ApiWhere(
             this.tag,
             this.filter,
             {
                 ...this.order,
-                [key]: value,
+                ...order,
             },
             this.pageZero,
         );
@@ -153,12 +155,12 @@ export class ApiWhere {
         );
     }
 
-    withFilter(key: keyof WhereFilter, value: TriState) {
+    withFilter(filter: Partial<WhereFilter>) {
         return new ApiWhere(
             this.tag,
             {
                 ...this.filter,
-                [key]: value,
+                ...filter,
             },
             this.order,
             this.pageZero,
@@ -179,19 +181,23 @@ export class ApiWhere {
      * ================ */
 
     title(title: WhereFilter["title"]) {
-        return this.withFilter("title", title);
+        return this.withFilter({title});
     }
 
-    tasks(todos: WhereFilter["tasks"]) {
-        return this.withFilter("tasks", todos);
+    tasks(tasks: WhereFilter["tasks"]) {
+        return this.withFilter({tasks});
     }
 
     dated(dated: WhereFilter["dated"]) {
-        return this.withFilter("dated", dated);
+        return this.withFilter({dated});
     }
 
     broken(broken: WhereFilter["broken"]) {
-        return this.withFilter("broken", broken);
+        return this.withFilter({broken});
+    }
+
+    root(root: WhereFilter["root"]) {
+        return this.withFilter({root});
     }
 
     /* =============== *
@@ -199,7 +205,7 @@ export class ApiWhere {
      * =============== */
 
     key(key: WhereOrder["key"]) {
-        return this.withOrder("key", key);
+        return this.withOrder({key});
     }
 
     keyNext() {
@@ -225,7 +231,7 @@ export class ApiWhere {
     }
 
     dir(dir: WhereOrder["dir"]) {
-        return this.withOrder("dir", dir);
+        return this.withOrder({dir});
     }
 
     dirNext() {
@@ -377,6 +383,7 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
                 tasks,
                 dated,
                 broken,
+                root,
             },
             order: {
                 key,
@@ -432,6 +439,12 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
             notes = notes.filter(note => note.invalid !== false);
         } else if (broken === TS.Off) {
             notes = notes.filter(note => note.invalid === false);
+        }
+
+        if (root === TS.On) {
+            notes = notes.filter(note => note.isRoot);
+        } else if (root == TS.Off) {
+            notes = notes.filter(note => !note.isRoot);
         }
 
         const keyF = key === "title"
