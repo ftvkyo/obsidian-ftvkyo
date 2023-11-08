@@ -31,7 +31,7 @@ function NoteAny({
     notes: ApiNotePeriodicList,
     children: React.ReactNode,
 }) {
-    const periodConfig = ftvkyo.deps.periodic[period];
+    const periodTemplate = ftvkyo.api.source.getTemplate(period);
     const note = notes.getThe(period, date);
 
     const onClick = useCallback(async (
@@ -40,7 +40,7 @@ function NoteAny({
         if (note) {
             note.reveal({ replace });
         } else {
-            const newNote = await ftvkyo.deps.createNote(period, date);
+            const newNote = await ftvkyo.api.source.createNote(period, date);
             new ApiNotePeriodic(newNote, date, period).reveal({ replace });
         }
     }, [note, period, date]);
@@ -51,7 +51,7 @@ function NoteAny({
             styles.note,
             className,
             note && styles.exists,
-            !periodConfig && styles.disabled,
+            !periodTemplate && styles.disabled,
         )}
         onClick={(e) => onClick(!e.ctrlKey)}
         onAuxClick={(e) => (e.button === 1) && onClick(false)}

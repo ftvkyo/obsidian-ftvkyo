@@ -22,8 +22,8 @@ export const DEFAULT_SETTINGS: Settings = {
 
     sensitiveTags: [],
 
-    folderPeriodic: "",
-    folderUnique: "",
+    folderPeriodic: "periodic",
+    folderUnique: "unique",
     folderTemplates: "",
 
     groupByYear: true,
@@ -57,9 +57,10 @@ export class OFSettingTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName("Folder for periodic notes")
             .addText((t) =>
-                t.setValue(ftvkyo.settings.folderPeriodic)
+                t.setValue(DEFAULT_SETTINGS.folderPeriodic)
+                    .setPlaceholder("periodic")
                     .onChange(async (value) => {
-                        ftvkyo.settings.folderPeriodic = value;
+                        ftvkyo.settings.folderPeriodic = (value || DEFAULT_SETTINGS.folderPeriodic).replace(/\/$/, "");
                         await ftvkyo.saveSettings();
                     })
             );
@@ -67,9 +68,10 @@ export class OFSettingTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName("Folder for unique notes")
             .addText((t) =>
-                t.setValue(ftvkyo.settings.folderUnique)
+                t.setValue(DEFAULT_SETTINGS.folderUnique)
+                    .setPlaceholder("unique")
                     .onChange(async (value) => {
-                        ftvkyo.settings.folderUnique = value;
+                        ftvkyo.settings.folderUnique = (value || DEFAULT_SETTINGS.folderUnique).replace(/\/$/, "");
                         await ftvkyo.saveSettings();
                     })
             );
@@ -80,7 +82,7 @@ export class OFSettingTab extends PluginSettingTab {
             .addText((t) =>
                 t.setValue(ftvkyo.settings.folderTemplates)
                     .onChange(async (value) => {
-                        ftvkyo.settings.folderTemplates = value;
+                        ftvkyo.settings.folderTemplates = (value || DEFAULT_SETTINGS.folderTemplates).replace(/\/$/, "");
                         await ftvkyo.saveSettings();
                     })
             );

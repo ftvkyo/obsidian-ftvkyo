@@ -1,5 +1,5 @@
+import { NoteType } from "@/api/source";
 import { TFile } from "obsidian";
-import { NoteType } from "./dependencies";
 
 
 const RE_TEMPLATE = /{{(?<what>.+?):(?<fmt>.+?)(?<mod>:.+?)?}}/gm;
@@ -9,12 +9,12 @@ const RE_TEMPLATE = /{{(?<what>.+?):(?<fmt>.+?)(?<mod>:.+?)?}}/gm;
  * Module API *
  * ========== */
 
-export async function replaceTemplates(type: NoteType, date: moment.Moment, note: TFile) {
+export async function replaceTemplates(noteType: NoteType, date: moment.Moment, note: TFile) {
     // 1. Read the file
     const content = await app.vault.read(note);
 
     // 2. Find and replace all the templates in the file
-    const newContent = content.replace(RE_TEMPLATE, (_, what, fmt, mod) => fmtTemplate(type, date, what, fmt, mod));
+    const newContent = content.replace(RE_TEMPLATE, (_, what, fmt, mod) => fmtTemplate(noteType, date, what, fmt, mod));
 
     // 3. Update the file with the new content
     await app.vault.modify(note, newContent);
@@ -105,8 +105,8 @@ const FMT: FormatConfig = {
 };
 
 
-function fmtTemplate(type: NoteType, date: moment.Moment, what: string, fmt: string, mod?: string): string {
-    const noteFmts = FMT[type];
+function fmtTemplate(noteType: NoteType, date: moment.Moment, what: string, fmt: string, mod?: string): string {
+    const noteFmts = FMT[noteType];
     const whatFmt = noteFmts[what]
     if (whatFmt) {
         return whatFmt(date.clone(), fmt, mod?.substring(1));

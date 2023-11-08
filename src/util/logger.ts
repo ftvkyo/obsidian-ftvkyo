@@ -36,6 +36,12 @@ export default class Logger {
         return this.log(text, "font-size: 1.5em;");
     }
 
+    error(
+        text: string,
+    ) {
+        return this.log(text, "color: #FF8888;");
+    }
+
     info(
         text: string,
     ) {
