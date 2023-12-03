@@ -5,10 +5,19 @@ import process from "process";
 import builtins from "builtin-modules";
 
 import { postcssModules, sassPlugin } from "esbuild-sass-plugin";
-import { copy } from "esbuild-plugin-copy";
 
 
 const OUT = "./out";
+
+
+const copyManifest = () => ({
+	name: "copy-manifest",
+	setup(build) {
+		build.onEnd(async () => {
+			await fs.copyFile(`./manifest.json`, `${OUT}/manifest.json`);
+		});
+	},
+});
 
 
 const renameCSS = () => ({
@@ -60,13 +69,7 @@ const context = await esbuild.context({
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
 	plugins: [
-		copy({
-			assets: {
-				from: "./static/*",
-				to: ".",
-			},
-			watch: !prod,
-		}),
+		copyManifest(),
 		sassPlugin({
 			filter: /\.module\.scss$/,
 			transform: postcssModules({}),
