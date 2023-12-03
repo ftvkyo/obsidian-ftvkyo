@@ -1,9 +1,9 @@
 {
-	"id": "obsidian-ftvkyo",
-	"name": "@ftvkyo",
-	"version": "1.0.0",
+	"id": "ftvkyo",
+	"name": "ftvkyo",
+	"version": "0.1.0",
 	"minAppVersion": "1.0.0",
-	"description": "This plugin includes a number of cool things.",
+	"description": "Personal workflow overhaul for better planning and note management.",
 	"author": "ftvkyo",
 	"authorUrl": "https://ftvkyo.me",
 	"isDesktopOnly": false

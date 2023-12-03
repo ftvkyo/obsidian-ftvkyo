@@ -1,15 +1,15 @@
 {
 	"name": "obsidian-ftvkyo",
-	"version": "1.0.0",
-	"description": "This plugin includes a number of cool things",
+	"version": "0.1.0",
+	"description": "Personal workflow overhaul for better planning and note management.",
 	"main": "out/main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": ["obsidian", "plugin", "planning", "overhaul"],
+	"author": "ftvkyo",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",
