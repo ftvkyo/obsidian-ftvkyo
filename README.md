@@ -6,16 +6,29 @@
 
 ## Description
 
-This is an [Obsidian.md](https://obsidian.md) plugin which is tailored specifically for [my](https://github.com/ftvkyo) goals.
+This is an [Obsidian.md](https://obsidian.md) plugin that is tailored specifically for [my](https://github.com/ftvkyo) goals:
+- Easier long-term planning (day, week, month, quarter, year)
+- Easier scheduling within the timespan of a day
+- Note discoverability based on tags, getting rid of sorting the notes between directories
+- Reducing redundant actions (e.g. writing custom text for links)
 
-For this reason, it is not currently released in the Obsidian plugin store.
-For the same reason, feature requests would likely only be implemented if I think "how have I lived without that?"
+As this is a plugin that represents my personal workflow, feature requests may only make it if I think "how have I lived without that?"
+However, I will look into making the plugin more robust, and adding feature toggles, so only a part of its functionality could be enabled if desired.
 
 See the 🧑🫴 [project wiki](https://github.com/ftvkyo/obsidian-ftvkyo/wiki) for:
 - Current **features** and some ideas I have for future improvements.
 - More **screenshots**.
 
+> ⚠️ Not all features are well documented yet.
+>
+> For example, there are some advanced templates for periodic notes.
+> Such as `{{weeks:gggg-[W]ww:link,list}}` in monthly notes that generates a list of links to all weekly notes that intersect with this month.
+
 > ⚠️ The plugin is not tested in the Live Editor mode.
+
+> ⚠️ The plugin is subject to change (although the core of my workflow is stable now, so most of the changes would rather be extensions).
+
+Feel free to create issues for bugs and ask questions in [discussions](https://github.com/ftvkyo/obsidian-ftvkyo/discussions).
 
 ## For developers
 
