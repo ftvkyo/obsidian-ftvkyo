@@ -65,14 +65,6 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
         return time;
     }
 
-    #formatBreaks(breaks: number): string {
-        let ret = `${breaks} break`;
-        if (breaks > 1) {
-            ret += "s";
-        }
-        return ret;
-    }
-
     #formatEndTime(start: {h: number, m: number}, minutes: number): string {
         start.m += minutes;
         start.h += Math.floor(start.m / 60);
@@ -117,7 +109,6 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
         const start = this.#getStartTime();
 
         let minutesTotal = 0;
-        let breaks = 0;
 
         const lis = this.#getListItems();
         lg?.debug(`Found ${lis.length} list elements.`);
@@ -126,7 +117,6 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
             const minutes = this.#getListItemMinutes(li);
             if (minutes) {
                 minutesTotal += minutes + BREAK_MINUTES;
-                breaks++;
             }
         }
 
@@ -135,20 +125,10 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
         if (minutesTotal > 0) {
             const em = document.createElement("em");
 
-            em.appendText("Total: ");
-            const codeTotal = document.createElement("code");
-            const td = this.#formatTimeDelta(minutesTotal);
-            codeTotal.innerText = td;
-            em.appendChild(codeTotal);
-            const brs = this.#formatBreaks(breaks);
-            em.appendText(`, ${brs}.`);
+            em.appendText(`Total: ${this.#formatTimeDelta(minutesTotal)}.`);
 
             if (start) {
-                em.appendText(" Finishing: ");
-                const codeEnd = document.createElement("code");
-                codeEnd.innerText = this.#formatEndTime(start, minutesTotal);
-                em.appendChild(codeEnd);
-                em.appendText(".");
+                em.appendText(` Finishing ${this.#formatEndTime(start, minutesTotal)}.`);
             }
 
             this.containerEl.appendChild(em);
