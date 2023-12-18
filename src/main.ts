@@ -75,10 +75,12 @@ export default class ObsidianFtvkyo extends Plugin {
 
         this.lg.important(`Loading obsidian-ftvkyo`);
 
+        await this.loadSettings();
+
         // May depend on the plugin being global
+        // May depend on settings
         this.api = new Api();
 
-        await this.loadSettings();
         this.addSettingTab(new OFSettingTab(app, this));
 
         this.app.workspace.onLayoutReady(() => {
