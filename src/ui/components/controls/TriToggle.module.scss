@@ -31,19 +31,23 @@
 
         transition: 0.1s all ease-in-out;
 
+        // Technically, the following are not text, but the error, warning and success
+        // are used because the themes might use a background color that would be incompatible
+        // with explicitly specified --color-red, --color-yellow and --color-green.
+
         &.off {
             left: 0;
-            background-color: var(--color-red);
+            background-color: var(--text-error);
         }
 
         &.maybe {
             left: 33%;
-            background-color: var(--color-yellow);
+            background-color: var(--text-faint);
         }
 
         &.on {
             left: 67%;
-            background-color: var(--color-green);
+            background-color: var(--text-success);
         }
     }
 

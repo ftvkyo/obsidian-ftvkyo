@@ -18,7 +18,7 @@
     gap: vars.$gap / 2;
 
     .rootBroken {
-        color: var(--red);
+        color: var(--text-error);
     }
 
     span.displayingWhat {
