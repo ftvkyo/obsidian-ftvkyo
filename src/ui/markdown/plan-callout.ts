@@ -12,6 +12,8 @@ const BREAK_MINUTES = 5;
 const RE_TIME_MOMENT = /^@\s?(\d\d?):(\d\d)$/;
 const RE_TIME_DELTA = /^(\d+[hH])?\s?(\d+[mM])?$/;
 
+type Time = {h: number, m: number, d: number};
+
 
 class PlanCalloutCalculator extends MarkdownRenderChild {
     constructor(
@@ -20,14 +22,11 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
         super(containerEl);
     }
 
-    #getListItemMinutes(listEl: HTMLLIElement): null | number {
-        const code = listEl.querySelector<HTMLElement>("code:first-of-type");
-        if (code) {
-            const td = this.#parseTimeDeltaToMinutes(code.innerText);
-            if (td) {
-                code.addClass("parsed");
-                return td;
-            }
+    #getEstimationCodeMinutes(code: HTMLElement): null | number {
+        const td = this.#parseTimeDeltaToMinutes(code.innerText);
+        if (td) {
+            code.addClass("parsed");
+            return td;
         }
         return null;
     }
@@ -48,36 +47,41 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
         return hm * 60 + mm;
     }
 
-    #formatTimeDelta(minutes: number): string {
-        const hours = Math.floor(minutes / 60);
-        const minutesRemainder = minutes % 60;
+    #addTime(start: Time, delta: Time): Time {
+        let m = start.m + delta.m;
+        let h = start.h + delta.h + Math.floor(m / 60);
+        const d = start.d + delta.d + Math.floor(h / 24);
 
+        m = m % 60;
+        h = h % 24;
+
+        return {h, m, d};
+    }
+
+    #formatTimeDelta(delta: Time): string {
         let time = "";
-        if (hours > 0) {
-            time += `${hours}h`;
+        if (delta.d > 0) {
+            time += `${delta.d}d`;
         }
         time += " ";
-        if (minutesRemainder > 0) {
-            time += `${minutesRemainder}m`;
+        if (delta.h > 0) {
+            time += `${delta.h}h`;
+        }
+        time += " ";
+        if (delta.m > 0) {
+            time += `${delta.m}m`;
         }
         time = time.trim();
 
         return time;
     }
 
-    #formatEndTime(start: {h: number, m: number}, minutes: number): string {
-        start.m += minutes;
-        start.h += Math.floor(start.m / 60);
-        start.m %= 60;
+    #formatMoment(moment: Time): string {
+        const mpad = String(moment.m).padStart(2, "0");
 
-        const days = Math.floor(start.h / 24);
-        start.h %= 24;
-
-        const mpad = String(start.m).padStart(2, "0");
-
-        let ret = `@ ${start.h}:${mpad}`;
-        if (days > 0) {
-            ret += ` (+${days}d)`;
+        let ret = `${moment.h}:${mpad}`;
+        if (moment.d > 0) {
+            ret += ` (+${moment.d}d)`;
         }
 
         return ret;
@@ -87,7 +91,7 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
         return Array.from(this.containerEl.querySelectorAll("li"));
     }
 
-    #getStartTime(): null | {h: number, m: number} {
+    #getStartTime(): null | Time {
         const code = this.containerEl.querySelector<HTMLElement>(".callout-title-inner > code:first-of-type");
         if (!code) {
             lg?.debug("Code in title not found.");
@@ -102,33 +106,47 @@ class PlanCalloutCalculator extends MarkdownRenderChild {
             return null;
         }
 
-        return {h: Number(h), m: Number(m)};
+        return {h: Number(h), m: Number(m), d: 0};
+    }
+
+    #addTooltip(el: HTMLElement, tooltip: string) {
+        el.ariaLabel = tooltip;
     }
 
     onload() {
-        const start = this.#getStartTime();
-
-        let minutesTotal = 0;
+        const blockStart = this.#getStartTime();
+        let blockDelta = {h: 0, m: 0, d: 0};
 
         const lis = this.#getListItems();
         lg?.debug(`Found ${lis.length} list elements.`);
 
         for (const li of lis) {
-            const minutes = this.#getListItemMinutes(li);
-            if (minutes) {
-                minutesTotal += minutes + BREAK_MINUTES;
+            const estimationCode = li.querySelector<HTMLElement>("code:first-of-type");
+            if (estimationCode) {
+                const minutes = this.#getEstimationCodeMinutes(estimationCode);
+                if (minutes) {
+                    if (blockStart) {
+                        const taskStart = this.#addTime(blockStart, blockDelta);
+                        // End does not include the break
+                        const taskEnd = this.#addTime(taskStart, {h: 0, m: minutes, d: 0});
+                        this.#addTooltip(estimationCode, `${this.#formatMoment(taskStart)} - ${this.#formatMoment(taskEnd)}`);
+                    }
+                    // Includes the break
+                    blockDelta = this.#addTime(blockDelta, {h: 0, m: minutes + BREAK_MINUTES, d: 0});
+                }
             }
         }
 
-        lg?.debug(`Total minutes is ${minutesTotal}.`);
+        lg?.debug(`Total time is ${blockDelta}.`);
 
-        if (minutesTotal > 0) {
+        if (blockDelta.h > 0 || blockDelta.m > 0) {
             const em = document.createElement("em");
 
-            em.appendText(`Total: ${this.#formatTimeDelta(minutesTotal)}.`);
+            em.appendText(`Total: ${this.#formatTimeDelta(blockDelta)}.`);
 
-            if (start) {
-                em.appendText(` Finishing ${this.#formatEndTime(start, minutesTotal)}.`);
+            if (blockStart) {
+                const blockEnd = this.#addTime(blockStart, blockDelta);
+                em.appendText(` Finishing @ ${this.#formatMoment(blockEnd)}.`);
             }
 
             this.containerEl.appendChild(em);
