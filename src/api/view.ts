@@ -3,15 +3,19 @@ export default class ApiView {
     // List of views that have been loaded.
     loadedViews: string[] = [];
 
-    // Add the view to the workspace,
-    // and register it to be removed on unload
+    // Add the view to the workspace if it's not there yet.
     async place(viewType: string) {
-        app.workspace.detachLeavesOfType(viewType);
-        await app.workspace.getLeftLeaf(false).setViewState({
-            type: viewType,
-            active: true,
-        });
+        const instances = app.workspace.getLeavesOfType(viewType);
+        if (instances.length < 1) {
+            // Need to place the view.
+            await app.workspace.getLeftLeaf(false).setViewState({
+                type: viewType,
+                active: true,
+            });
+            // Otherwise we just keep the view where it was.
+        }
 
+        // Save the view for the unlikely event we'd want to detach it later.
         if (!this.loadedViews.includes(viewType)) {
             this.loadedViews.push(viewType);
         }
