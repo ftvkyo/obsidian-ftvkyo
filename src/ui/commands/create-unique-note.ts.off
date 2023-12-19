@@ -7,7 +7,7 @@ const CreateUniqueNote: Command = {
     name: "Create a new unique note",
     callback: async () => {
         const now = ftvkyo.moment();
-        const newNote = await ftvkyo.api.source.createNote("unique", now);
+        const newNote = await ftvkyo.api.source.createPeriodicNote("unique", now);
         new ApiNoteUnique(newNote, now).reveal({ mode: "source" });
     },
 };

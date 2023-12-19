@@ -40,7 +40,7 @@ function NoteAny({
         if (note) {
             note.reveal({ replace });
         } else if (periodTemplate) {
-            const newNote = await ftvkyo.api.source.createNote(period, date);
+            const newNote = await ftvkyo.api.source.createPeriodicNote(period, date);
             new ApiNotePeriodic(newNote, date, period).reveal({ replace });
         }
     }, [note, period, date, periodTemplate?.path]);

@@ -13,8 +13,6 @@ export abstract class ApiNote {
     constructor(
         // Note identification
         public readonly tf: TFile,
-        // Note moment (creation or what it's related to)
-        public readonly date: moment.Moment,
     ) {}
 
     /* ================ *
@@ -63,38 +61,7 @@ export abstract class ApiNote {
 }
 
 
-const DATE_TODO_MARKERS = ["to-do", "todo", "future"];
-
-const DATE_AUTO_MARKER = "auto";
-
-
 export class ApiNoteUnique extends ApiNote {
-
-    static RE_TITLE_ROOT = /^#[\w-][\w-/]*$/;
-
-    /* ================= *
-     * Title information *
-     * ================= */
-
-    // Title of the note.
-    // Returns the H1 heading if there is only one of them.
-    // Returns null otherwise.
-    get title(): string | null {
-        const hs = this.fc?.headings ?? [];
-        const h1s = hs.filter(h => h.level === 1);
-
-        if (h1s.length >= 2) {
-            return null;
-        }
-
-        const h1 = h1s.first()?.heading.trim() ?? null;
-
-        if (h1 && this.isDated) {
-            return `${h1} (${this.dateInfo})`;
-        }
-
-        return h1;
-    }
 
     /* =============== *
      * Tag information *
@@ -125,91 +92,13 @@ export class ApiNoteUnique extends ApiNote {
         return this.tasks.filter((val) => val.task !== " ");
     }
 
-    /* ================ *
-     * Date information *
-     * ================ */
-
-    // Return `date` from the frontmatter.
-    //
-    // Accepted fronmatter `date` values:
-    // - string with a date in the format `YYYYMMDD-HHmmss`
-    // - string with a date in the format `YYYYMMDD`
-    // - string "auto"
-    // - not set
-    get dateMatter(): string | null {
-        return this.fc?.frontmatter?.date ?? null;
-    }
-
-    // Get pretty date info about the note.
-    get dateInfo(): string | null {
-        // Don't output time:
-        // - Some notes don't have a meaningful time
-        // - It creates extra visual clutter
-
-        // const outputFormat = "ddd, ll";
-        // "\xa0" = nbsp
-        const outputFormat = "ddd,[\xa0]DD[\xa0]MMM[\xa0]YYYY";
-
-        const matter = this.dateMatter;
-
-        if (matter && DATE_TODO_MARKERS.includes(matter)) {
-            return "to-do";
-        }
-
-        if (matter === DATE_AUTO_MARKER || matter === null) {
-            return this.date.format(outputFormat);
-        }
-
-        // Try parsing the frontmatter
-        return ftvkyo.momentParse(matter, ["YYYYMMDD-HHmmss", "YYYYMMDD"]).format(outputFormat);
-    }
-
     /* ============ *
      * State checks *
      * ============ */
 
-    get isDated(): boolean {
-        return this.dateMatter !== null;
-    }
-
-    // Whether the note is work in progress.
-    get hasTasks() {
-        return this.tasksUndone.length > 0 || (this.dateMatter && DATE_TODO_MARKERS.includes(this.dateMatter));
-    }
-
-    // Whether the note is a root note.
-    // Those notes have a tag as their title.
-    get rootFor() {
-        return ApiNoteUnique.RE_TITLE_ROOT.test(this.title ?? "") && this.title?.slice(1) /* remove # */ || null;
-    }
-
-    // Check if the note is invalid.
-    // If invalid, reason is provided.
-    get broken(): false | string {
-        const hs = this.fc?.headings ?? [];
-        const h1s = hs.filter(h => h.level === 1);
-        if (h1s.length >= 2) {
-            return "Note has more than one top-level title.";
-        }
-
-        // A note title can contain a tag or some text, but not both.
-        // This simply checks that the title does not have the "#" symbol when
-        // the note is not root, and this is good enough.
-        if (!this.rootFor && this.title && this.title.search("#") !== -1) {
-            return "Note title has a '#' when the note is not a root note.";
-        }
-
-        // If a note is a root note, it can't have other tags.
-        if (this.rootFor && this.tags.length > 1) {
-            return "Root notes can't have extra tags.";
-        }
-
-        // If the filename can't be parsed into a date.
-        if (!this.dateInfo) {
-            return "The note's date can't be parsed.";
-        }
-
-        return false;
+    get isIndex() {
+        const fm = this.fc?.frontmatter;
+        return !!fm?.["index"];
     }
 
     get isSensitive(): boolean {
@@ -230,9 +119,10 @@ export class ApiNotePeriodic extends ApiNote {
     constructor(
         public readonly tf: TFile,
         public readonly date: moment.Moment,
+        // Note period
         public readonly period: string,
     ) {
-        super(tf, date);
+        super(tf);
 
         date.hour(0).minute(0).second(0);
     }

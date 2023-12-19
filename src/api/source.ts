@@ -54,21 +54,24 @@ export default class ApiSource {
         const notesPeriodic = [];
 
         for (const mdf of mdfs) {
-            const [type, date] = this.determineNote(mdf.path);
+            // A note is supposedly periodic if it's in the right directory.
+            // It still may have an incorrect filename pattern.
+            const supposedlyPeriodic = mdf.path.startsWith(ftvkyo.settings.folderPeriodic + "/");
 
-            if (type === null) {
-                // We only care about notes that are in periodic / unique folders.
+            if (supposedlyPeriodic) {
+                const [type, date] = this.determinePeriodicNote(mdf.path);
 
-                const inPeriodic = mdf.path.startsWith(ftvkyo.settings.folderPeriodic + "/");
-                const inUnique = mdf.path.startsWith(ftvkyo.settings.folderUnique + "/");
-
-                if (inPeriodic || inUnique) {
+                if (type && date) {
+                    notesPeriodic.push(new ApiNotePeriodic(mdf, date, type));
+                } else {
                     lg?.error(`Unexpected note: "${mdf.path}" - can't determine type`);
                 }
-            } else if (type === "unique") {
-                notesUnique.push(new ApiNoteUnique(mdf, date));
+            } else if (mdf.path.startsWith("_")) {
+                // Skip other "hidden" direcotires.
+                continue;
             } else {
-                notesPeriodic.push(new ApiNotePeriodic(mdf, date, type));
+                // Supposedly unique.
+                notesUnique.push(new ApiNoteUnique(mdf));
             }
         }
 
@@ -127,13 +130,8 @@ export default class ApiSource {
         return null;
     }
 
-    generatePathFormat(noteType: NoteType): string {
-        let folder;
-        if (noteType === "unique") {
-            folder = ftvkyo.settings.folderUnique;
-        } else {
-            folder = ftvkyo.settings.folderPeriodic;
-        }
+    generatePeriodicPathFormat(noteType: MomentPeriods): string {
+        let folder = ftvkyo.settings.folderPeriodic;
         folder &&= `[${folder}]/`;
 
         let year = ftvkyo.settings.groupByYear ? (FMT_YearGrouping[noteType] ?? FMT_YearGrouping.default ) : "";
@@ -145,13 +143,12 @@ export default class ApiSource {
         return folder + year + basename;
     }
 
-    generatePath(noteType: NoteType, date: moment.Moment): string {
-        return date.format(this.generatePathFormat(noteType));
+    generatePeriodicPath(noteType: MomentPeriods, date: moment.Moment): string {
+        return date.format(this.generatePeriodicPathFormat(noteType));
     }
 
-    determineNote(path: string): [NoteType, moment.Moment] | [null] {
+    determinePeriodicNote(path: string): [MomentPeriods, moment.Moment] | [null] {
         const order = [
-            "unique",
             "date",
             "week",
             "month",
@@ -160,7 +157,7 @@ export default class ApiSource {
         ] as const;
 
         for (const type of order) {
-            const fmt = this.generatePathFormat(type);
+            const fmt = this.generatePeriodicPathFormat(type);
             const date = ftvkyo.momentParse(path, fmt);
             if (date.isValid()) {
                 return [type, date];
@@ -170,7 +167,7 @@ export default class ApiSource {
         return [null];
     }
 
-    async createNote(noteType: NoteType, date: moment.Moment): Promise<TFile> {
+    async createPeriodicNote(noteType: MomentPeriods, date: moment.Moment): Promise<TFile> {
         const template = this.getTemplate(noteType);
 
         if (!template) {
@@ -179,7 +176,7 @@ export default class ApiSource {
 
         lg?.debug(`Creating a note of type ${noteType} for date ${date.format()}`)
 
-        const path = this.generatePath(noteType, date);
+        const path = this.generatePeriodicPath(noteType, date);
 
         await this.ensureFolderFor(path);
 

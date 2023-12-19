@@ -319,6 +319,7 @@ export abstract class ApiNoteList<Note extends ApiNote> {
 
 export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
 
+    /*
     // Get a map from tags to notes.
     // Does not include subnotes into tag notes.
     get tags() {
@@ -373,20 +374,17 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
 
         return res;
     }
+    */
 
     // Filter the notes.
     where(w: ApiWhere): {notes: ApiNoteUniqueList, found: number} {
         const {
             tag,
             filter: {
-                title,
                 tasks,
-                dated,
-                broken,
                 root,
             },
             order: {
-                key,
                 dir,
             },
             page,
@@ -417,39 +415,20 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
             });
         }
 
-        if (title === TS.On) {
-            notes = notes.filter(note => note.title !== null);
-        } else if (title === TS.Off) {
-            notes = notes.filter(note => note.title === null);
-        }
 
         if (tasks === TS.On) {
-            notes = notes.filter(note => note.hasTasks);
+            notes = notes.filter(note => note.tasks.length > 0);
         } else if (tasks === TS.Off) {
-            notes = notes.filter(note => !note.hasTasks);
-        }
-
-        if (dated === TS.On) {
-            notes = notes.filter(note => note.isDated);
-        } else if (dated === TS.Off) {
-            notes = notes.filter(note => !note.isDated);
-        }
-
-        if (broken === TS.On) {
-            notes = notes.filter(note => note.broken !== false);
-        } else if (broken === TS.Off) {
-            notes = notes.filter(note => note.broken === false);
+            notes = notes.filter(note => note.tasks.length === 0);
         }
 
         if (root === TS.On) {
-            notes = notes.filter(note => note.rootFor);
+            notes = notes.filter(note => note.isIndex);
         } else if (root == TS.Off) {
-            notes = notes.filter(note => !note.rootFor);
+            notes = notes.filter(note => !note.isIndex);
         }
 
-        const keyF = key === "title"
-            ? (e: ApiNoteUnique) => e.title ?? e.base
-            : (e: ApiNoteUnique) => e.base;
+        const keyF = (e: ApiNoteUnique) => e.base;
 
         notes = notes.sort((a, b) => keyF(a).localeCompare(keyF(b)));
 

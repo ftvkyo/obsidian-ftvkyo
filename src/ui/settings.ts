@@ -8,7 +8,6 @@ export interface Settings {
 
     sensitiveTags: string[];
 
-    folderUnique: string,
     folderPeriodic: string,
     folderTemplates: string,
 
@@ -22,8 +21,7 @@ export const DEFAULT_SETTINGS: Settings = {
 
     sensitiveTags: [],
 
-    folderPeriodic: "periodic",
-    folderUnique: "unique",
+    folderPeriodic: "_periodic",
     folderTemplates: "",
 
     groupByYear: true,
@@ -61,17 +59,6 @@ export class OFSettingTab extends PluginSettingTab {
                     .setPlaceholder("periodic")
                     .onChange(async (value) => {
                         ftvkyo.settings.folderPeriodic = (value || DEFAULT_SETTINGS.folderPeriodic).replace(/\/$/, "");
-                        await ftvkyo.saveSettings();
-                    })
-            );
-
-        new Setting(containerEl)
-            .setName("Folder for unique notes")
-            .addText((t) =>
-                t.setValue(DEFAULT_SETTINGS.folderUnique)
-                    .setPlaceholder("unique")
-                    .onChange(async (value) => {
-                        ftvkyo.settings.folderUnique = (value || DEFAULT_SETTINGS.folderUnique).replace(/\/$/, "");
                         await ftvkyo.saveSettings();
                     })
             );

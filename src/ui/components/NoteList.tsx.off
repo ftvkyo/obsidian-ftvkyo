@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-import NoteCard from "./parts/NoteCard";
+import NoteCard from "./parts/NoteCard.tsx.off";
 import {ApiNoteUniqueList, ApiWhere, Tag, TriState} from "@/api/note-list";
-import NoteFilter from "./parts/NoteFilter";
-import NotePaginator from "./parts/NotePaginator";
+import NoteFilter from "./parts/NoteFilter.tsx.off";
+import NotePaginator from "./parts/NotePaginator.tsx.off";
 
 import styles from "./NoteList.module.scss";
 import Icon from "./controls/Icon";
