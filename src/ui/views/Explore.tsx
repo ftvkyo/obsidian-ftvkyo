@@ -1,4 +1,4 @@
-import {type ViewElement} from "./view";
+import {ViewElementProps, type ViewElement} from "./view";
 import Logger from "@/util/logger";
 import Calendar from "../components/Calendar";
 
@@ -6,8 +6,13 @@ import Calendar from "../components/Calendar";
 let lg: Logger | undefined = undefined;
 
 
-const ExploreView: ViewElement = {
-    Element: () => {
+export type ExploreViewState = {
+    calendarCompact: boolean,
+};
+
+const ExploreView: ViewElement<ExploreViewState> = {
+    short: "nav",
+    Element: ({state, setState}: ViewElementProps<ExploreViewState>) => {
         if (!lg) {
             lg = ftvkyo.lg.sub("Explore");
         }
@@ -18,10 +23,14 @@ const ExploreView: ViewElement = {
         return <>
             <Calendar
                 notes={periodic}
+                compact={state.calendarCompact}
+                setCompact={(compact) => setState({...state, calendarCompact: compact})}
             />
         </>;
     },
-    short: "nav",
+    initialState: {
+        calendarCompact: true,
+    },
     viewType: "ftvkyo-explore",
     displayText: "Explore",
     icon: "lucide-globe-2",

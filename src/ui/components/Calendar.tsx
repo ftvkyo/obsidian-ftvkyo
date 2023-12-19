@@ -315,10 +315,13 @@ const weekOffsets = [
 
 export default function Calendar({
     notes,
-}: NotesTakerProps) {
+    compact,
+    setCompact,
+}: {
+    compact: boolean,
+    setCompact: (c: boolean) => void,
+} & NotesTakerProps) {
     const today = dateToday();
-
-    const [compact, setCompact] = useState(true);
 
     // What date to center the calendar around.
     // .weekday is locale-aware.

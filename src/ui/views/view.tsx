@@ -2,17 +2,24 @@ import { StrictMode } from "react";
 import { createRoot, Root } from 'react-dom/client';
 import { ErrorBoundary } from "react-error-boundary";
 
-import { View, WorkspaceLeaf } from "obsidian";
+import { View, ViewStateResult, WorkspaceLeaf } from "obsidian";
 
 import ObsidianFtvkyo from "@/main";
 
 
-export type ViewElement = {
+export type ViewElementProps<State> = {
+    state: State,
+    setState: (s: State) => void
+};
+
+
+export type ViewElement<State> = {
     // Short name
     short: string,
 
     // JSX
-    Element: () => JSX.Element,
+    Element: (props: ViewElementProps<State>) => JSX.Element,
+    initialState: State,
 
     // Obsidian-required stuff
     viewType: string,
@@ -21,14 +28,16 @@ export type ViewElement = {
 };
 
 
-export default class ObsidianFtvkyoView extends View {
+export default class ObsidianFtvkyoView<State> extends View {
     root: Root | undefined;
 
-    static create(
+    state: State;
+
+    static create<State>(
         leaf: WorkspaceLeaf,
         plugin: ObsidianFtvkyo,
 
-        element: ViewElement,
+        element: ViewElement<State>,
     ) {
         return new ObsidianFtvkyoView(
             leaf,
@@ -37,6 +46,7 @@ export default class ObsidianFtvkyoView extends View {
             element.displayText,
             element.icon,
             element.Element,
+            element.initialState,
         );
     }
 
@@ -48,9 +58,12 @@ export default class ObsidianFtvkyoView extends View {
         readonly displayText: string,
         readonly icon: string,
 
-        readonly Element: () => JSX.Element,
+        readonly Element: (props: ViewElementProps<State>) => JSX.Element,
+        readonly initialState: State,
     ) {
         super(leaf);
+
+        this.state = initialState,
 
         // The view is not intended to be navigated away.
         this.navigation = false;
@@ -84,7 +97,23 @@ export default class ObsidianFtvkyoView extends View {
         this.root?.unmount();
     }
 
+    async setState(state: State, result: ViewStateResult): Promise<void> {
+        this.state = state;
+        return super.setState(state, result);
+    }
+
+    getState(): State {
+        return this.state;
+    }
+
     private render() {
+        const setState = (s: State) => {
+            this.state = s;
+            this.app.workspace.requestSaveLayout();
+            // Trigger a re-render with the new state.
+            this.render();
+        };
+
         this.root?.render(
             <StrictMode>
                 <div className="view-content">
@@ -96,7 +125,10 @@ export default class ObsidianFtvkyoView extends View {
                             </div>;
                         }}
                     >
-                        <this.Element />
+                        <this.Element
+                            state={this.getState()}
+                            setState={setState}
+                        />
                     </ErrorBoundary>
                 </div>
             </StrictMode>
