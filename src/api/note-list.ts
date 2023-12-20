@@ -8,10 +8,8 @@ export enum TriState {
     Maybe = "maybe",
 }
 
-type TS = TriState;
-const TS = TriState;
 
-
+/*
 export enum TagWildcard {
     All,
     Any,
@@ -76,10 +74,11 @@ interface WhereOrder {
     key: "base" | "title",
     dir: "asc" | "desc",
 }
-
+*/
 
 export class ApiWhere {
 
+    /*
     constructor(
         public readonly tag: Tag = Tag.all,
         public readonly filter: WhereFilter = {
@@ -102,11 +101,13 @@ export class ApiWhere {
     static init(tag: Tag) {
         return ApiWhere.default.withTag(tag).withPage(0);
     }
+    */
 
     /* ================== *
      * Flexible modifiers *
      * ================== */
 
+    /*
     resetTag() {
         return new ApiWhere(
             ApiWhere.default.tag,
@@ -175,11 +176,13 @@ export class ApiWhere {
             page,
         );
     }
+    */
 
     /* ================ *
      * Filter shortcuts *
      * ================ */
 
+    /*
     title(title: WhereFilter["title"]) {
         return this.withFilter({title});
     }
@@ -199,11 +202,13 @@ export class ApiWhere {
     root(root: WhereFilter["root"]) {
         return this.withFilter({root});
     }
+    */
 
     /* =============== *
      * Order shortcuts *
      * =============== */
 
+    /*
     key(key: WhereOrder["key"]) {
         return this.withOrder({key});
     }
@@ -255,11 +260,13 @@ export class ApiWhere {
                 throw new Error(`Unreachable: unknown dir '${this.order.dir}'`);
         }
     }
+    */
 
     /* ================ *
      * Paging shortcuts *
      * ================ */
 
+    /*
     // Get the page 0 if it's set and undefined otherwise.
     get pageZero() {
         return this.page === undefined ? undefined : 0;
@@ -294,6 +301,7 @@ export class ApiWhere {
         }
         return this.withPage(this.page - 1);
     }
+    */
 }
 
 
@@ -317,7 +325,43 @@ export abstract class ApiNoteList<Note extends ApiNote> {
 }
 
 
+export interface DirectoryTree {
+    subs: Record<string, DirectoryTree>,
+    notes: ApiNoteUnique[],
+}
+
+
 export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
+
+    get directoryTree(): DirectoryTree {
+        const tree = {
+            subs: {},
+            notes: [],
+        };
+
+        const addNote = (tree: DirectoryTree, path: string[], note: ApiNoteUnique) => {
+            if (path.length === 0) {
+                throw "Recursion too deep, no path?";
+            }
+
+            if (path.length === 1) {
+                tree.notes.push(note);
+                return;
+            }
+
+            const thispath = path.shift();
+            if (thispath) {
+                tree.subs[thispath] ??= { subs: {}, notes: [] };
+                addNote(tree.subs[thispath] as DirectoryTree, path, note);
+            }
+        };
+
+        for (const note of this.notes) {
+            addNote(tree, note.pathparts, note);
+        }
+
+        return tree;
+    }
 
     /*
     // Get a map from tags to notes.
@@ -374,7 +418,6 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
 
         return res;
     }
-    */
 
     // Filter the notes.
     where(w: ApiWhere): {notes: ApiNoteUniqueList, found: number} {
@@ -446,6 +489,7 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
 
         return {notes: new ApiNoteUniqueList(notes), found: count};
     }
+    */
 }
 
 

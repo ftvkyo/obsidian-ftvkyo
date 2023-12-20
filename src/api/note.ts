@@ -24,6 +24,10 @@ export abstract class ApiNote {
         return this.tf.path;
     }
 
+    get pathparts() {
+        return this.tf.path.split("/");
+    }
+
     // Filename without the extension.
     get base() {
         return this.tf.basename;
@@ -98,7 +102,7 @@ export class ApiNoteUnique extends ApiNote {
 
     get isIndex() {
         const fm = this.fc?.frontmatter;
-        return !!fm?.["index"];
+        return !!(fm?.["index"] || fm?.["root"]);
     }
 
     get isSensitive(): boolean {

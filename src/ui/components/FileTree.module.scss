@@ -1,0 +1,35 @@
+@use "../../vars";
+
+.tree {
+    padding: vars.$pad;
+}
+
+.directory {
+    display: flex;
+    flex-direction: column;
+    gap: vars.$gap / 2;
+
+    .header {
+        font-family: var(--font-monospace);
+    }
+
+    .contents {
+        display: flex;
+        flex-direction: column;
+        gap: vars.$gap / 4;
+
+        margin-left: vars.$pad;
+    }
+
+    .directory {
+
+    }
+
+    .note {
+
+
+        &.index {
+            color: var(--italic-color);
+        }
+    }
+}
