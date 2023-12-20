@@ -2,6 +2,7 @@
 
 .tree {
     padding: vars.$pad;
+    overflow-y: scroll;
 }
 
 .directory {
@@ -10,7 +11,15 @@
     gap: vars.$gap / 2;
 
     .header {
-        font-family: var(--font-monospace);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: vars.$gap / 2;
+
+        span {
+            flex-grow: 1;
+            font-family: var(--font-monospace);
+        }
     }
 
     .contents {
@@ -19,6 +28,10 @@
         gap: vars.$gap / 4;
 
         margin-left: vars.$pad;
+
+        &.hidden {
+            display: none;
+        }
     }
 
     .directory {
@@ -26,8 +39,6 @@
     }
 
     .note {
-
-
         &.index {
             color: var(--italic-color);
         }

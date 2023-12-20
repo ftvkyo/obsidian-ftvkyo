@@ -2,6 +2,7 @@ import { ApiNoteUnique } from "@/api/note";
 import { ApiNoteUniqueList, DirectoryTree } from "@/api/note-list";
 import { clsx } from "clsx";
 import { useState } from "react";
+import Icon from "./controls/Icon";
 
 import styles from "./FileTree.module.scss";
 
@@ -26,8 +27,15 @@ function Directory({
 }) {
     const [expanded, setExpanded] = useState(false);
 
+    const expandedIcon = expanded ? "chevron-down" : "chevron-right";
+    const expandedClass = expanded ? null : styles.hidden;
+
     const header = <div className={styles.header}>
-        {name}
+        <Icon
+            icon={expandedIcon}
+            onClick={() => setExpanded((v) => !v)}
+        />
+        <span>{name}</span>
     </div>;
 
     const subs = Object.entries(tree.subs)
@@ -41,7 +49,7 @@ function Directory({
 
     return <div className={styles.directory}>
         {header}
-        <div className={styles.contents}>
+        <div className={clsx(styles.contents, expandedClass)}>
             {subs}
             {files}
         </div>
