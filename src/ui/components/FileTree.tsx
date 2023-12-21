@@ -112,7 +112,7 @@ function Directory({
 }) {
     const [expanded, setExpanded] = useState(false);
 
-    const expandedIcon = expanded ? "chevron-down" : "chevron-right";
+    const expandedIcon = expanded ? "folder" : "folder-closed";
     const expandedClass = expanded ? null : styles.hidden;
 
     const subs = Object.entries(tree.subs)
