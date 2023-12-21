@@ -16,7 +16,13 @@
         align-items: center;
         gap: vars.$gap / 2;
 
-        a {
+        .icon {
+            &.index {
+                color: var(--text-accent);
+            }
+        }
+
+        span {
             flex-grow: 1;
         }
 
@@ -24,12 +30,17 @@
             color: var(--nav-item-color-hover);
             background-color: var(--nav-item-background-hover);
         }
+
+        .progress {
+            color: var(--text-normal);
+            opacity: 50%;
+        }
     }
 
     .children {
         display: flex;
         flex-direction: column;
-        gap: vars.$gap / 4;
+        gap: vars.$gap / 2;
 
         margin-left: vars.$pad / 2;
         padding-left: vars.$pad / 2;
@@ -39,9 +50,9 @@
         &.hidden {
             display: none;
         }
-    }
-}
 
-.faint {
-    opacity: 50%;
+        hr {
+            margin: 0.5rem 0;
+        }
+    }
 }

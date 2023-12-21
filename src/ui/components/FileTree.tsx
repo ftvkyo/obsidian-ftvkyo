@@ -8,42 +8,6 @@ import Progress from "./parts/Progress";
 import styles from "./FileTree.module.scss";
 
 
-function onClick(
-    e: React.MouseEvent<HTMLAnchorElement>,
-) {
-    e.preventDefault();
-
-    const href = e.currentTarget.getAttribute("href");
-    if (!href) {
-        return;
-    }
-
-    const note = ftvkyo.api.source.byPath(href);
-    if (!note) {
-        return;
-    }
-
-    note.reveal({ replace: !e.ctrlKey });
-
-    // Otherwise, we ignore the clicks
-}
-
-
-function onAuxClick(
-    e: React.MouseEvent<HTMLAnchorElement>,
-) {
-    if (e.button === 1) {
-        // Middle mouse button.
-        e.preventDefault();
-
-        // "genius": Relay to the other handler.
-        e.button = 0;
-        e.ctrlKey = true;
-        onClick(e);
-    }
-}
-
-
 function Note({
     note,
 }: {
@@ -52,22 +16,22 @@ function Note({
     const tasks = note.tasks.length;
     const tasksDone = note.tasksDone.length;
 
-    return <div className={styles.leaf}>
+    const icon = note.isIndex ? "file-badge" : "file";
+    const iconClass = note.isIndex ? styles.index : null;
+
+    return <div
+        className={styles.leaf}
+        onClick={(e) => note.reveal({ replace: !e.ctrlKey })}
+        onAuxClick={(e) => e.button === 1 && note.reveal()}
+    >
         <div className={styles.header}>
-            <Icon
-                className={styles.faint}
-                icon={note.isIndex ? "file-badge" : "file"}
-            />
-            <a
-                href={note.path}
-                onClick={onClick}
-                onAuxClick={onAuxClick}
-            >
+            <Icon className={clsx(styles.icon, iconClass)} icon={icon} />
+            <span>
                 {note.base}
-            </a>
+            </span>
             {tasks > 0
                 && <Progress
-                    className={styles.faint}
+                    className={styles.progress}
                     icon="check"
                     value={tasksDone}
                     max={tasks}
@@ -124,16 +88,21 @@ function Directory({
         .sort(sortNotes)
         .map((note) => <Note key={note.base} note={note} />);
 
+    const hr = subs.length > 0 && notes.length > 0
+        ? <hr/>
+        : null;
+
     return <div className={styles.leaf}>
         <div
             className={styles.header}
             onClick={() => setExpanded((v) => !v)}
         >
-            <Icon icon={expandedIcon}/>
+            <Icon className={styles.icon} icon={expandedIcon}/>
             <span>{name}</span>
         </div>
         <div className={clsx(styles.children, expandedClass)}>
             {subs}
+            {hr}
             {notes}
         </div>
     </div>;
