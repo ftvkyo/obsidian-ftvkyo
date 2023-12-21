@@ -12,6 +12,7 @@ export interface IconProps {
     disabled?: boolean,
     onClick?: (e: React.MouseEvent) => void,
     onAuxClick?: (e: React.MouseEvent) => void,
+    className?: string,
 }
 
 
@@ -22,6 +23,7 @@ export default function Icon({
     disabled,
     onClick,
     onAuxClick,
+    className,
 }: IconProps) {
     const updateIcon = useCallback((node: HTMLElement | null) => {
         if (node) {
@@ -34,6 +36,7 @@ export default function Icon({
         ref={updateIcon}
 
         className={clsx(
+            className, // Styling from the parent component
             "clickable-icon", // General styling from obsidian
             pressed && "is-active", // When it's a toggle that is pressed
             styles.icon, // Custom styling

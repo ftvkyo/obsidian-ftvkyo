@@ -6,41 +6,54 @@
 }
 
 .directory {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-areas:
+        "icon  name    "
+        "guide contents";
+    grid-template-columns: min-content auto;
+    grid-template-rows: min-content auto;
     gap: vars.$gap / 2;
 
-    .header {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: vars.$gap / 2;
+    .icon {
+        grid-area: "icon";
+    }
 
-        span {
-            flex-grow: 1;
-            font-family: var(--font-monospace);
-        }
+    .name {
+        grid-area: "name";
+        align-self: center;
+
+        font-family: var(--font-monospace);
+    }
+
+    .guide {
+        grid-area: "guide";
+
+        width: 50%;
+        border-inline-end: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
     }
 
     .contents {
+        grid-area: "contents";
+
         display: flex;
         flex-direction: column;
         gap: vars.$gap / 4;
 
-        margin-left: vars.$pad;
+        .directory {
 
-        &.hidden {
-            display: none;
+        }
+
+        .note {
+            &.index {
+                color: var(--italic-color);
+            }
         }
     }
 
-    .directory {
-
-    }
-
-    .note {
-        &.index {
-            color: var(--italic-color);
+    .hidden {
+        &.contents,
+        &.guide {
+            display: none;
         }
     }
 }

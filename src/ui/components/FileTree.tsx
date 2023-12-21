@@ -84,14 +84,6 @@ function Directory({
     const expandedIcon = expanded ? "chevron-down" : "chevron-right";
     const expandedClass = expanded ? null : styles.hidden;
 
-    const header = <div className={styles.header}>
-        <Icon
-            icon={expandedIcon}
-            onClick={() => setExpanded((v) => !v)}
-        />
-        <span>{name}</span>
-    </div>;
-
     const subs = Object.entries(tree.subs)
         // Sort by name
         .sort((a, b) => a[0].localeCompare(b[0]))
@@ -102,7 +94,15 @@ function Directory({
         .map((note) => <Note key={note.base} note={note} />);
 
     return <div className={styles.directory}>
-        {header}
+        <Icon
+            className={styles.icon}
+            icon={expandedIcon}
+            onClick={() => setExpanded((v) => !v)}
+        />
+        <div className={styles.name}>
+            {name}
+        </div>
+        <div className={clsx(styles.guide, expandedClass)}/>
         <div className={clsx(styles.contents, expandedClass)}>
             {subs}
             {files}
