@@ -7,13 +7,57 @@ import Icon from "./controls/Icon";
 import styles from "./FileTree.module.scss";
 
 
+function onClick(
+    e: React.MouseEvent<HTMLAnchorElement>,
+) {
+    e.preventDefault();
+
+    const href = e.currentTarget.getAttribute("href");
+    if (!href) {
+        return;
+    }
+
+    const note = ftvkyo.api.source.byPath(href);
+    if (!note) {
+        return;
+    }
+
+    note.reveal({ replace: !e.ctrlKey });
+
+    // Otherwise, we ignore the clicks
+}
+
+
+function onAuxClick(
+    e: React.MouseEvent<HTMLAnchorElement>,
+) {
+    if (e.button === 1) {
+        // Middle mouse button.
+        e.preventDefault();
+
+        // "genius": Relay to the other handler.
+        e.button = 0;
+        e.ctrlKey = true;
+        onClick(e);
+    }
+}
+
+
 function Note({
     note,
 }: {
     note: ApiNoteUnique,
 }) {
-    return <div className={clsx(styles.note, note.isIndex && styles.index)}>
-        {note.base}
+    return <div
+        className={clsx(styles.note, note.isIndex && styles.index)}
+    >
+        <a
+            href={note.path}
+            onClick={onClick}
+            onAuxClick={onAuxClick}
+        >
+            {note.base}
+        </a>
     </div>;
 }
 
