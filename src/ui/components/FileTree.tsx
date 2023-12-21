@@ -55,6 +55,7 @@ function Note({
     return <div className={styles.leaf}>
         <div className={styles.header}>
             <Icon
+                className={styles.faint}
                 icon={note.isIndex ? "file-badge" : "file"}
             />
             <a
@@ -66,6 +67,7 @@ function Note({
             </a>
             {tasks > 0
                 && <Progress
+                    className={styles.faint}
                     icon="check"
                     value={tasksDone}
                     max={tasks}

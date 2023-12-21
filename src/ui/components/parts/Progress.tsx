@@ -10,14 +10,16 @@ export default function Progress({
     max,
     compact = false,
     reverse = false,
+    className,
 }: {
     icon?: string,
     value: number,
     max: number,
     compact?: boolean,
     reverse?: boolean,
+    className?: string,
 }) {
-    return <div className={clsx(styles.progress, reverse && styles.reverse)}>
+    return <div className={clsx(className, styles.progress, reverse && styles.reverse)}>
         {icon && <Icon icon={icon}/>}
         {value}/{max}
         {compact
