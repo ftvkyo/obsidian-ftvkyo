@@ -6,34 +6,26 @@
 }
 
 .directory {
-    display: grid;
-    grid-template-areas:
-        "icon  name    "
-        "guide contents";
-    grid-template-columns: min-content auto;
-    grid-template-rows: min-content auto;
+    display: flex;
+    flex-direction: column;
     gap: vars.$gap / 2;
 
-    .icon {
-        grid-area: "icon";
-    }
+    .header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: vars.$gap / 2;
 
-    .name {
-        grid-area: "name";
-        align-self: center;
-
-        font-family: var(--font-monospace);
-    }
-
-    .guide {
-        grid-area: "guide";
-
-        width: 50%;
-        border-inline-end: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
+        span {
+            flex-grow: 1;
+            font-family: var(--font-monospace);
+        }
     }
 
     .contents {
-        grid-area: "contents";
+        margin-left: vars.$pad / 2;
+        padding-left: vars.$pad / 2;
+        border-left: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
 
         display: flex;
         flex-direction: column;
