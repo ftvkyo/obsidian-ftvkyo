@@ -1,0 +1,26 @@
+@use "../../../vars";
+
+.progress {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    gap: vars.$gap;
+
+    progress {
+        appearance: none;
+
+        flex: 1;
+        height: 0.5em;
+    }
+
+    progress[value]::-webkit-progress-bar {
+        background: var(--background-primary-alt);
+        border: 1px solid var(--background-modifier-border);
+        border-radius: 3px;
+    }
+
+    progress[value]::-webkit-progress-value {
+        background: var(--background-modifier-border);
+    }
+}

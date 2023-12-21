@@ -3,6 +3,7 @@ import { ApiNoteUniqueList, DirectoryTree } from "@/api/note-list";
 import { clsx } from "clsx";
 import { useState } from "react";
 import Icon from "./controls/Icon";
+import ProgressBar from "./parts/ProgressBar";
 
 import styles from "./FileTree.module.scss";
 
@@ -58,6 +59,15 @@ function Note({
         >
             {note.base}
         </a>
+        {
+            note.tasks.length > 0
+            ? <ProgressBar
+                icon="check-circle"
+                value={note.tasksDone.length}
+                max={note.tasks.length}
+            />
+            : null
+        }
     </div>;
 }
 
