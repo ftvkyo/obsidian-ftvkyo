@@ -125,11 +125,11 @@ function Directory({
         .map((note) => <Note key={note.base} note={note} />);
 
     return <div className={styles.leaf}>
-        <div className={styles.header}>
-            <Icon
-                icon={expandedIcon}
-                onClick={() => setExpanded((v) => !v)}
-            />
+        <div
+            className={styles.header}
+            onClick={() => setExpanded((v) => !v)}
+        >
+            <Icon icon={expandedIcon}/>
             <span>{name}</span>
         </div>
         <div className={clsx(styles.children, expandedClass)}>

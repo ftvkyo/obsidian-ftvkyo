@@ -19,6 +19,11 @@
         a {
             flex-grow: 1;
         }
+
+        &:hover {
+            color: var(--nav-item-color-hover);
+            background-color: var(--nav-item-background-hover);
+        }
     }
 
     .children {
