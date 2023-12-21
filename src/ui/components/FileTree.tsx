@@ -72,6 +72,29 @@ function Note({
 }
 
 
+const sortSubfolders = (
+    a: [string, DirectoryTree],
+    b: [string, DirectoryTree],
+) => a[0].localeCompare(b[0]);
+
+
+const sortNotes = (
+    a: ApiNoteUnique,
+    b: ApiNoteUnique,
+) => {
+    // Make the index notes go to the top.
+    if (a.isIndex && !b.isIndex) {
+        return -1;
+    }
+    if (!a.isIndex && b.isIndex) {
+        return 1;
+    }
+    // If both notes are index, or if none of them are index,
+    // compare as usual.
+    return a.base.localeCompare(b.base);
+}
+
+
 function Directory({
     name,
     tree,
@@ -86,11 +109,11 @@ function Directory({
 
     const subs = Object.entries(tree.subs)
         // Sort by name
-        .sort((a, b) => a[0].localeCompare(b[0]))
+        .sort(sortSubfolders)
         .map(([name, tree]) => <Directory key={name} name={name} tree={tree} />);
 
-    const files = tree.notes
-        .sort((a, b) => a.base.localeCompare(b.base))
+    const notes = tree.notes
+        .sort(sortNotes)
         .map((note) => <Note key={note.base} note={note} />);
 
     return <div className={styles.directory}>
@@ -105,7 +128,7 @@ function Directory({
         <div className={clsx(styles.guide, expandedClass)}/>
         <div className={clsx(styles.contents, expandedClass)}>
             {subs}
-            {files}
+            {notes}
         </div>
     </div>;
 }
