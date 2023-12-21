@@ -4,8 +4,13 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: vars.$gap / 2;
 
-    gap: vars.$gap;
+    &.reverse {
+        flex-direction: row-reverse;
+    }
+
+    text-wrap: nowrap;
 
     progress {
         appearance: none;

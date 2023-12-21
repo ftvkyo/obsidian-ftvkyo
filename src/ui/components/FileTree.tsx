@@ -3,7 +3,7 @@ import { ApiNoteUniqueList, DirectoryTree } from "@/api/note-list";
 import { clsx } from "clsx";
 import { useState } from "react";
 import Icon from "./controls/Icon";
-import ProgressBar from "./parts/ProgressBar";
+import Progress from "./parts/Progress";
 
 import styles from "./FileTree.module.scss";
 
@@ -49,25 +49,31 @@ function Note({
 }: {
     note: ApiNoteUnique,
 }) {
-    return <div
-        className={clsx(styles.note, note.isIndex && styles.index)}
-    >
-        <a
-            href={note.path}
-            onClick={onClick}
-            onAuxClick={onAuxClick}
-        >
-            {note.base}
-        </a>
-        {
-            note.tasks.length > 0
-            ? <ProgressBar
-                icon="check-circle"
-                value={note.tasksDone.length}
-                max={note.tasks.length}
+    const tasks = note.tasks.length;
+    const tasksDone = note.tasksDone.length;
+
+    return <div className={styles.leaf}>
+        <div className={styles.header}>
+            <Icon
+                icon={note.isIndex ? "file-badge" : "file"}
             />
-            : null
-        }
+            <a
+                href={note.path}
+                onClick={onClick}
+                onAuxClick={onAuxClick}
+            >
+                {note.base}
+            </a>
+            {tasks > 0
+                && <Progress
+                    icon="check"
+                    value={tasksDone}
+                    max={tasks}
+                    compact
+                    reverse
+                />
+            }
+        </div>
     </div>;
 }
 
@@ -116,7 +122,7 @@ function Directory({
         .sort(sortNotes)
         .map((note) => <Note key={note.base} note={note} />);
 
-    return <div className={styles.directory}>
+    return <div className={styles.leaf}>
         <div className={styles.header}>
             <Icon
                 icon={expandedIcon}
@@ -124,7 +130,7 @@ function Directory({
             />
             <span>{name}</span>
         </div>
-        <div className={clsx(styles.contents, expandedClass)}>
+        <div className={clsx(styles.children, expandedClass)}>
             {subs}
             {notes}
         </div>
