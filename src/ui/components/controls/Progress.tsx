@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import Icon from "../controls/Icon";
+import Icon from "./Icon";
 
 import styles from "./Progress.module.scss";
 

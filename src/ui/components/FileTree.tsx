@@ -3,7 +3,7 @@ import { ApiNoteUniqueList, DirectoryTree } from "@/api/note-list";
 import { clsx } from "clsx";
 import { useState } from "react";
 import Icon from "./controls/Icon";
-import Progress from "./parts/Progress";
+import Progress from "./controls/Progress";
 
 import styles from "./FileTree.module.scss";
 
