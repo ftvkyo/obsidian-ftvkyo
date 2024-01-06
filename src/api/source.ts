@@ -167,6 +167,31 @@ export default class ApiSource {
         return [null];
     }
 
+    /* ============== *
+     * Creating stuff *
+     * ============== */
+
+    async createUniqueNoteAt(folder: string): Promise<TFile> {
+        let counter = 1;
+        const path = () => `${folder}/Untitled-${counter}.md`;
+
+        // Find the first available name
+        while (app.vault.getAbstractFileByPath(path())) {
+            counter += 1;
+        }
+
+        await this.ensureFolder(folder);
+
+        const template = this.getTemplate("unique");
+        if (template) {
+            const newNote = await app.vault.copy(template, path());
+            await replaceTemplates("unique", ftvkyo.moment(), newNote);
+            return newNote;
+        }
+
+        return await app.vault.create(path(), "");
+    }
+
     async createPeriodicNote(noteType: MomentPeriods, date: moment.Moment): Promise<TFile> {
         const template = this.getTemplate(noteType);
 
@@ -178,7 +203,8 @@ export default class ApiSource {
 
         const path = this.generatePeriodicPath(noteType, date);
 
-        await this.ensureFolderFor(path);
+        const folderPath = path.substring(0, path.lastIndexOf("/"));
+        await this.ensureFolder(folderPath);
 
         // Check if the file already exists
         const existing = app.vault.getAbstractFileByPath(path);
@@ -196,20 +222,26 @@ export default class ApiSource {
         return newNote;
     }
 
-    async ensureFolderFor(notePath: string) {
-        const folderPath = notePath.substring(0, notePath.lastIndexOf("/"));
+    // Make sure a folder at `path` exists (and is not a file).
+    // Note: empty string is treated as "/", which always exists.
+    async ensureFolder(path: string) {
+        if (!path) {
+            return;
+        }
 
-        // Check if it exists
-        const existing = app.vault.getAbstractFileByPath(folderPath);
+        lg?.debug(`Ensuring folder '${path}' exists...`);
+
+        // Check if it exists.
+        const existing = app.vault.getAbstractFileByPath(path);
 
         if (existing) {
             if (existing instanceof TFolder) {
                 return;
             }
-            throw Error(`Tried to create a folder "${folderPath}", but a file exists at this path.`);
+            throw Error(`Tried to create a folder "${path}", but a file exists at this path.`);
         }
 
-        // TODO: check if this creates folders recursively
-        return app.vault.createFolder(folderPath);
+        // Does create folders recursively
+        return app.vault.createFolder(path);
     }
 }

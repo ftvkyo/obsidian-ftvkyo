@@ -29,7 +29,11 @@ export abstract class ApiNoteList<Note extends ApiNote> {
 }
 
 
+// TODO: maybe store actual TFolders,
+//       or look into a structure that can be updated with patches
+//       rather than regenerated every time.
 export interface DirectoryTree {
+    pathparts: string[],
     subs: Record<string, DirectoryTree>,
     notes: ApiNoteUnique[],
 }
@@ -39,24 +43,30 @@ export class ApiNoteUniqueList extends ApiNoteList<ApiNoteUnique> {
 
     get directoryTree(): DirectoryTree {
         const tree = {
+            pathparts: [],
             subs: {},
             notes: [],
         };
 
-        const addNote = (tree: DirectoryTree, path: string[], note: ApiNoteUnique) => {
-            if (path.length === 0) {
+        const addNote = (tree: DirectoryTree, pathparts: string[], note: ApiNoteUnique) => {
+            if (pathparts.length === 0) {
                 throw "Recursion too deep, no path?";
             }
 
-            if (path.length === 1) {
+            if (pathparts.length === 1) {
                 tree.notes.push(note);
                 return;
             }
 
-            const thispath = path.shift();
-            if (thispath) {
-                tree.subs[thispath] ??= { subs: {}, notes: [] };
-                addNote(tree.subs[thispath] as DirectoryTree, path, note);
+            const pathpart = pathparts.shift();
+            if (pathpart) {
+                tree.subs[pathpart] ??= {
+                    // Reaccumulate the path parts for each of the folders
+                    pathparts: [...tree.pathparts, pathpart],
+                    subs: {},
+                    notes: []
+                };
+                addNote(tree.subs[pathpart] as DirectoryTree, pathparts, note);
             }
         };
 

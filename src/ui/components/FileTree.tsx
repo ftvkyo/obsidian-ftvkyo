@@ -1,7 +1,7 @@
 import { ApiNoteUnique } from "@/api/note";
 import { ApiNoteUniqueList, DirectoryTree } from "@/api/note-list";
 import { clsx } from "clsx";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Icon from "./controls/Icon";
 import Progress from "./controls/Progress";
 
@@ -90,14 +90,17 @@ const sortNotes = (
 
 
 function Directory({
-    name = "/",
     tree,
 }: {
-    name?: string,
     tree: DirectoryTree,
 }) {
-    // "/" (root) starts expanded
-    const [expanded, setExpanded] = useState(name === "/");
+    // Root starts expanded
+    const [expanded, setExpanded] = useState(tree.pathparts.length === 0);
+
+    const newNote = useCallback(async () => {
+        const newNote = await ftvkyo.api.source.createUniqueNoteAt(tree.pathparts.join("/"));
+        new ApiNoteUnique(newNote).reveal();
+    }, [tree.pathparts]);
 
     const expandedIcon = expanded ? "folder" : "folder-closed";
     const expandedClass = expanded ? null : styles.hidden;
@@ -105,7 +108,7 @@ function Directory({
     const subs = Object.entries(tree.subs)
         // Sort by name
         .sort(sortSubfolders)
-        .map(([name, tree]) => <Directory key={name} name={name} tree={tree} />);
+        .map(([name, tree]) => <Directory key={name} tree={tree} />);
 
     const notes = tree.notes
         .sort(sortNotes)
@@ -119,10 +122,11 @@ function Directory({
         <div
             className={styles.header}
             // Don't allow toggling the root-level directory
-            onClick={() => name !== "/" && setExpanded((v) => !v)}
+            onClick={() => tree.pathparts.length !== 0 && setExpanded((v) => !v)}
         >
             <Icon className={styles.icon} icon={expandedIcon}/>
-            <span>{name}</span>
+            <span>{tree.pathparts.last() ?? "/"}</span>
+            <Icon className={styles.icon} icon="plus" onClick={newNote}/>
         </div>
         <div className={clsx(styles.children, expandedClass)}>
             {subs}
