@@ -48,7 +48,7 @@ function Note({
         onClick={(e) => note.reveal({ replace: !e.ctrlKey })}
         onAuxClick={(e) => e.button === 1 && note.reveal()}
     >
-        <div className={styles.header}>
+        <div className={styles.info}>
             <Icon className={clsx(styles.icon, iconClass)} icon={icon} />
             {title}
             {tasks > 0
@@ -120,12 +120,14 @@ function Directory({
 
     return <div className={styles.leaf}>
         <div
-            className={styles.header}
+            className={styles.info}
             // Don't allow toggling the root-level directory
             onClick={() => tree.pathparts.length !== 0 && setExpanded((v) => !v)}
         >
             <Icon className={styles.icon} icon={expandedIcon}/>
             <span>{tree.pathparts.last() ?? "/"}</span>
+        </div>
+        <div className={styles.controls}>
             <Icon className={styles.icon} icon="plus" onClick={newNote}/>
         </div>
         <div className={clsx(styles.children, expandedClass)}>
