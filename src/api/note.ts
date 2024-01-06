@@ -45,7 +45,7 @@ export abstract class ApiNote {
     // Reveal the note.
     async reveal({
         // What mode to open the note in.
-        mode = "preview",
+        mode,
         // Whether to replace the current workspace leaf.
         replace = false,
     }: {
