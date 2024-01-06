@@ -16,6 +16,8 @@
         align-items: center;
         gap: vars.$gap / 2;
 
+        border-radius: var(--radius-s);
+
         .icon {
             &.index {
                 color: var(--text-accent);
