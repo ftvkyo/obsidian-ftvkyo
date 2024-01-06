@@ -104,17 +104,6 @@ export class ApiNoteUnique extends ApiNote {
         const fm = this.fc?.frontmatter;
         return !!(fm?.["index"] || fm?.["root"]);
     }
-
-    get isSensitive(): boolean {
-        return !!this.tags.find(tag => {
-            for (const sensitive of ftvkyo.settings.sensitiveTags) {
-                if (tag === sensitive || tag.startsWith(sensitive + "/")) {
-                    return true;
-                }
-            }
-            return false;
-        });
-    }
 }
 
 

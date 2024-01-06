@@ -6,8 +6,6 @@ export interface Settings {
 
     resultsPerPage: 10 | 25 | 50;
 
-    sensitiveTags: string[];
-
     folderPeriodic: string,
     folderTemplates: string,
 
@@ -18,8 +16,6 @@ export const DEFAULT_SETTINGS: Settings = {
     debugLogging: false,
 
     resultsPerPage: 25,
-
-    sensitiveTags: [],
 
     folderPeriodic: "_periodic",
     folderTemplates: "",
@@ -81,17 +77,6 @@ export class OFSettingTab extends PluginSettingTab {
                 t.setValue(ftvkyo.settings.groupByYear)
                     .onChange(async (value) => {
                         ftvkyo.settings.groupByYear = value;
-                        await ftvkyo.saveSettings();
-                    })
-            );
-
-        new Setting(containerEl)
-            .setName("Sensitive tags")
-            .setDesc("Specify sensitive tags one per line without the leading #. Children of these tags will also be considered sensitive.")
-            .addTextArea((ta) =>
-                ta.setValue(ftvkyo.settings.sensitiveTags.join("\n"))
-                    .onChange(async (value) => {
-                        ftvkyo.settings.sensitiveTags = value.split("\n").filter((line) => line.trim().length > 0);
                         await ftvkyo.saveSettings();
                     })
             );
