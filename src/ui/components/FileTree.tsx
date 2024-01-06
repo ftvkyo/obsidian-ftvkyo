@@ -90,13 +90,14 @@ const sortNotes = (
 
 
 function Directory({
-    name,
+    name = "/",
     tree,
 }: {
-    name: string,
+    name?: string,
     tree: DirectoryTree,
 }) {
-    const [expanded, setExpanded] = useState(false);
+    // "/" (root) starts expanded
+    const [expanded, setExpanded] = useState(name === "/");
 
     const expandedIcon = expanded ? "folder" : "folder-closed";
     const expandedClass = expanded ? null : styles.hidden;
@@ -117,7 +118,8 @@ function Directory({
     return <div className={styles.leaf}>
         <div
             className={styles.header}
-            onClick={() => setExpanded((v) => !v)}
+            // Don't allow toggling the root-level directory
+            onClick={() => name !== "/" && setExpanded((v) => !v)}
         >
             <Icon className={styles.icon} icon={expandedIcon}/>
             <span>{name}</span>
@@ -138,7 +140,6 @@ export default function FileTree({
 }) {
     return <div className={styles.tree}>
         <Directory
-            name="/"
             tree={notes.directoryTree}
         />
     </div>;
