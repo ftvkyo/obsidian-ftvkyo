@@ -1,4 +1,5 @@
 import { Command, Plugin, moment } from "obsidian";
+import { Extension } from "@codemirror/state";
 
 import Logger from "@/util/logger";
 
@@ -8,6 +9,7 @@ import { sendError } from "./ui/builtin/notice";
 
 import CopyLink from "./ui/commands/copy-link";
 
+import { planListField } from "./ui/editor/plan-list";
 import PlanCallout from "./ui/markdown/plan-callout";
 
 import ObsidianFtvkyoView from "@/ui/views/view";
@@ -28,6 +30,10 @@ declare global {
 const commands: Command[] = [
     CopyLink,
 ];
+
+const editorExtensions: Extension[] = [
+    planListField,
+]
 
 const markdown = [
     PlanCallout,
@@ -128,6 +134,8 @@ export default class ObsidianFtvkyo extends Plugin {
 
     private loadMarkdown() {
         const lg = this.lg.sub("markdown");
+
+        this.registerEditorExtension(editorExtensions);
 
         for (const renderer of markdown) {
             this.registerMarkdownPostProcessor(renderer);
