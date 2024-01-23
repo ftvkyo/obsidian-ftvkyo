@@ -99,7 +99,7 @@ function Directory({
 
     const newNote = useCallback(async () => {
         const newNote = await ftvkyo.api.source.createUniqueNoteAt(tree.pathparts.join("/"));
-        new ApiNoteUnique(newNote).reveal();
+        new ApiNoteUnique(newNote).reveal({ rename: "end" });
     }, [tree.pathparts]);
 
     const expandedIcon = expanded ? "folder" : "folder-closed";

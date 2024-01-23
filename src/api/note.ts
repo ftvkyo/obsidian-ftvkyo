@@ -44,13 +44,16 @@ export abstract class ApiNote {
 
     // Reveal the note.
     async reveal({
-        // What mode to open the note in.
         mode,
-        // Whether to replace the current workspace leaf.
         replace = false,
+        rename,
     }: {
+        // What mode to open the note in.
         mode?: "preview" | "source",
+        // Whether to replace the current workspace leaf.
         replace?: boolean,
+        // Whether to put the cursor to note title for renaming.
+        rename?: "end",
     } = {}) {
         const current = app.workspace.getActiveFile();
         const shouldReplace = replace || current === null;
@@ -58,6 +61,7 @@ export abstract class ApiNote {
         const leaf = app.workspace.getLeaf(!shouldReplace);
         await leaf.openFile(this.tf, {
             state: { mode },
+            eState: { rename },
         });
 
         return leaf;
