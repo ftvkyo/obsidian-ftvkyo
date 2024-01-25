@@ -3,9 +3,9 @@ import Icon from "./controls/Icon";
 import { clsx } from "clsx";
 import { ApiNotePeriodicList } from "@/api/note-list";
 import { equalUpTo, MomentPeriods } from "@/util/date";
+import { revealNote } from "@/api/note";
 
 import styles from "./Calendar.module.scss";
-import { ApiNotePeriodic } from "@/api/note";
 
 
 function dateToday() {
@@ -38,10 +38,10 @@ function NoteAny({
         replace: boolean,
     ) => {
         if (note) {
-            note.reveal({ replace });
+            revealNote(note.tf, { replace });
         } else if (periodTemplate) {
             const newNote = await ftvkyo.api.source.createPeriodicNote(period, date);
-            new ApiNotePeriodic(newNote, date, period).reveal({ replace });
+            revealNote(newNote, { replace });
         }
     }, [note, period, date, periodTemplate?.path]);
 

@@ -1,9 +1,9 @@
-import { ApiNote } from "@/api/note";
+import { ApiNote, revealNote } from "@/api/note";
 import { useCallback } from "react";
 
 export function useOnNoteClick(note: ApiNote | undefined) {
     const onClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
-        note?.reveal({ replace: !e.ctrlKey });
+        note && revealNote(note.tf, { replace: !e.ctrlKey });
     }, [note?.path]);
 
     const onAuxClick = useCallback((e: React.MouseEvent<HTMLElement>) => {

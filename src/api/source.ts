@@ -1,6 +1,6 @@
-import { TFile, TFolder } from "obsidian";
-import { ApiNote, ApiNotePeriodic, ApiNoteUnique } from "./note";
-import { ApiNotePeriodicList, ApiNoteUniqueList } from "./note-list";
+import { TAbstractFile, TFile, TFolder } from "obsidian";
+import { ApiNotePeriodic } from "./note";
+import { ApiNotePeriodicList } from "./note-list";
 import { MomentPeriods } from "../util/date";
 import { replaceTemplates } from "../util/templates";
 
@@ -28,14 +28,35 @@ const FMT_YearGrouping: { [key in NoteType]?: string } & { default: string } = {
 };
 
 
+export class ApiFolder {
+    constructor(
+        readonly tf: TFolder,
+        readonly includeHidden: boolean = false,
+    ) {
+    }
+
+    filterHidden<T extends TAbstractFile>(fs: T[]): T[] {
+        return this.includeHidden ? fs : fs.filter(f => !f.name.startsWith("_"));
+    }
+
+    get subfolders(): ApiFolder[] {
+        const fs = this.tf.children.filter(c => c instanceof TFolder) as TFolder[];
+        return this.filterHidden(fs).map(f => new ApiFolder(f, this.includeHidden));
+    }
+
+    get files(): TFile[] {
+        const fs = this.tf.children.filter(c => c instanceof TFile) as TFile[];
+        return this.filterHidden(fs);
+    }
+}
+
+
 export default class ApiSource {
 
     #et = new EventTarget();
 
-    cache: {
-        unique: ApiNoteUniqueList,
-        periodic: ApiNotePeriodicList,
-    };
+    root: TFolder;
+    periodic: ApiNotePeriodicList;
 
     constructor() {
         if (!lg) {
@@ -48,9 +69,10 @@ export default class ApiSource {
     }
 
     update() {
-        const mdfs = ftvkyo.app.vault.getMarkdownFiles();
+        this.root = app.vault.getRoot();
 
-        const notesUnique = [];
+        const mdfs = app.vault.getMarkdownFiles();
+
         const notesPeriodic = [];
 
         for (const mdf of mdfs) {
@@ -66,19 +88,10 @@ export default class ApiSource {
                 } else {
                     lg?.error(`Unexpected note: "${mdf.path}" - can't determine type`);
                 }
-            } else if (mdf.path.startsWith("_")) {
-                // Skip other "hidden" direcotires.
-                continue;
-            } else {
-                // Supposedly unique.
-                notesUnique.push(new ApiNoteUnique(mdf));
             }
         }
 
-        this.cache = {
-            unique: new ApiNoteUniqueList(notesUnique),
-            periodic: new ApiNotePeriodicList(notesPeriodic),
-        };
+        this.periodic = new ApiNotePeriodicList(notesPeriodic);
 
         this.#et.dispatchEvent(new Event("updated"));
     }
@@ -87,34 +100,8 @@ export default class ApiSource {
         this.#et.addEventListener("updated", cb);
     }
 
-    /* ================ *
-     * Search the cache *
-     * ================ */
-
-    byTf(
-        tf: TFile,
-    ): ApiNote | null {
-        const unique = this.cache.unique.find(note => note.tf.path === tf.path);
-        const periodic = this.cache.periodic.find(note => note.tf.path === tf.path);
-
-        return unique ?? periodic;
-    }
-
-    // Try to get a note from a path.
-    // Returns null if the note is not found in cache.
-    // If `from` is specified, the path is resolved relative to `from`.
-    byPath(
-        path: string,
-        from: string = "",
-    ): ApiNote | null {
-        // Use the builtin method to find the note.
-        const tf = app.metadataCache.getFirstLinkpathDest(path, from);
-
-        if (!tf) {
-            return null;
-        }
-
-        return this.byTf(tf);
+    get adapter() {
+        return new ApiFolder(this.root);
     }
 
     /* ======================= *

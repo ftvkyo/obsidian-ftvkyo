@@ -1,4 +1,4 @@
-import { ListItemCache, TFile, moment } from "obsidian";
+import { TFile, moment } from "obsidian";
 
 
 // A note in the vault.
@@ -43,71 +43,7 @@ export abstract class ApiNote {
      * ======= */
 
     // Reveal the note.
-    async reveal({
-        mode,
-        replace = false,
-        rename,
-    }: {
-        // What mode to open the note in.
-        mode?: "preview" | "source",
-        // Whether to replace the current workspace leaf.
-        replace?: boolean,
-        // Whether to put the cursor to note title for renaming.
-        rename?: "end",
-    } = {}) {
-        const current = app.workspace.getActiveFile();
-        const shouldReplace = replace || current === null;
 
-        const leaf = app.workspace.getLeaf(!shouldReplace);
-        await leaf.openFile(this.tf, {
-            state: { mode },
-            eState: { rename },
-        });
-
-        return leaf;
-    }
-}
-
-
-export class ApiNoteUnique extends ApiNote {
-
-    /* =============== *
-     * Tag information *
-     * =============== */
-
-    // Tags of the note, without the leading `#` and without "special" tags.
-    get tags() {
-        return this.fc?.tags
-            // Remove leading "#".
-            ?.map(tag => tag.tag.substring(1))
-            // Remove "special" tags.
-            .filter(tag => !tag.startsWith("-")) ?? [];
-    }
-
-    /* ================ *
-     * Task information *
-     * ================ */
-
-    get tasks(): ListItemCache[] {
-        return this.fc?.listItems?.filter((val) => val.task !== undefined) ?? [];
-    }
-
-    get tasksUndone(): ListItemCache[] {
-        return this.tasks.filter((val) => val.task === " ");
-    }
-
-    get tasksDone(): ListItemCache[] {
-        return this.tasks.filter((val) => val.task !== " ");
-    }
-
-    /* ============ *
-     * State checks *
-     * ============ */
-
-    get isIndex() {
-        const fm = this.fc?.frontmatter;
-        return !!(fm?.["index"] || fm?.["root"]);
-    }
 }
 
 
@@ -123,4 +59,32 @@ export class ApiNotePeriodic extends ApiNote {
 
         date.hour(0).minute(0).second(0);
     }
+}
+
+
+export async function revealNote(
+    note: TFile,
+    {
+        mode,
+        replace = false,
+        rename,
+    }: {
+        // What mode to open the note in.
+        mode?: "preview" | "source",
+        // Whether to replace the current workspace leaf.
+        replace?: boolean,
+        // Whether to put the cursor to note title for renaming.
+        rename?: "end",
+    } = {},
+) {
+    const current = app.workspace.getActiveFile();
+    const shouldReplace = replace || current === null;
+
+    const leaf = app.workspace.getLeaf(!shouldReplace);
+    await leaf.openFile(note, {
+        state: { mode },
+        eState: { rename },
+    });
+
+    return leaf;
 }

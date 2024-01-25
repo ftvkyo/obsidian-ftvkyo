@@ -18,8 +18,8 @@ const ExploreView: ViewElement<ExploreViewState> = {
             lg = ftvkyo.lg.sub("Explore");
         }
 
-        const unique = ftvkyo.api.source.cache.unique;
-        const periodic = ftvkyo.api.source.cache.periodic;
+        const unique = ftvkyo.api.source.adapter;
+        const periodic = ftvkyo.api.source.periodic;
 
         return <>
             <Calendar
@@ -28,7 +28,7 @@ const ExploreView: ViewElement<ExploreViewState> = {
                 setCompact={(compact) => setState({...state, calendarCompact: compact})}
             />
             <FileTree
-                notes={unique}
+                folder={unique}
             />
         </>;
     },
