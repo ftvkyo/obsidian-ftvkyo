@@ -1,9 +1,8 @@
 import { useCallback, useState } from "react";
 import Icon from "./controls/Icon";
 import { clsx } from "clsx";
-import { ApiNotePeriodicList } from "@/api/note-list";
 import { equalUpTo, MomentPeriods } from "@/util/date";
-import { revealNote } from "@/api/note";
+import { ApiNotePeriodic, revealNote } from "@/api/note";
 
 import styles from "./Calendar.module.scss";
 
@@ -28,11 +27,14 @@ function NoteAny({
     className?: string,
     period: MomentPeriods,
     date: moment.Moment,
-    notes: ApiNotePeriodicList,
+    notes: ApiNotePeriodic[],
     children: React.ReactNode,
 }) {
     const periodTemplate = ftvkyo.api.source.getTemplate(period);
-    const note = notes.getThe(period, date);
+    const note = notes.find((note) => {
+        const { period: np, date: nd } = note;
+        return np === period && equalUpTo(nd, date, period);
+    });
 
     const onClick = useCallback(async (
         replace: boolean,
@@ -70,7 +72,7 @@ interface NoteDateProps {
 
 
 interface NotesTakerProps {
-    notes: ApiNotePeriodicList,
+    notes: ApiNotePeriodic[],
 }
 
 

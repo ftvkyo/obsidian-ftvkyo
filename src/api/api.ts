@@ -7,3 +7,11 @@ export default class Api {
     view = new ApiView();
     source = new ApiSource();
 }
+
+
+export enum TriState {
+    On = "on",
+    Off = "off",
+    Maybe = "maybe",
+}
+

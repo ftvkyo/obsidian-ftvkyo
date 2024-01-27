@@ -1,6 +1,5 @@
 import { TAbstractFile, TFile, TFolder } from "obsidian";
 import { ApiNotePeriodic } from "./note";
-import { ApiNotePeriodicList } from "./note-list";
 import { MomentPeriods } from "../util/date";
 import { replaceTemplates } from "../util/templates";
 
@@ -56,7 +55,7 @@ export default class ApiSource {
     #et = new EventTarget();
 
     root: TFolder;
-    periodic: ApiNotePeriodicList;
+    periodic: ApiNotePeriodic[];
 
     constructor() {
         if (!lg) {
@@ -70,10 +69,9 @@ export default class ApiSource {
 
     update() {
         this.root = app.vault.getRoot();
+        this.periodic = [];
 
         const mdfs = app.vault.getMarkdownFiles();
-
-        const notesPeriodic = [];
 
         for (const mdf of mdfs) {
             // A note is supposedly periodic if it's in the right directory.
@@ -84,14 +82,12 @@ export default class ApiSource {
                 const [type, date] = this.determinePeriodicNote(mdf.path);
 
                 if (type && date) {
-                    notesPeriodic.push(new ApiNotePeriodic(mdf, date, type));
+                    this.periodic.push(new ApiNotePeriodic(mdf, date, type));
                 } else {
                     lg?.error(`Unexpected note: "${mdf.path}" - can't determine type`);
                 }
             }
         }
-
-        this.periodic = new ApiNotePeriodicList(notesPeriodic);
 
         this.#et.dispatchEvent(new Event("updated"));
     }
