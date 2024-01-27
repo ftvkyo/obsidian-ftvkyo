@@ -1,6 +1,5 @@
-import { ApiFolder, revealNote } from "@/api/source";
+import { ApiFile, ApiFolder } from "@/api/source";
 import { clsx } from "clsx";
-import { TFile } from "obsidian";
 import { useCallback, useState } from "react";
 import Icon from "./controls/Icon";
 import Progress from "./controls/Progress";
@@ -22,36 +21,21 @@ function parseTitle(title: string): {
 }
 
 
-const getFileCache = (file: TFile) => {
-    return app.metadataCache.getFileCache(file);
-}
-
-const getTasks = (file: TFile) => {
-    const fc = getFileCache(file);
-    return fc?.listItems?.filter(val => val.task !== undefined) ?? [];
-}
-
-const getIndexStatus = (file: TFile) => {
-    const fm = getFileCache(file)?.frontmatter;
-    return !!(fm?.["index"] || fm?.["root"]);
-}
-
-
 function Note({
     file: note,
 }: {
-    file: TFile,
+    file: ApiFile,
 }) {
-    const tasksAll = getTasks(note);
+    const tasksAll = note.tasks;
     const tasks = tasksAll.length;
     const tasksDone = tasksAll.filter(val => val.task !== " ").length;
 
-    const isIndex = getIndexStatus(note);
+    const isIndex = note.isIndex;
 
     const icon = isIndex ? "file-badge" : "file";
     const iconClass = isIndex ? styles.index : null;
 
-    const titleInfo = parseTitle(note.basename);
+    const titleInfo = parseTitle(note.tf.basename);
     const title = titleInfo.prefix
         ? <span>
             <code>{titleInfo.prefix}</code>
@@ -63,8 +47,8 @@ function Note({
 
     return <div
         className={styles.leaf}
-        onClick={(e) => revealNote(note, { replace: !e.ctrlKey })}
-        onAuxClick={(e) => e.button === 1 && revealNote(note)}
+        onClick={(e) => note.reveal({ replace: !e.ctrlKey })}
+        onAuxClick={(e) => e.button === 1 && note.reveal()}
     >
         <div className={styles.info}>
             <Icon className={clsx(styles.icon, iconClass)} icon={icon} />
@@ -91,19 +75,19 @@ const sortSubfolders = (
 
 
 const sortNotes = (
-    a: TFile,
-    b: TFile,
+    a: ApiFile,
+    b: ApiFile,
 ) => {
     // Make the index notes go to the top.
-    if (getIndexStatus(a) && !getIndexStatus(b)) {
+    if (a.isIndex && !b.isIndex) {
         return -1;
     }
-    if (!getIndexStatus(a) && getIndexStatus(b)) {
+    if (!a.isIndex && b.isIndex) {
         return 1;
     }
     // If both notes are index, or if none of them are index,
     // compare as usual.
-    return a.basename.localeCompare(b.basename);
+    return a.tf.basename.localeCompare(b.tf.basename);
 }
 
 
@@ -117,7 +101,7 @@ function Directory({
 
     const newNote = useCallback(async () => {
         const newNote = await ftvkyo.api.source.createUniqueNoteAt(folder.tf.path);
-        await revealNote(newNote, { rename: "end" });
+        await newNote.reveal({ rename: "end" });
     }, [folder.tf.path]);
 
     const expandedIcon = expanded ? "folder" : "folder-closed";
@@ -130,7 +114,7 @@ function Directory({
 
     const notes = folder.files
         .sort(sortNotes)
-        .map((file) => <Note key={file.basename} file={file} />);
+        .map((file) => <Note key={file.tf.basename} file={file} />);
 
     const hr = subs.length > 0 && notes.length > 0
         ? <hr/>

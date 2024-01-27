@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import Icon from "./controls/Icon";
 import { clsx } from "clsx";
 import { equalUpTo, MomentPeriods } from "@/util/date";
-import { ApiNotePeriodic, revealNote } from "@/api/source";
+import { ApiFile, ApiFileKindPeriodic } from "@/api/source";
 
 import styles from "./Calendar.module.scss";
 
@@ -27,12 +27,12 @@ function NoteAny({
     className?: string,
     period: MomentPeriods,
     date: moment.Moment,
-    notes: ApiNotePeriodic[],
+    notes: ApiFile<ApiFileKindPeriodic>[],
     children: React.ReactNode,
 }) {
     const periodTemplate = ftvkyo.api.source.getTemplate(period);
     const note = notes.find((note) => {
-        const { period: np, date: nd } = note;
+        const { period: np, date: nd } = note.kind;
         return np === period && equalUpTo(nd, date, period);
     });
 
@@ -40,10 +40,10 @@ function NoteAny({
         replace: boolean,
     ) => {
         if (note) {
-            revealNote(note.tf, { replace });
+            note.reveal({ replace });
         } else if (periodTemplate) {
             const newNote = await ftvkyo.api.source.createPeriodicNote(period, date);
-            revealNote(newNote, { replace });
+            newNote.reveal({ replace });
         }
     }, [note, period, date, periodTemplate?.path]);
 
@@ -72,7 +72,7 @@ interface NoteDateProps {
 
 
 interface NotesTakerProps {
-    notes: ApiNotePeriodic[],
+    notes: ApiFile<ApiFileKindPeriodic>[],
 }
 
 

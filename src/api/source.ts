@@ -10,6 +10,14 @@ let lg: Logger | undefined = undefined;
 
 export type NoteType = "unique" | MomentPeriods;
 
+export type ApiFileKindPeriodic = {
+    period: MomentPeriods,
+    date: moment.Moment,
+};
+
+export type ApiFileKind = ApiFileKindPeriodic | undefined;
+
+
 const FMT_Basenames: Record<NoteType, string> = {
     unique: "YYYYMMDD-HHmmss",
     date: "YYYYMMDD",
@@ -26,92 +34,54 @@ const FMT_YearGrouping: { [key in NoteType]?: string } & { default: string } = {
 };
 
 
-// A note in the vault.
-//
-// Identified by its TFile.
-// The getters provide up to date information.
-//
-// Contracts:
-// - TFile must be valid when the object is accessed.
-export abstract class ApiNote {
-
+export class ApiFile<Kind extends ApiFileKind = undefined> {
     constructor(
-        // Note identification
-        public readonly tf: TFile,
-    ) {}
-
-    /* ================ *
-     * Filesystem stuff *
-     * ================ */
-
-    // Vault-relative path to the note without the extension.
-    get path() {
-        return this.tf.path;
+        readonly tf: TFile,
+        readonly kind: Kind,
+    ) {
+        if (kind) {
+            kind.date.hour(0).minute(0).second(0);
+        }
     }
 
-    get pathparts() {
-        return this.tf.path.split("/");
-    }
-
-    // Filename without the extension.
-    get base() {
-        return this.tf.basename;
-    }
-
-    // File cache of the note.
     get fc() {
         return app.metadataCache.getFileCache(this.tf);
     }
 
-    /* ======= *
-     * Actions *
-     * ======= */
-
-    // Reveal the note.
-
-}
-
-
-export class ApiNotePeriodic extends ApiNote {
-
-    constructor(
-        public readonly tf: TFile,
-        public readonly date: moment.Moment,
-        // Note period
-        public readonly period: string,
-    ) {
-        super(tf);
-
-        date.hour(0).minute(0).second(0);
+    get tasks() {
+        return this.fc?.listItems?.filter(val => val.task !== undefined) ?? [];
     }
-}
 
+    get isIndex() {
+        const fm = this.fc?.frontmatter;
+        return !!(fm?.["index"] || fm?.["root"]);
+    }
 
-export async function revealNote(
-    note: TFile,
-    {
-        mode,
-        replace = false,
-        rename,
-    }: {
-        // What mode to open the note in.
-        mode?: "preview" | "source",
-        // Whether to replace the current workspace leaf.
-        replace?: boolean,
-        // Whether to put the cursor to note title for renaming.
-        rename?: "end",
-    } = {},
-) {
-    const current = app.workspace.getActiveFile();
-    const shouldReplace = replace || current === null;
+    async reveal(
+        {
+            mode,
+            replace = false,
+            rename,
+        }: {
+            // What mode to open the note in.
+            mode?: "preview" | "source",
+            // Whether to replace the current workspace leaf.
+            replace?: boolean,
+            // Whether to put the cursor to note title for renaming.
+            rename?: "end",
+        } = {},
+    ) {
+        const current = app.workspace.getActiveFile();
+        const shouldReplace = replace || current === null;
 
-    const leaf = app.workspace.getLeaf(!shouldReplace);
-    await leaf.openFile(note, {
-        state: { mode },
-        eState: { rename },
-    });
+        const leaf = app.workspace.getLeaf(!shouldReplace);
+        await leaf.openFile(this.tf, {
+            state: { mode },
+            eState: { rename },
+        });
 
-    return leaf;
+        return leaf;
+    }
 }
 
 
@@ -131,9 +101,9 @@ export class ApiFolder {
         return this.filterHidden(fs).map(f => new ApiFolder(f, this.includeHidden));
     }
 
-    get files(): TFile[] {
+    get files(): ApiFile[] {
         const fs = this.tf.children.filter(c => c instanceof TFile) as TFile[];
-        return this.filterHidden(fs);
+        return this.filterHidden(fs).map(f => new ApiFile(f, undefined));
     }
 }
 
@@ -143,7 +113,7 @@ export default class ApiSource {
     #et = new EventTarget();
 
     root: TFolder;
-    periodic: ApiNotePeriodic[];
+    periodic: ApiFile<ApiFileKindPeriodic>[];
 
     constructor() {
         if (!lg) {
@@ -167,10 +137,10 @@ export default class ApiSource {
             const supposedlyPeriodic = mdf.path.startsWith(ftvkyo.settings.folderPeriodic + "/");
 
             if (supposedlyPeriodic) {
-                const [type, date] = this.determinePeriodicNote(mdf.path);
+                const [period, date] = this.determinePeriodicNote(mdf.path);
 
-                if (type && date) {
-                    this.periodic.push(new ApiNotePeriodic(mdf, date, type));
+                if (period && date) {
+                    this.periodic.push(new ApiFile(mdf, {period, date}));
                 } else {
                     lg?.error(`Unexpected note: "${mdf.path}" - can't determine type`);
                 }
@@ -242,7 +212,7 @@ export default class ApiSource {
      * Creating stuff *
      * ============== */
 
-    async createUniqueNoteAt(folder: string): Promise<TFile> {
+    async createUniqueNoteAt(folder: string): Promise<ApiFile> {
         let counter = 1;
         const path = () => `${folder}/Untitled-${counter}.md`;
 
@@ -257,22 +227,23 @@ export default class ApiSource {
         if (template) {
             const newNote = await app.vault.copy(template, path());
             await replaceTemplates("unique", ftvkyo.moment(), newNote);
-            return newNote;
+            return new ApiFile(newNote, undefined);
         }
 
-        return await app.vault.create(path(), "");
+        const newNote = await app.vault.create(path(), "");
+        return new ApiFile(newNote, undefined);
     }
 
-    async createPeriodicNote(noteType: MomentPeriods, date: moment.Moment): Promise<TFile> {
-        const template = this.getTemplate(noteType);
+    async createPeriodicNote(period: MomentPeriods, date: moment.Moment): Promise<ApiFile<ApiFileKindPeriodic>> {
+        const template = this.getTemplate(period);
 
         if (!template) {
-            throw new Error(`No template for note type '${noteType}'`);
+            throw new Error(`No template for note type '${period}'`);
         }
 
-        lg?.debug(`Creating a note of type ${noteType} for date ${date.format()}`)
+        lg?.debug(`Creating a note of type ${period} for date ${date.format()}`)
 
-        const path = this.generatePeriodicPath(noteType, date);
+        const path = this.generatePeriodicPath(period, date);
 
         const folderPath = path.substring(0, path.lastIndexOf("/"));
         await this.ensureFolder(folderPath);
@@ -288,9 +259,9 @@ export default class ApiSource {
         const newNote = await app.vault.copy(template, path);
 
         // Process the templates inside
-        await replaceTemplates(noteType, date, newNote);
+        await replaceTemplates(period, date, newNote);
 
-        return newNote;
+        return new ApiFile(newNote, { period, date });
     }
 
     // Make sure a folder at `path` exists (and is not a file).
