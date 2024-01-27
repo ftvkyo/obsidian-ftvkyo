@@ -1,5 +1,4 @@
-import { revealNote } from "@/api/note";
-import { ApiFolder } from "@/api/source";
+import { ApiFolder, revealNote } from "@/api/source";
 import { clsx } from "clsx";
 import { TFile } from "obsidian";
 import { useCallback, useState } from "react";

@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import Icon from "./controls/Icon";
 import { clsx } from "clsx";
 import { equalUpTo, MomentPeriods } from "@/util/date";
-import { ApiNotePeriodic, revealNote } from "@/api/note";
+import { ApiNotePeriodic, revealNote } from "@/api/source";
 
 import styles from "./Calendar.module.scss";
 

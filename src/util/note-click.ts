@@ -1,4 +1,4 @@
-import { ApiNote, revealNote } from "@/api/note";
+import { ApiNote, revealNote } from "@/api/source";
 import { useCallback } from "react";
 
 export function useOnNoteClick(note: ApiNote | undefined) {
