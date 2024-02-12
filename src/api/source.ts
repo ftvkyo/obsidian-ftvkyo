@@ -1,6 +1,4 @@
-import { TFile, TFolder } from "obsidian";
-import { ApiNote, ApiNotePeriodic, ApiNoteUnique } from "./note";
-import { ApiNotePeriodicList, ApiNoteUniqueList } from "./note-list";
+import { TAbstractFile, TFile, TFolder } from "obsidian";
 import { MomentPeriods } from "../util/date";
 import { replaceTemplates } from "../util/templates";
 
@@ -11,6 +9,14 @@ let lg: Logger | undefined = undefined;
 
 
 export type NoteType = "unique" | MomentPeriods;
+
+export type ApiFileKindPeriodic = {
+    period: MomentPeriods,
+    date: moment.Moment,
+};
+
+export type ApiFileKind = ApiFileKindPeriodic | undefined;
+
 
 const FMT_Basenames: Record<NoteType, string> = {
     unique: "YYYYMMDD-HHmmss",
@@ -28,14 +34,86 @@ const FMT_YearGrouping: { [key in NoteType]?: string } & { default: string } = {
 };
 
 
+export class ApiFile<Kind extends ApiFileKind = undefined> {
+    constructor(
+        readonly tf: TFile,
+        readonly kind: Kind,
+    ) {
+        if (kind) {
+            kind.date.hour(0).minute(0).second(0);
+        }
+    }
+
+    get fc() {
+        return app.metadataCache.getFileCache(this.tf);
+    }
+
+    get tasks() {
+        return this.fc?.listItems?.filter(val => val.task !== undefined) ?? [];
+    }
+
+    get isIndex() {
+        const fm = this.fc?.frontmatter;
+        return !!(fm?.["index"] || fm?.["root"]);
+    }
+
+    async reveal(
+        {
+            mode,
+            replace = false,
+            rename,
+        }: {
+            // What mode to open the note in.
+            mode?: "preview" | "source",
+            // Whether to replace the current workspace leaf.
+            replace?: boolean,
+            // Whether to put the cursor to note title for renaming.
+            rename?: "end",
+        } = {},
+    ) {
+        const current = app.workspace.getActiveFile();
+        const shouldReplace = replace || current === null;
+
+        const leaf = app.workspace.getLeaf(!shouldReplace);
+        await leaf.openFile(this.tf, {
+            state: { mode },
+            eState: { rename },
+        });
+
+        return leaf;
+    }
+}
+
+
+export class ApiFolder {
+    constructor(
+        readonly tf: TFolder,
+        readonly includeHidden: boolean = false,
+    ) {
+    }
+
+    filterHidden<T extends TAbstractFile>(fs: T[]): T[] {
+        return this.includeHidden ? fs : fs.filter(f => !f.name.startsWith("_"));
+    }
+
+    get subfolders(): ApiFolder[] {
+        const fs = this.tf.children.filter(c => c instanceof TFolder) as TFolder[];
+        return this.filterHidden(fs).map(f => new ApiFolder(f, this.includeHidden));
+    }
+
+    get files(): ApiFile[] {
+        const fs = this.tf.children.filter(c => c instanceof TFile) as TFile[];
+        return this.filterHidden(fs).map(f => new ApiFile(f, undefined));
+    }
+}
+
+
 export default class ApiSource {
 
     #et = new EventTarget();
 
-    cache: {
-        unique: ApiNoteUniqueList,
-        periodic: ApiNotePeriodicList,
-    };
+    root: TFolder;
+    periodic: ApiFile<ApiFileKindPeriodic>[];
 
     constructor() {
         if (!lg) {
@@ -48,34 +126,26 @@ export default class ApiSource {
     }
 
     update() {
-        const mdfs = ftvkyo.app.vault.getMarkdownFiles();
+        this.root = app.vault.getRoot();
+        this.periodic = [];
 
-        const notesUnique = [];
-        const notesPeriodic = [];
+        const mdfs = app.vault.getMarkdownFiles();
 
         for (const mdf of mdfs) {
-            const [type, date] = this.determineNote(mdf.path);
+            // A note is supposedly periodic if it's in the right directory.
+            // It still may have an incorrect filename pattern.
+            const supposedlyPeriodic = mdf.path.startsWith(ftvkyo.settings.folderPeriodic + "/");
 
-            if (type === null) {
-                // We only care about notes that are in periodic / unique folders.
+            if (supposedlyPeriodic) {
+                const [period, date] = this.determinePeriodicNote(mdf.path);
 
-                const inPeriodic = mdf.path.startsWith(ftvkyo.settings.folderPeriodic + "/");
-                const inUnique = mdf.path.startsWith(ftvkyo.settings.folderUnique + "/");
-
-                if (inPeriodic || inUnique) {
+                if (period && date) {
+                    this.periodic.push(new ApiFile(mdf, {period, date}));
+                } else {
                     lg?.error(`Unexpected note: "${mdf.path}" - can't determine type`);
                 }
-            } else if (type === "unique") {
-                notesUnique.push(new ApiNoteUnique(mdf, date));
-            } else {
-                notesPeriodic.push(new ApiNotePeriodic(mdf, date, type));
             }
         }
-
-        this.cache = {
-            unique: new ApiNoteUniqueList(notesUnique),
-            periodic: new ApiNotePeriodicList(notesPeriodic),
-        };
 
         this.#et.dispatchEvent(new Event("updated"));
     }
@@ -84,34 +154,8 @@ export default class ApiSource {
         this.#et.addEventListener("updated", cb);
     }
 
-    /* ================ *
-     * Search the cache *
-     * ================ */
-
-    byTf(
-        tf: TFile,
-    ): ApiNote | null {
-        const unique = this.cache.unique.find(note => note.tf.path === tf.path);
-        const periodic = this.cache.periodic.find(note => note.tf.path === tf.path);
-
-        return unique ?? periodic;
-    }
-
-    // Try to get a note from a path.
-    // Returns null if the note is not found in cache.
-    // If `from` is specified, the path is resolved relative to `from`.
-    byPath(
-        path: string,
-        from: string = "",
-    ): ApiNote | null {
-        // Use the builtin method to find the note.
-        const tf = app.metadataCache.getFirstLinkpathDest(path, from);
-
-        if (!tf) {
-            return null;
-        }
-
-        return this.byTf(tf);
+    get adapter() {
+        return new ApiFolder(this.root);
     }
 
     /* ======================= *
@@ -127,13 +171,8 @@ export default class ApiSource {
         return null;
     }
 
-    generatePathFormat(noteType: NoteType): string {
-        let folder;
-        if (noteType === "unique") {
-            folder = ftvkyo.settings.folderUnique;
-        } else {
-            folder = ftvkyo.settings.folderPeriodic;
-        }
+    generatePeriodicPathFormat(noteType: MomentPeriods): string {
+        let folder = ftvkyo.settings.folderPeriodic;
         folder &&= `[${folder}]/`;
 
         let year = ftvkyo.settings.groupByYear ? (FMT_YearGrouping[noteType] ?? FMT_YearGrouping.default ) : "";
@@ -145,13 +184,12 @@ export default class ApiSource {
         return folder + year + basename;
     }
 
-    generatePath(noteType: NoteType, date: moment.Moment): string {
-        return date.format(this.generatePathFormat(noteType));
+    generatePeriodicPath(noteType: MomentPeriods, date: moment.Moment): string {
+        return date.format(this.generatePeriodicPathFormat(noteType));
     }
 
-    determineNote(path: string): [NoteType, moment.Moment] | [null] {
+    determinePeriodicNote(path: string): [MomentPeriods, moment.Moment] | [null] {
         const order = [
-            "unique",
             "date",
             "week",
             "month",
@@ -160,7 +198,7 @@ export default class ApiSource {
         ] as const;
 
         for (const type of order) {
-            const fmt = this.generatePathFormat(type);
+            const fmt = this.generatePeriodicPathFormat(type);
             const date = ftvkyo.momentParse(path, fmt);
             if (date.isValid()) {
                 return [type, date];
@@ -170,18 +208,45 @@ export default class ApiSource {
         return [null];
     }
 
-    async createNote(noteType: NoteType, date: moment.Moment): Promise<TFile> {
-        const template = this.getTemplate(noteType);
+    /* ============== *
+     * Creating stuff *
+     * ============== */
 
-        if (!template) {
-            throw new Error(`No template for note type '${noteType}'`);
+    async createUniqueNoteAt(folder: string): Promise<ApiFile> {
+        let counter = 1;
+        const path = () => `${folder}/Untitled-${counter}.md`;
+
+        // Find the first available name
+        while (app.vault.getAbstractFileByPath(path())) {
+            counter += 1;
         }
 
-        lg?.debug(`Creating a note of type ${noteType} for date ${date.format()}`)
+        await this.ensureFolder(folder);
 
-        const path = this.generatePath(noteType, date);
+        const template = this.getTemplate("unique");
+        if (template) {
+            const newNote = await app.vault.copy(template, path());
+            await replaceTemplates("unique", ftvkyo.moment(), newNote);
+            return new ApiFile(newNote, undefined);
+        }
 
-        await this.ensureFolderFor(path);
+        const newNote = await app.vault.create(path(), "");
+        return new ApiFile(newNote, undefined);
+    }
+
+    async createPeriodicNote(period: MomentPeriods, date: moment.Moment): Promise<ApiFile<ApiFileKindPeriodic>> {
+        const template = this.getTemplate(period);
+
+        if (!template) {
+            throw new Error(`No template for note type '${period}'`);
+        }
+
+        lg?.debug(`Creating a note of type ${period} for date ${date.format()}`)
+
+        const path = this.generatePeriodicPath(period, date);
+
+        const folderPath = path.substring(0, path.lastIndexOf("/"));
+        await this.ensureFolder(folderPath);
 
         // Check if the file already exists
         const existing = app.vault.getAbstractFileByPath(path);
@@ -194,25 +259,31 @@ export default class ApiSource {
         const newNote = await app.vault.copy(template, path);
 
         // Process the templates inside
-        await replaceTemplates(noteType, date, newNote);
+        await replaceTemplates(period, date, newNote);
 
-        return newNote;
+        return new ApiFile(newNote, { period, date });
     }
 
-    async ensureFolderFor(notePath: string) {
-        const folderPath = notePath.substring(0, notePath.lastIndexOf("/"));
+    // Make sure a folder at `path` exists (and is not a file).
+    // Note: empty string is treated as "/", which always exists.
+    async ensureFolder(path: string) {
+        if (!path) {
+            return;
+        }
 
-        // Check if it exists
-        const existing = app.vault.getAbstractFileByPath(folderPath);
+        lg?.debug(`Ensuring folder '${path}' exists...`);
+
+        // Check if it exists.
+        const existing = app.vault.getAbstractFileByPath(path);
 
         if (existing) {
             if (existing instanceof TFolder) {
                 return;
             }
-            throw Error(`Tried to create a folder "${folderPath}", but a file exists at this path.`);
+            throw Error(`Tried to create a folder "${path}", but a file exists at this path.`);
         }
 
-        // TODO: check if this creates folders recursively
-        return app.vault.createFolder(folderPath);
+        // Does create folders recursively
+        return app.vault.createFolder(path);
     }
 }

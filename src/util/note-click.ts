@@ -1,10 +1,10 @@
-import { ApiNote } from "@/api/note";
+import { ApiFile } from "@/api/source";
 import { useCallback } from "react";
 
-export function useOnNoteClick(note: ApiNote | undefined) {
+export function useOnNoteClick(note: ApiFile | undefined) {
     const onClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
-        note?.reveal({ replace: !e.ctrlKey });
-    }, [note?.path]);
+        note && note.reveal({ replace: !e.ctrlKey });
+    }, [note?.tf.path]);
 
     const onAuxClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
         if (note && e.button === 1) {
@@ -16,7 +16,7 @@ export function useOnNoteClick(note: ApiNote | undefined) {
             e.ctrlKey = true;
             onClick(e);
         }
-    }, [note?.path, onClick]);
+    }, [note?.tf.path, onClick]);
 
     return {onClick, onAuxClick};
 }

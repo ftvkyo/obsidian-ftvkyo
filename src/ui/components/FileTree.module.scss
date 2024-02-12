@@ -1,0 +1,74 @@
+@use "../../vars";
+
+.tree {
+    padding: vars.$pad;
+    overflow-y: scroll;
+}
+
+.leaf {
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    gap: vars.$gap / 2;
+
+    .info {
+        grid-area: 1 / 1;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: vars.$gap / 2;
+
+        border-radius: var(--radius-s);
+
+        &:hover {
+            color: var(--nav-item-color-hover);
+            background-color: var(--nav-item-background-hover);
+        }
+
+        span {
+            flex-grow: 1;
+        }
+    }
+
+    .controls {
+        grid-area: 1 / 2;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: vars.$gap / 2;
+    }
+
+    .children {
+        grid-area: 2 / 1 / 3 / 3;
+
+        display: flex;
+        flex-direction: column;
+        gap: vars.$gap / 2;
+
+        margin-left: vars.$pad / 2;
+        padding-left: vars.$pad / 2;
+
+        border-left: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
+
+        &.hidden {
+            display: none;
+        }
+
+        hr {
+            margin: 0.5rem 0;
+        }
+    }
+}
+
+.icon {
+    &.index {
+        color: var(--text-accent);
+    }
+}
+
+.progress {
+    color: var(--text-normal);
+    opacity: 50%;
+}

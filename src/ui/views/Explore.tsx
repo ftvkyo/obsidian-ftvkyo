@@ -1,44 +1,40 @@
-import {useState} from "react";
-
-import {type ViewElement} from "./view";
+import {ViewElementProps, type ViewElement} from "./view";
 import Logger from "@/util/logger";
-import NoteList from "../components/NoteList";
-import { Tag } from "@/api/note-list";
-import TagList from "../components/TagList";
 import Calendar from "../components/Calendar";
+import FileTree from "../components/FileTree";
 
 
 let lg: Logger | undefined = undefined;
 
 
-const ExploreView: ViewElement = {
-    Element: () => {
+export type ExploreViewState = {
+    calendarCompact: boolean,
+};
+
+const ExploreView: ViewElement<ExploreViewState> = {
+    short: "nav",
+    Element: ({state, setState}: ViewElementProps<ExploreViewState>) => {
         if (!lg) {
             lg = ftvkyo.lg.sub("Explore");
         }
 
-        const [tag, setTag] = useState<Tag | null>(null);
-
-        const unique = ftvkyo.api.source.cache.unique;
-        const periodic = ftvkyo.api.source.cache.periodic;
+        const unique = ftvkyo.api.source.adapter;
+        const periodic = ftvkyo.api.source.periodic;
 
         return <>
             <Calendar
                 notes={periodic}
+                compact={state.calendarCompact}
+                setCompact={(compact) => setState({...state, calendarCompact: compact})}
             />
-            {tag
-            ? <NoteList
-                tag={tag}
-                goBack={() => setTag(null)}
-                notes={unique}
+            <FileTree
+                folder={unique}
             />
-            : <TagList
-                setTag={setTag}
-                notes={unique}
-            />}
         </>;
     },
-    short: "nav",
+    initialState: {
+        calendarCompact: true,
+    },
     viewType: "ftvkyo-explore",
     displayText: "Explore",
     icon: "lucide-globe-2",

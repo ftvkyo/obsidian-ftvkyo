@@ -1,11 +1,10 @@
 import { useCallback, useState } from "react";
 import Icon from "./controls/Icon";
 import { clsx } from "clsx";
-import { ApiNotePeriodicList } from "@/api/note-list";
 import { equalUpTo, MomentPeriods } from "@/util/date";
+import { ApiFile, ApiFileKindPeriodic } from "@/api/source";
 
 import styles from "./Calendar.module.scss";
-import { ApiNotePeriodic } from "@/api/note";
 
 
 function dateToday() {
@@ -28,11 +27,14 @@ function NoteAny({
     className?: string,
     period: MomentPeriods,
     date: moment.Moment,
-    notes: ApiNotePeriodicList,
+    notes: ApiFile<ApiFileKindPeriodic>[],
     children: React.ReactNode,
 }) {
     const periodTemplate = ftvkyo.api.source.getTemplate(period);
-    const note = notes.getThe(period, date);
+    const note = notes.find((note) => {
+        const { period: np, date: nd } = note.kind;
+        return np === period && equalUpTo(nd, date, period);
+    });
 
     const onClick = useCallback(async (
         replace: boolean,
@@ -40,8 +42,8 @@ function NoteAny({
         if (note) {
             note.reveal({ replace });
         } else if (periodTemplate) {
-            const newNote = await ftvkyo.api.source.createNote(period, date);
-            new ApiNotePeriodic(newNote, date, period).reveal({ replace });
+            const newNote = await ftvkyo.api.source.createPeriodicNote(period, date);
+            newNote.reveal({ replace });
         }
     }, [note, period, date, periodTemplate?.path]);
 
@@ -70,7 +72,7 @@ interface NoteDateProps {
 
 
 interface NotesTakerProps {
-    notes: ApiNotePeriodicList,
+    notes: ApiFile<ApiFileKindPeriodic>[],
 }
 
 
@@ -315,10 +317,13 @@ const weekOffsets = [
 
 export default function Calendar({
     notes,
-}: NotesTakerProps) {
+    compact,
+    setCompact,
+}: {
+    compact: boolean,
+    setCompact: (c: boolean) => void,
+} & NotesTakerProps) {
     const today = dateToday();
-
-    const [compact, setCompact] = useState(true);
 
     // What date to center the calendar around.
     // .weekday is locale-aware.

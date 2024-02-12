@@ -1,6 +1,6 @@
 import { clsx } from "clsx";
 import { useId } from "react";
-import { TriState } from "@/api/note-list";
+import { TriState } from "@/api/api";
 
 import styles from "./TriToggle.module.scss";
 
