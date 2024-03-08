@@ -84,8 +84,8 @@ function Directory({
     const expandedIcon = expanded ? "folder" : "folder-closed";
     const expandedClass = expanded ? null : styles.hidden;
 
-    const subs = Object.entries(folder.subfolders)
-        .map(([name, folder]) => <Directory key={name} folder={folder} />);
+    const subs = folder.subfolders
+        .map((folder) => <Directory key={folder.tf.name} folder={folder} />);
 
     const notes = folder.files
         .map((file) => <Note key={file.tf.basename} file={file} />);
