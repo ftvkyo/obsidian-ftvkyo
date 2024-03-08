@@ -96,14 +96,35 @@ export class ApiFolder {
         return this.includeHidden ? fs : fs.filter(f => !f.name.startsWith("_"));
     }
 
+    cmpFolders(a: ApiFolder, b: ApiFolder) {
+        return a.tf.name.localeCompare(b.tf.name);
+    }
+
     get subfolders(): ApiFolder[] {
         const fs = this.tf.children.filter(c => c instanceof TFolder) as TFolder[];
-        return this.filterHidden(fs).map(f => new ApiFolder(f, this.includeHidden));
+        return this.filterHidden(fs)
+            .map(f => new ApiFolder(f, this.includeHidden))
+            .sort((a, b) => this.cmpFolders(a, b));
+    }
+
+    cmpFiles(a: ApiFile, b: ApiFile) {
+        // Make the index notes go to the top.
+        if (a.isIndex && !b.isIndex) {
+            return -1;
+        }
+        if (!a.isIndex && b.isIndex) {
+            return 1;
+        }
+        // If both notes are index, or if none of them are index,
+        // compare as usual.
+        return a.tf.basename.localeCompare(b.tf.basename);
     }
 
     get files(): ApiFile[] {
         const fs = this.tf.children.filter(c => c instanceof TFile) as TFile[];
-        return this.filterHidden(fs).map(f => new ApiFile(f, undefined));
+        return this.filterHidden(fs)
+            .map(f => new ApiFile(f, undefined))
+            .sort((a, b) => this.cmpFiles(a, b));
     }
 }
 

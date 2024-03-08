@@ -68,29 +68,6 @@ function Note({
 }
 
 
-const sortSubfolders = (
-    a: [string, ApiFolder],
-    b: [string, ApiFolder],
-) => a[0].localeCompare(b[0]);
-
-
-const sortNotes = (
-    a: ApiFile,
-    b: ApiFile,
-) => {
-    // Make the index notes go to the top.
-    if (a.isIndex && !b.isIndex) {
-        return -1;
-    }
-    if (!a.isIndex && b.isIndex) {
-        return 1;
-    }
-    // If both notes are index, or if none of them are index,
-    // compare as usual.
-    return a.tf.basename.localeCompare(b.tf.basename);
-}
-
-
 function Directory({
     folder,
 }: {
@@ -108,12 +85,9 @@ function Directory({
     const expandedClass = expanded ? null : styles.hidden;
 
     const subs = Object.entries(folder.subfolders)
-        // Sort by name
-        .sort(sortSubfolders)
         .map(([name, folder]) => <Directory key={name} folder={folder} />);
 
     const notes = folder.files
-        .sort(sortNotes)
         .map((file) => <Note key={file.tf.basename} file={file} />);
 
     const hr = subs.length > 0 && notes.length > 0
