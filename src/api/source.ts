@@ -1,4 +1,4 @@
-import { TAbstractFile, TFile, TFolder } from "obsidian";
+import { FrontMatterCache, TAbstractFile, TFile, TFolder } from "obsidian";
 import { MomentPeriods } from "../util/date";
 import { replaceTemplates } from "../util/templates";
 
@@ -48,6 +48,10 @@ export class ApiFile<Kind extends ApiFileKind = undefined> {
         return app.metadataCache.getFileCache(this.tf);
     }
 
+    get fm() {
+        return this.fc?.frontmatter ?? null;
+    }
+
     get tasks() {
         return this.fc?.listItems?.filter(val => val.task !== undefined) ?? [];
     }
@@ -89,7 +93,13 @@ export class ApiFolder {
     constructor(
         readonly tf: TFolder,
         readonly includeHidden: boolean = false,
+        private readonly ancestorConfig: FrontMatterCache | null = null,
     ) {
+    }
+
+    get config() {
+        const config = this.tf.children.find((tf) => tf instanceof TFile && tf.basename === "_config") as TFile | undefined;
+        return (config && app.metadataCache.getFileCache(config)?.frontmatter) ?? this.ancestorConfig;
     }
 
     filterHidden<T extends TAbstractFile>(fs: T[]): T[] {
@@ -103,7 +113,7 @@ export class ApiFolder {
     get subfolders(): ApiFolder[] {
         const fs = this.tf.children.filter(c => c instanceof TFolder) as TFolder[];
         return this.filterHidden(fs)
-            .map(f => new ApiFolder(f, this.includeHidden))
+            .map(f => new ApiFolder(f, this.includeHidden, this.config))
             .sort((a, b) => this.cmpFolders(a, b));
     }
 
@@ -115,9 +125,13 @@ export class ApiFolder {
         if (!a.isIndex && b.isIndex) {
             return 1;
         }
-        // If both notes are index, or if none of them are index,
-        // compare as usual.
-        return a.tf.basename.localeCompare(b.tf.basename);
+
+        // If both notes are index, or if none of them are index, compare as usual.
+
+        const keyA = String(a.fm?.[this.config?.sort]) || a.tf.basename;
+        const keyB = String(b.fm?.[this.config?.sort]) || b.tf.basename;
+
+        return keyA.localeCompare(keyB);
     }
 
     get files(): ApiFile[] {
