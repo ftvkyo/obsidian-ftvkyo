@@ -7,20 +7,6 @@ import Progress from "./controls/Progress";
 import styles from "./FileTree.module.scss";
 
 
-const RE_NUMBER_PREFIX = /^(?<prefix>\d+\s+)?(?<content>.*)$/;
-
-function parseTitle(title: string): {
-    prefix?: string,
-    content: string,
-} {
-    const match = RE_NUMBER_PREFIX.exec(title);
-    return {
-        prefix: match?.groups?.["prefix"],
-        content: match?.groups?.["content"] ?? title,
-    };
-}
-
-
 function Note({
     file: note,
 }: {
@@ -35,16 +21,6 @@ function Note({
     const icon = isIndex ? "file-badge" : "file";
     const iconClass = isIndex ? styles.index : null;
 
-    const titleInfo = parseTitle(note.tf.basename);
-    const title = titleInfo.prefix
-        ? <span>
-            <code>{titleInfo.prefix}</code>
-            {titleInfo.content}
-        </span>
-        : <span>
-            {titleInfo.content}
-        </span>;
-
     return <div
         className={styles.leaf}
         onClick={(e) => note.reveal({ replace: !e.ctrlKey })}
@@ -52,7 +28,9 @@ function Note({
     >
         <div className={styles.info}>
             <Icon className={clsx(styles.icon, iconClass)} icon={icon} />
-            {title}
+            <span>
+                {note.tf.basename}
+            </span>
             {tasks > 0
                 && <Progress
                     className={styles.progress}
