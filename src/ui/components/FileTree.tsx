@@ -61,7 +61,9 @@ function Directory({
     }, [folder.tf.path]);
     */
 
-    const expandedIcon = expanded ? "folder" : "folder-closed";
+    const hasConfig = folder.config !== null;
+
+    const expandedIcon = expanded ? (hasConfig ? "folder-open-dot" : "folder") : "folder-closed";
     const expandedClass = expanded ? null : styles.hidden;
 
     const subs = folder.subfolders
