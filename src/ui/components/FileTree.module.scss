@@ -6,14 +6,11 @@
 }
 
 .leaf {
-    display: grid;
-    grid-template-columns: 1fr auto;
-
+    display: flex;
+    flex-direction: column;
     gap: vars.$gap / 2;
 
     .info {
-        grid-area: 1 / 1;
-
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -31,18 +28,7 @@
         }
     }
 
-    .controls {
-        grid-area: 1 / 2;
-
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: vars.$gap / 2;
-    }
-
     .children {
-        grid-area: 2 / 1 / 3 / 3;
-
         display: flex;
         flex-direction: column;
         gap: vars.$gap / 2;

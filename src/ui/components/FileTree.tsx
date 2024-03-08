@@ -76,10 +76,12 @@ function Directory({
     // Root starts expanded
     const [expanded, setExpanded] = useState(folder.tf.isRoot());
 
+    /*
     const newNote = useCallback(async () => {
         const newNote = await ftvkyo.api.source.createUniqueNoteAt(folder.tf.path);
         await newNote.reveal({ rename: "end" });
     }, [folder.tf.path]);
+    */
 
     const expandedIcon = expanded ? "folder" : "folder-closed";
     const expandedClass = expanded ? null : styles.hidden;
@@ -102,9 +104,6 @@ function Directory({
         >
             <Icon className={styles.icon} icon={expandedIcon}/>
             <span>{folder.tf.name || "/"}</span>
-        </div>
-        <div className={styles.controls}>
-            <Icon className={styles.icon} icon="plus" onClick={newNote}/>
         </div>
         <div className={clsx(styles.children, expandedClass)}>
             {subs}
