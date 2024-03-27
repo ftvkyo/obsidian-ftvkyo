@@ -13,6 +13,19 @@ function Note({
 }: {
     file: ApiFile,
 }) {
+    const showMenu = createMenu([
+        {
+            title: "Rename",
+            icon: "pen-line",
+            onClick: () => console.log("unimplemented"),
+        },
+        {
+            title: "Delete",
+            icon: "trash",
+            onClick: () => console.log("unimplemented"),
+        },
+    ]);
+
     const tasksAll = note.tasks;
     const tasks = tasksAll.length;
     const tasksDone = tasksAll.filter(val => val.task !== " ").length;
@@ -26,6 +39,7 @@ function Note({
         className={styles.leaf}
         onClick={(e) => note.reveal({ replace: !e.ctrlKey })}
         onAuxClick={(e) => e.button === 1 && note.reveal()}
+        onContextMenu={showMenu}
     >
         <div className={styles.info}>
             <Icon className={clsx(styles.icon, iconClass)} icon={icon} />
@@ -47,6 +61,45 @@ function Note({
 }
 
 
+function createMenuForDirectory(
+    folder: ApiFolder
+) {
+    const newNote = useCallback(async () => {
+        const newNote = await ftvkyo.api.source.createUniqueNoteAt(folder.tf.path);
+        await newNote.reveal({ rename: "end" });
+    }, [folder.tf.path]);
+
+    const items = [
+        {
+            title: "New note",
+            icon: "edit",
+            onClick: newNote,
+        },
+        {
+            title: "New folder",
+            icon: "folder-open",
+            onClick: () => console.log("unimplemented"),
+        },
+    ];
+
+    if (!folder.tf.isRoot()) {
+        items.push({
+            title: "Rename",
+            icon: "pen-line",
+            onClick: () => console.log("unimplemented"),
+        });
+    }
+
+    items.push({
+        title: "Open config",
+        icon: "gear",
+        onClick: () => console.log("unimplemented"),
+    });
+
+    return createMenu(items);
+}
+
+
 function Directory({
     folder,
 }: {
@@ -62,23 +115,7 @@ function Directory({
         }
     }, [folder.tf.path]);
 
-    const newNote = useCallback(async () => {
-        const newNote = await ftvkyo.api.source.createUniqueNoteAt(folder.tf.path);
-        await newNote.reveal({ rename: "end" });
-    }, [folder.tf.path]);
-
-    const snowMenu = createMenu([
-        {
-            title: "New note",
-            icon: "edit",
-            onClick: newNote,
-        },
-        {
-            title: "New folder",
-            icon: "folder-open",
-            onClick: () => console.log("unimplemented"),
-        },
-    ]);
+    const showMenu = createMenuForDirectory(folder);
 
     const hasConfig = folder.config !== null;
 
@@ -99,7 +136,7 @@ function Directory({
         <div
             className={styles.info}
             onClick={toggleExpanded}
-            onContextMenu={snowMenu}
+            onContextMenu={showMenu}
         >
             <Icon className={styles.icon} icon={expandedIcon}/>
             <span>{folder.tf.name || "/"}</span>
