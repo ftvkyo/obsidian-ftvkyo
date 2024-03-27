@@ -1,7 +1,9 @@
 import { ApiFile, ApiFolder } from "@/api/source";
 import { clsx } from "clsx";
 import { useCallback, useState } from "react";
+import confirm from "../builtin/confirm";
 import { createMenu } from "../builtin/menu";
+import prompt from "../builtin/prompt";
 import Icon from "./controls/Icon";
 import Progress from "./controls/Progress";
 
@@ -17,12 +19,21 @@ function Note({
         {
             title: "Rename",
             icon: "pen-line",
-            onClick: () => console.log("unimplemented"),
+            onClick: async () => {
+                const newName = await prompt(`Rename note "${note.tf.basename}"?`, note.tf.basename, false);
+                const newPath = (note.tf.parent?.path ?? "") + "/" + newName;
+                app.vault.rename(note.tf, newPath);
+            },
         },
         {
             title: "Delete",
             icon: "trash",
-            onClick: () => console.log("unimplemented"),
+            onClick: async () => {
+                const shouldDelete = await confirm(`Really delete "${note.tf.basename}"?`);
+                if (shouldDelete) {
+                    app.vault.delete(note.tf);
+                }
+            }
         },
     ]);
 
@@ -86,7 +97,11 @@ function createMenuForDirectory(
         items.push({
             title: "Rename",
             icon: "pen-line",
-            onClick: () => console.log("unimplemented"),
+            onClick: async () => {
+                const newName = await prompt(`Rename folder "${folder.tf.name}"?`, folder.tf.name, false);
+                const newPath = (folder.tf.parent?.path ?? "") + "/" + newName;
+                app.vault.rename(folder.tf, newPath);
+            },
         });
     }
 
