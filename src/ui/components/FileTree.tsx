@@ -1,6 +1,7 @@
 import { ApiFile, ApiFolder } from "@/api/source";
 import { clsx } from "clsx";
 import { useCallback, useState } from "react";
+import { createMenu } from "../builtin/menu";
 import Icon from "./controls/Icon";
 import Progress from "./controls/Progress";
 
@@ -54,12 +55,30 @@ function Directory({
     // Root starts expanded
     const [expanded, setExpanded] = useState(folder.tf.isRoot());
 
-    /*
+    const toggleExpanded = useCallback(() => {
+        // Don't allow toggling the root-level directory
+        if (!folder.tf.isRoot()) {
+            setExpanded((v) => !v);
+        }
+    }, [folder.tf.path]);
+
     const newNote = useCallback(async () => {
         const newNote = await ftvkyo.api.source.createUniqueNoteAt(folder.tf.path);
         await newNote.reveal({ rename: "end" });
     }, [folder.tf.path]);
-    */
+
+    const snowMenu = createMenu([
+        {
+            title: "New note",
+            icon: "edit",
+            onClick: newNote,
+        },
+        {
+            title: "New folder",
+            icon: "folder-open",
+            onClick: () => console.log("unimplemented"),
+        },
+    ]);
 
     const hasConfig = folder.config !== null;
 
@@ -79,8 +98,8 @@ function Directory({
     return <div className={styles.leaf}>
         <div
             className={styles.info}
-            // Don't allow toggling the root-level directory
-            onClick={() => !folder.tf.isRoot() && setExpanded((v) => !v)}
+            onClick={toggleExpanded}
+            onContextMenu={snowMenu}
         >
             <Icon className={styles.icon} icon={expandedIcon}/>
             <span>{folder.tf.name || "/"}</span>

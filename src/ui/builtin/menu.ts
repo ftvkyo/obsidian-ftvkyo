@@ -1,4 +1,5 @@
 import { Menu } from "obsidian";
+import { useCallback } from "react";
 
 
 export interface MenuItem {
@@ -9,7 +10,7 @@ export interface MenuItem {
 
 
 export function createMenu(items: MenuItem[]) {
-    return (event: React.MouseEvent) => {
+    return useCallback((event: React.MouseEvent) => {
         const menu = new Menu();
 
         for (const item of items) {
@@ -22,5 +23,5 @@ export function createMenu(items: MenuItem[]) {
         }
 
         menu.showAtMouseEvent(event.nativeEvent);
-    }
+    }, [items]);
 }
