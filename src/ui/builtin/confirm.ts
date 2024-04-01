@@ -2,6 +2,9 @@ import { App, ButtonComponent, Modal } from "obsidian";
 
 import Logger from "@/util/logger";
 
+import styles from "./confirm.module.scss";
+
+
 type Resolve = (value: boolean) => void;
 type Reject = (reason?: any) => void;
 
@@ -29,6 +32,8 @@ class ConfirmerModal extends Modal {
         this.titleEl.setText(this.question);
 
         const div = this.contentEl.createDiv();
+
+        div.addClass(styles.confirm ?? "confirm");
 
         const no = new ButtonComponent(div);
         const yes = new ButtonComponent(div);

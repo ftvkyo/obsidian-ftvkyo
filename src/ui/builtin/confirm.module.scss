@@ -1,0 +1,9 @@
+@use "../../vars" as v;
+
+.confirm {
+    display: flex;
+    flex-direction: row;
+    gap: v.$gap;
+
+    justify-content: flex-end;
+}
