@@ -198,10 +198,8 @@ function CalendarHeader({
     today,
     setWeek: setDate,
     notes,
-    collapse,
 }: NoteDateProps & NotesTakerProps & {
     setWeek: (date: moment.Moment) => void,
-    collapse: () => void,
 }) {
     return <div className={styles.header}>
         <NoteYear week={week} today={today} notes={notes}/>
@@ -223,10 +221,6 @@ function CalendarHeader({
             <Icon
                 icon="chevron-down"
                 onClick={() => setDate(week.clone().add(+1, "week"))}
-            />
-            <Icon
-                icon="calendar-minus"
-                onClick={collapse}
             />
         </div>
     </div>;
@@ -317,28 +311,12 @@ const weekOffsets = [
 
 export default function Calendar({
     notes,
-    compact,
-    setCompact,
-}: {
-    compact: boolean,
-    setCompact: (c: boolean) => void,
-} & NotesTakerProps) {
+}: NotesTakerProps) {
     const today = dateToday();
 
     // What date to center the calendar around.
     // .weekday is locale-aware.
     const [week, setWeek] = useState(dateWeekStart());
-
-    if (compact) {
-        return <div className={styles.calendar}>
-            <CalendarCompact
-                week={week}
-                today={today}
-                notes={notes}
-                expand={() => setCompact(false)}
-            />
-        </div>;
-    }
 
     return <div className={styles.calendar}>
         <CalendarHeader
@@ -346,7 +324,6 @@ export default function Calendar({
             today={today}
             setWeek={setWeek}
             notes={notes}
-            collapse={() => setCompact(true)}
         />
         <CalendarWeekHeader
             week={week}

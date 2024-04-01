@@ -8,7 +8,6 @@ let lg: Logger | undefined = undefined;
 
 
 export type ExploreViewState = {
-    calendarCompact: boolean,
 };
 
 const ExploreView: ViewElement<ExploreViewState> = {
@@ -24,17 +23,13 @@ const ExploreView: ViewElement<ExploreViewState> = {
         return <>
             <Calendar
                 notes={periodic}
-                compact={state.calendarCompact}
-                setCompact={(compact) => setState({...state, calendarCompact: compact})}
             />
             <FileTree
                 folder={unique}
             />
         </>;
     },
-    initialState: {
-        calendarCompact: true,
-    },
+    initialState: {},
     viewType: "ftvkyo-explore",
     displayText: "Explore",
     icon: "lucide-globe-2",
