@@ -4,8 +4,6 @@ import { PluginSettingTab, Setting } from "obsidian";
 export interface Settings {
     debugLogging: boolean;
 
-    resultsPerPage: 10 | 25 | 50;
-
     folderPeriodic: string,
     folderTemplates: string,
 
@@ -14,8 +12,6 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
     debugLogging: false,
-
-    resultsPerPage: 25,
 
     folderPeriodic: "_periodic",
     folderTemplates: "",
@@ -30,23 +26,6 @@ export class OFSettingTab extends PluginSettingTab {
         const { containerEl } = this;
 
         containerEl.empty();
-
-        new Setting(containerEl)
-            .setName("Results per page")
-            .setDesc("How many results display per page in the Explore view")
-            .addDropdown((dropdown) =>
-                dropdown
-                    .setValue(String(ftvkyo.settings.resultsPerPage))
-                    .onChange(async (value) => {
-                        ftvkyo.settings.resultsPerPage = Number(value) as 10 | 25 | 50;
-                        await ftvkyo.saveSettings();
-                    })
-                    .addOptions({
-                        "10": "10",
-                        "25": "25",
-                        "50": "50",
-                    })
-            );
 
         new Setting(containerEl)
             .setName("Folder for periodic notes")
