@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import Icon from "./controls/Icon";
 import { clsx } from "clsx";
 import { equalUpTo, MomentPeriods } from "@/util/date";
-import { ApiFile, ApiFileKindPeriodic } from "@/api/source";
+import { ApiFile, ApiFileKind } from "@/api/source";
 
 import styles from "./Calendar.module.scss";
 
@@ -27,7 +27,7 @@ function NoteAny({
     className?: string,
     period: MomentPeriods,
     date: moment.Moment,
-    notes: ApiFile<ApiFileKindPeriodic>[],
+    notes: ApiFile<ApiFileKind>[],
     children: React.ReactNode,
 }) {
     const periodTemplate = ftvkyo.api.source.getTemplate(period);
@@ -72,7 +72,7 @@ interface NoteDateProps {
 
 
 interface NotesTakerProps {
-    notes: ApiFile<ApiFileKindPeriodic>[],
+    notes: ApiFile<ApiFileKind>[],
 }
 
 

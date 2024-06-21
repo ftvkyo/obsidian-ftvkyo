@@ -1,7 +1,7 @@
-import { ApiFile } from "@/api/source";
+import { ApiFile, ApiFileKind } from "@/api/source";
 import { useCallback } from "react";
 
-export function useOnNoteClick(note: ApiFile | undefined) {
+export function useOnNoteClick<Kind extends ApiFileKind>(note: ApiFile<Kind> | undefined) {
     const onClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
         note && note.reveal({ replace: !e.ctrlKey });
     }, [note?.tf.path]);

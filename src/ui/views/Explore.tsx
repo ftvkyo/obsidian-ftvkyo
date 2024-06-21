@@ -1,7 +1,6 @@
 import {ViewElementProps, type ViewElement} from "./view";
 import Logger from "@/util/logger";
 import Calendar from "../components/Calendar";
-import FileTree from "../components/FileTree";
 
 
 let lg: Logger | undefined = undefined;
@@ -17,15 +16,11 @@ const ExploreView: ViewElement<ExploreViewState> = {
             lg = ftvkyo.lg.sub("Explore");
         }
 
-        const unique = ftvkyo.api.source.adapter;
         const periodic = ftvkyo.api.source.periodic;
 
         return <>
             <Calendar
                 notes={periodic}
-            />
-            <FileTree
-                folder={unique}
             />
         </>;
     },

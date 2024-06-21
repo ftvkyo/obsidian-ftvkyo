@@ -105,9 +105,6 @@ const fmtWeeksInMonth: Formatter = (date, fmt, flags) => {
 }
 
 const FMT: FormatConfig = {
-    unique: {
-        date: fmtIdentity,
-    },
     year: {
         date: fmtIdentity,
     },

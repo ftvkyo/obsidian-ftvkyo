@@ -8,18 +8,15 @@ import Logger from "@/util/logger";
 let lg: Logger | undefined = undefined;
 
 
-export type NoteType = "unique" | MomentPeriods;
+export type NoteType = MomentPeriods;
 
-export type ApiFileKindPeriodic = {
+export type ApiFileKind = {
     period: MomentPeriods,
     date: moment.Moment,
 };
 
-export type ApiFileKind = ApiFileKindPeriodic | undefined;
-
 
 const FMT_Basenames: Record<NoteType, string> = {
-    unique: "YYYYMMDD-HHmmss",
     date: "YYYYMMDD",
     week: "gggg-[W]ww",
     month: "YYYYMM",
@@ -34,7 +31,7 @@ const FMT_YearGrouping: { [key in NoteType]?: string } & { default: string } = {
 };
 
 
-export class ApiFile<Kind extends ApiFileKind = undefined> {
+export class ApiFile<Kind extends ApiFileKind> {
     constructor(
         readonly tf: TFile,
         readonly kind: Kind,
@@ -54,11 +51,6 @@ export class ApiFile<Kind extends ApiFileKind = undefined> {
 
     get tasks() {
         return this.fc?.listItems?.filter(val => val.task !== undefined) ?? [];
-    }
-
-    get isIndex() {
-        const fm = this.fc?.frontmatter;
-        return !!(fm?.["index"] || fm?.["root"]);
     }
 
     async reveal(
@@ -89,66 +81,11 @@ export class ApiFile<Kind extends ApiFileKind = undefined> {
 }
 
 
-export class ApiFolder {
-    constructor(
-        readonly tf: TFolder,
-        readonly includeHidden: boolean = false,
-        private readonly ancestorConfig: FrontMatterCache | null = null,
-    ) {
-    }
-
-    get config() {
-        const config = this.tf.children.find((tf) => tf instanceof TFile && tf.basename === "_config") as TFile | undefined;
-        return (config && app.metadataCache.getFileCache(config)?.frontmatter) ?? this.ancestorConfig;
-    }
-
-    filterHidden<T extends TAbstractFile>(fs: T[]): T[] {
-        return this.includeHidden ? fs : fs.filter(f => !f.name.startsWith("_"));
-    }
-
-    cmpFolders(a: ApiFolder, b: ApiFolder) {
-        return a.tf.name.localeCompare(b.tf.name);
-    }
-
-    get subfolders(): ApiFolder[] {
-        const fs = this.tf.children.filter(c => c instanceof TFolder) as TFolder[];
-        return this.filterHidden(fs)
-            .map(f => new ApiFolder(f, this.includeHidden, this.config))
-            .sort((a, b) => this.cmpFolders(a, b));
-    }
-
-    cmpFiles(a: ApiFile, b: ApiFile) {
-        // Make the index notes go to the top.
-        if (a.isIndex && !b.isIndex) {
-            return -1;
-        }
-        if (!a.isIndex && b.isIndex) {
-            return 1;
-        }
-
-        // If both notes are index, or if none of them are index, compare as usual.
-
-        const keyA = String(a.fm?.[this.config?.sort]) || a.tf.basename;
-        const keyB = String(b.fm?.[this.config?.sort]) || b.tf.basename;
-
-        return keyA.localeCompare(keyB);
-    }
-
-    get files(): ApiFile[] {
-        const fs = this.tf.children.filter(c => c instanceof TFile) as TFile[];
-        return this.filterHidden(fs)
-            .map(f => new ApiFile(f, undefined))
-            .sort((a, b) => this.cmpFiles(a, b));
-    }
-}
-
-
 export default class ApiSource {
 
     #et = new EventTarget();
 
-    root: TFolder;
-    periodic: ApiFile<ApiFileKindPeriodic>[];
+    periodic: ApiFile<ApiFileKind>[];
 
     constructor() {
         if (!lg) {
@@ -161,7 +98,6 @@ export default class ApiSource {
     }
 
     update() {
-        this.root = app.vault.getRoot();
         this.periodic = [];
 
         const mdfs = app.vault.getMarkdownFiles();
@@ -187,10 +123,6 @@ export default class ApiSource {
 
     on(e: "updated", cb: () => void) {
         this.#et.addEventListener("updated", cb);
-    }
-
-    get adapter() {
-        return new ApiFolder(this.root);
     }
 
     /* ======================= *
@@ -247,29 +179,7 @@ export default class ApiSource {
      * Creating stuff *
      * ============== */
 
-    async createUniqueNoteAt(folder: string): Promise<ApiFile> {
-        let counter = 1;
-        const path = () => `${folder}/Untitled-${counter}.md`;
-
-        // Find the first available name
-        while (app.vault.getAbstractFileByPath(path())) {
-            counter += 1;
-        }
-
-        await this.ensureFolder(folder);
-
-        const template = this.getTemplate("unique");
-        if (template) {
-            const newNote = await app.vault.copy(template, path());
-            await replaceTemplates("unique", ftvkyo.moment(), newNote);
-            return new ApiFile(newNote, undefined);
-        }
-
-        const newNote = await app.vault.create(path(), "");
-        return new ApiFile(newNote, undefined);
-    }
-
-    async createPeriodicNote(period: MomentPeriods, date: moment.Moment): Promise<ApiFile<ApiFileKindPeriodic>> {
+    async createPeriodicNote(period: MomentPeriods, date: moment.Moment): Promise<ApiFile<ApiFileKind>> {
         const template = this.getTemplate(period);
 
         if (!template) {
