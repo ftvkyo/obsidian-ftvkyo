@@ -271,37 +271,6 @@ function CalendarWeek({
 }
 
 
-function CalendarCompact({
-    week,
-    today,
-    notes,
-    expand,
-}: NoteDateProps & NotesTakerProps & {
-    expand: () => void,
-}) {
-    return <div className={styles.header}>
-        <NoteYear week={week} today={today} notes={notes}/>
-        <NoteQuarter week={week} today={today} notes={notes}/>
-
-        <div className={styles.break}/>
-
-        <NoteMonth week={week} today={today} notes={notes}/>
-        <NoteDay date={today} today={today} centerWeek={week} notes={notes}/>
-
-        <div className={styles.break}/>
-
-        <NoteWeek week={week} today={today} notes={notes} extended/>
-
-        <div className={styles.controls}>
-            <Icon
-                icon="calendar-plus"
-                onClick={expand}
-            />
-        </div>
-    </div>;
-}
-
-
 const weekOffsets = [
     -1,
     0,
