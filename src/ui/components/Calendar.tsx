@@ -1,20 +1,10 @@
 import { useCallback, useState } from "react";
 import Icon from "./controls/Icon";
 import { clsx } from "clsx";
-import { equalUpTo, MomentPeriods } from "@/util/date";
+import { dateToday, dateWeekStart, equalUpTo, MomentPeriods, NotesTakerProps } from "@/util/date";
 import { ApiFile, ApiFileKind } from "@/api/source";
 
 import styles from "./Calendar.module.scss";
-
-
-function dateToday() {
-    return ftvkyo.moment().hour(0).minute(0).second(0);
-}
-
-
-function dateWeekStart() {
-    return dateToday().weekday(0);
-}
 
 
 function NoteAny({
@@ -68,11 +58,6 @@ interface NoteDateProps {
     week: moment.Moment,
     // Expected to be today
     today: moment.Moment,
-}
-
-
-interface NotesTakerProps {
-    notes: ApiFile<ApiFileKind>[],
 }
 
 

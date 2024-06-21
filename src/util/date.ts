@@ -1,3 +1,6 @@
+import {ApiFile, ApiFileKind} from "@/api/source";
+
+
 const periods = [
     "year",
     "quarter",
@@ -8,6 +11,11 @@ const periods = [
 
 
 export type MomentPeriods = typeof periods[number];
+
+
+export interface NotesTakerProps {
+    notes: ApiFile<ApiFileKind>[],
+}
 
 
 export function equalUpTo(
@@ -37,4 +45,14 @@ export function equalUpTo(
         }
     }
     return true;
+}
+
+
+export function dateToday() {
+    return ftvkyo.moment().hour(0).minute(0).second(0);
+}
+
+
+export function dateWeekStart() {
+    return dateToday().weekday(0);
 }

@@ -53,6 +53,10 @@ export class ApiFile<Kind extends ApiFileKind> {
         return this.fc?.listItems?.filter(val => val.task !== undefined) ?? [];
     }
 
+    async text() {
+        return await app.vault.cachedRead(this.tf);
+    }
+
     async reveal(
         {
             mode,

@@ -1,6 +1,7 @@
 import {ViewElementProps, type ViewElement} from "./view";
 import Logger from "@/util/logger";
 import Calendar from "../components/Calendar";
+import Daily from "../components/Daily";
 
 
 let lg: Logger | undefined = undefined;
@@ -20,6 +21,9 @@ const ExploreView: ViewElement<ExploreViewState> = {
 
         return <>
             <Calendar
+                notes={periodic}
+            />
+            <Daily
                 notes={periodic}
             />
         </>;
