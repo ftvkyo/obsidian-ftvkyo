@@ -1,14 +1,28 @@
-import {dateToday, NotesTakerProps, equalUpTo} from "@/util/date";
 import {useEffect, useState} from "react";
+
+import {dateToday, NotesTakerProps, equalUpTo} from "@/util/date";
+import { iconForTaskStatus, parseTask, Task } from "@/util/tasks";
+import Icon from "./controls/Icon";
 
 import styles from "./Daily.module.scss";
 
 
-function Task({
-    text
-}: { text: string | undefined }) {
+function TaskBox({
+    task
+}: { task: Task }) {
+    const icon = iconForTaskStatus(task.status);
+
+    const start = task.time && task.time.start.format("HH:mm");
+    const end = task.time?.duration && task.time.start.clone().add(task.time.duration).format("[- ]HH:mm");
+
+    const blockTime = start ? <>
+        <Icon icon="clock"/> {start} {end}
+    </> : undefined;
+
     return <div className={styles.task}>
-        {text}
+        <Icon icon={icon}/>
+        {task.text}
+        {blockTime}
     </div>;
 }
 
@@ -26,6 +40,9 @@ export default function Daily({
     const [todayText, setTodayText] = useState<string | undefined>();
 
     useEffect(() => {
+        // TODO: Make sure there is no update spam?
+        //       Maybe acquire today's note in an outer component and only update it when we receive
+        //       an update event for it?
         async function updateTodayText() {
             setTodayText(await todayNote?.text());
         }
@@ -34,12 +51,15 @@ export default function Daily({
 
     const todayTasks = todayNote?.tasks.map(t => {
         const { start, end } = t.position;
-        return todayText?.slice(start.offset, end.offset);
-    });
+        const taskText = todayText?.slice(start.offset, end.offset);
+        return taskText && parseTask(taskText);
+    }).filter(t => t) as Task[];
 
-    return <div className={styles.tasks}>
-        Today's tasks:
+    return <div className={styles.daily}>
+        Today: {today.format("YYYY-MM-DD, [W]w ddd")}
 
-        {todayTasks?.map((t, i) => <Task key={i} text={t} />)}
+        <div className={styles.schedule}>
+            {todayTasks?.map((t, i) => <TaskBox key={i} task={t} />)}
+        </div>
     </div>;
 }

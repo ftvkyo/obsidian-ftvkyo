@@ -1,0 +1,21 @@
+@use "../../vars";
+
+
+.daily {
+    padding: vars.$pad;
+}
+
+
+.schedule {
+    padding-top: vars.$gap;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.task {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

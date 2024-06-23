@@ -47,6 +47,12 @@ export default class ObsidianFtvkyo extends Plugin {
 
     #momentLocale = "en-gb";
 
+    momentParseDuration(duration: string) {
+        // "PT" for ISO8601 duration:
+        // - https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
+        return moment.duration("PT" + duration.toUpperCase());
+    }
+
     momentParse(date: string, format: string | string[]) {
         return moment(date, format, this.#momentLocale, /* strict */ true);
     }
