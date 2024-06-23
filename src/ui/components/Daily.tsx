@@ -28,12 +28,12 @@ export default function Daily({
     useEffect(() => {
         async function updateTodayText() {
             setTodayText(await todayNote?.text());
-        };
+        }
         updateTodayText();
     });
 
     const todayTasks = todayNote?.tasks.map(t => {
-        let { start, end } = t.position;
+        const { start, end } = t.position;
         return todayText?.slice(start.offset, end.offset);
     });
 

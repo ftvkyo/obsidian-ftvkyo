@@ -1,4 +1,4 @@
-import { FrontMatterCache, TAbstractFile, TFile, TFolder } from "obsidian";
+import { TFile, TFolder } from "obsidian";
 import { MomentPeriods } from "../util/date";
 import { replaceTemplates } from "../util/templates";
 
