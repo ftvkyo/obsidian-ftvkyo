@@ -1,14 +1,78 @@
 import {useEffect, useState} from "react";
+import { clsx } from "clsx";
 
 import {dateToday, NotesTakerProps, equalUpTo} from "@/util/date";
-import { iconForTaskStatus, parseTask, Task } from "@/util/tasks";
+import { iconForTaskStatus, parseTask, Task, TaskTimed } from "@/util/tasks";
 import Icon from "./controls/Icon";
 
 import styles from "./Daily.module.scss";
 
 
-function TaskBox({
-    task
+const SCALE_FACTOR = 2;
+
+
+function timeToOffset(time: moment.Moment): number {
+    return (time.hours() * 60 + time.minutes()) * SCALE_FACTOR;
+}
+
+
+function TaskScheduleNow({
+    time,
+}: { time: moment.Moment }) {
+    const top = timeToOffset(time) + "px";
+    return <div className={clsx(styles.guide, styles.now)} style={{top}}>
+        {time.format("HH:mm")}
+    </div>;
+}
+
+
+function TaskScheduleGuide({
+    time,
+}: { time: moment.Moment }) {
+    const top = timeToOffset(time) + "px";
+    return <div className={styles.guide} style={{top}}>
+        {time.format("HH:mm")}
+    </div>;
+}
+
+
+function TaskScheduleItem({
+    task,
+}: { task: TaskTimed }) {
+    const top = timeToOffset(task.time.start) + "px";
+    const height = (task.time.duration?.asMinutes() ?? 1) * SCALE_FACTOR + "px";
+
+    return <div className={styles.task} style={{top, height}}>
+        {task.time.start.format("HH:mm")} - {task.text}
+    </div>;
+}
+
+
+function TaskSchedule({
+    today,
+    now,
+    tasks,
+}: {
+    today: moment.Moment,
+    now: moment.Moment,
+    tasks: TaskTimed[],
+}) {
+    const guides = [];
+    for (let i = 0; i < 25; i++) {
+        const guideTime = today.clone().hours(i);
+        guides.push(<TaskScheduleGuide key={i} time={guideTime}/>)
+    }
+
+    return <div className={styles.taskSchedule}>
+        {guides}
+        {tasks.map((t, i) => <TaskScheduleItem key={i} task={t}/>)}
+        <TaskScheduleNow time={now}/>
+    </div>;
+}
+
+
+function TaskListItem({
+    task,
 }: { task: Task }) {
     const icon = iconForTaskStatus(task.status);
 
@@ -27,10 +91,22 @@ function TaskBox({
 }
 
 
+function TaskList({
+    tasks,
+}: { tasks: Task[] }) {
+    return <div className={styles.taskList}>
+        {tasks.map((t, i) => <TaskListItem key={i} task={t} />)}
+    </div>;
+}
+
+
 export default function Daily({
     notes,
 }: NotesTakerProps) {
+    const [scheduleMode, setScheduleMode] = useState(true);
+
     const today = dateToday();
+    const now = ftvkyo.moment();
 
     const todayNote = notes.find(note => {
         const { period: np, date: nd } = note.kind;
@@ -53,13 +129,21 @@ export default function Daily({
         const { start, end } = t.position;
         const taskText = todayText?.slice(start.offset, end.offset);
         return taskText && parseTask(taskText);
-    }).filter(t => t) as Task[];
+    }).filter(t => t) as Task[] ?? [];
+
+    // Blocks
+
+    const blockTime = <div className={styles.time}>
+        <Icon icon="list" onClick={() => setScheduleMode(m => !m)}/>
+        {today.format("YYYY-MM-DD, [W]w ddd")}
+    </div>;
+
+    const blockTasks = scheduleMode
+        ? <TaskSchedule today={today} now={now} tasks={todayTasks.filter(t => t.time) as TaskTimed[]}/>
+        : <TaskList tasks={todayTasks}/>
 
     return <div className={styles.daily}>
-        Today: {today.format("YYYY-MM-DD, [W]w ddd")}
-
-        <div className={styles.schedule}>
-            {todayTasks?.map((t, i) => <TaskBox key={i} task={t} />)}
-        </div>
+        {blockTime}
+        {blockTasks}
     </div>;
 }

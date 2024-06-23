@@ -73,6 +73,9 @@ export interface Task {
 }
 
 
+export type TaskTimed = Required<Task>;
+
+
 const RE_TASK = /^\s*- \[(?<status>.)\]\s+(?<rest>.*)$/u;
 
 export function parseTask(task: string): Task | undefined {
