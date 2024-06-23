@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import { clsx } from "clsx";
 
-import {dateToday, NotesTakerProps, equalUpTo} from "@/util/date";
+import {NotesTakerProps, equalUpTo} from "@/util/date";
 import { iconForTaskStatus, parseTask, Task, TaskTimed } from "@/util/tasks";
 import Icon from "./controls/Icon";
 
@@ -102,12 +102,9 @@ function TaskList({
 
 export default function Daily({
     notes,
-}: NotesTakerProps) {
-    const [scheduleMode, setScheduleMode] = useState(true);
-
-    const today = dateToday();
-    const now = ftvkyo.moment();
-
+    today,
+    now,
+}: NotesTakerProps & { now: moment.Moment }) {
     const todayNote = notes.find(note => {
         const { period: np, date: nd } = note.kind;
         return np === "date" && equalUpTo(nd, today, "date");
@@ -131,19 +128,9 @@ export default function Daily({
         return taskText && parseTask(taskText);
     }).filter(t => t) as Task[] ?? [];
 
-    // Blocks
-
-    const blockTime = <div className={styles.time}>
-        <Icon icon="list" onClick={() => setScheduleMode(m => !m)}/>
-        {today.format("YYYY-MM-DD, [W]w ddd")}
-    </div>;
-
-    const blockTasks = scheduleMode
-        ? <TaskSchedule today={today} now={now} tasks={todayTasks.filter(t => t.time) as TaskTimed[]}/>
-        : <TaskList tasks={todayTasks}/>
-
     return <div className={styles.daily}>
-        {blockTime}
-        {blockTasks}
+        {now.format("YYYY-MM-DD, [W]w ddd, HH:mm")}
+        <TaskList tasks={todayTasks.filter(t => !t.time)}/>
+        <TaskSchedule today={today} now={now} tasks={todayTasks.filter(t => t.time) as TaskTimed[]}/>
     </div>;
 }

@@ -1,7 +1,8 @@
 import { useCallback, useState } from "react";
-import Icon from "./controls/Icon";
 import { clsx } from "clsx";
-import { dateToday, dateWeekStart, equalUpTo, MomentPeriods, NotesTakerProps } from "@/util/date";
+
+import Icon from "./controls/Icon";
+import { dateWeekStart, equalUpTo, MomentPeriods, NotesTakerProps } from "@/util/date";
 import { ApiFile, ApiFileKind } from "@/api/source";
 
 import styles from "./Calendar.module.scss";
@@ -56,8 +57,6 @@ function NoteAny({
 interface NoteDateProps {
     // Expected to be the Monday of the week we are displaying
     week: moment.Moment,
-    // Expected to be today
-    today: moment.Moment,
 }
 
 
@@ -265,9 +264,8 @@ const weekOffsets = [
 
 export default function Calendar({
     notes,
+    today,
 }: NotesTakerProps) {
-    const today = dateToday();
-
     // What date to center the calendar around.
     // .weekday is locale-aware.
     const [week, setWeek] = useState(dateWeekStart());

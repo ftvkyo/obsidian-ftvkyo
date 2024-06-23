@@ -15,6 +15,8 @@ export type MomentPeriods = typeof periods[number];
 
 export interface NotesTakerProps {
     notes: ApiFile<ApiFileKind>[],
+    // Expected to be today
+    today: moment.Moment,
 }
 
 
@@ -48,8 +50,13 @@ export function equalUpTo(
 }
 
 
+export function dateNow() {
+    return ftvkyo.moment();
+}
+
+
 export function dateToday() {
-    return ftvkyo.moment().hour(0).minute(0).second(0);
+    return dateNow().hour(0).minute(0).second(0);
 }
 
 
