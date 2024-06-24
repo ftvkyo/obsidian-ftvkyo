@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import { clsx } from "clsx";
 
 import {NotesTakerProps, equalUpTo} from "@/util/date";
 import { iconForTaskStatus, parseTask, Task, TaskTimed } from "@/util/tasks";
@@ -13,16 +12,6 @@ const SCALE_FACTOR = 2;
 
 function timeToOffset(time: moment.Moment): number {
     return (time.hours() * 60 + time.minutes()) * SCALE_FACTOR;
-}
-
-
-function TaskScheduleNow({
-    time,
-}: { time: moment.Moment }) {
-    const top = timeToOffset(time) + "px";
-    return <div className={clsx(styles.guide, styles.now)} style={{top}}>
-        {time.format("HH:mm")}
-    </div>;
 }
 
 
@@ -42,8 +31,35 @@ function TaskScheduleItem({
     const top = timeToOffset(task.time.start) + "px";
     const height = (task.time.duration?.asMinutes() ?? 1) * SCALE_FACTOR + "px";
 
+    const start = <div className={styles.start}>
+        {task.time.start.format("HH:mm")}
+    </div>;
+
+    const icon = iconForTaskStatus(task.status);
+    const text = <div className={styles.text}>
+        <Icon icon={icon}/>
+        {task.text}
+    </div>;
+
+    const end = task.time.duration
+        ? <div className={styles.end}>{task.time.start.clone().add(task.time.duration).format("HH:mm")}</div>
+        : undefined;
+
     return <div className={styles.task} style={{top, height}}>
-        {task.time.start.format("HH:mm")} - {task.text}
+        <div className={styles.contents}>
+            {start}
+            {text}
+            {end}
+        </div>
+    </div>;
+}
+
+
+function TaskScheduleNow({
+    time,
+}: { time: moment.Moment }) {
+    const top = timeToOffset(time) + "px";
+    return <div className={styles.now} style={{top}} data-time={time.format("HH:mm")}>
     </div>;
 }
 
@@ -76,17 +92,9 @@ function TaskListItem({
 }: { task: Task }) {
     const icon = iconForTaskStatus(task.status);
 
-    const start = task.time && task.time.start.format("HH:mm");
-    const end = task.time?.duration && task.time.start.clone().add(task.time.duration).format("[- ]HH:mm");
-
-    const blockTime = start ? <>
-        <Icon icon="clock"/> {start} {end}
-    </> : undefined;
-
     return <div className={styles.task}>
         <Icon icon={icon}/>
         {task.text}
-        {blockTime}
     </div>;
 }
 

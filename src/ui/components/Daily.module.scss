@@ -21,34 +21,85 @@
     top: vars.$gap;
 
     .guide {
-        position: absolute;
-        z-index: 100;
-
         width: 100%;
-        height: 1px;
-
+        height: 120px;
         border-top: 1px solid var(--background-modifier-border);
 
-        &.now {
-            z-index: 300;
-
-            font-weight: bold;
-            color: var(--color-accent);
-            border-top: 1px solid var(--color-accent);
-        }
+        padding: 0 0.5ch;
     }
 
     .task {
         position: absolute;
+        z-index: 100;
+        left: 7ch;
+        width: calc(100% - 6ch - vars.$pad);
+
+        background: var(--background-primary);
+        border-left: 2px solid var(--color-accent);
+
+        overflow-y: hidden;
+
+        &:hover {
+            z-index: 300;
+            overflow-y: visible;
+            border-left: 2px solid var(--text-error);
+        }
+
+        .contents {
+            height: auto;
+            min-height: 100%;
+            padding: vars.$pad * 0.25;
+
+            background: var(--background-primary);
+            border: 1px solid var(--background-primary);
+
+            &:hover {
+                border: 1px solid var(--background-modifier-border);
+            }
+
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-areas:
+                "start text"
+                "end   text";
+
+            column-gap: vars.$gap;
+
+            .start {
+                grid-area: "start";
+            }
+
+            .end {
+                grid-area: "end";
+                align-self: end;
+            }
+
+            .text {
+                grid-area: "text";
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+    }
+
+    .now {
+        position: absolute;
         z-index: 200;
 
-        border: 1px solid var(--background-modifier-border);
-        background: var(--background-secondary);
+        width: 100%;
+        border-top: 1px dashed var(--color-accent);
 
-        padding: vars.$pad * 0.25;
+        &::before {
+            content: attr(data-time);
 
-        left: 6ch;
-        width: calc(100% - 6ch - vars.$pad);
+            padding: 0 0.5ch;
+
+            color: var(--background-modifier-border);
+            background-color: var(--color-accent);
+
+            font-weight: bold;
+        }
     }
 }
 
