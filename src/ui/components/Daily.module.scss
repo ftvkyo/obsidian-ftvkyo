@@ -7,6 +7,8 @@
     flex-direction: column;
     gap: vars.$gap;
 
+    overflow-y: scroll;
+
     .time {
         display: flex;
         flex-direction: row;
@@ -18,7 +20,6 @@
 
 .taskSchedule {
     position: relative;
-    top: vars.$gap;
 
     .guide {
         width: 100%;
@@ -107,8 +108,6 @@
 
 
 .taskList {
-    padding-top: vars.$gap;
-
     display: flex;
     flex-direction: column;
 
