@@ -67,11 +67,13 @@
 
             .start {
                 grid-area: 1 / 1;
+                color: var(--text-muted);
             }
 
             .end {
                 grid-area: 2 / 1;
                 align-self: end;
+                color: var(--text-muted);
             }
 
             .text {

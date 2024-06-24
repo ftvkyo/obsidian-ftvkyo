@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import {moment} from "obsidian";
 
 import {NotesTakerProps, equalUpTo} from "@/util/date";
 import { iconForTaskStatus, parseTask, Task, TaskTimed } from "@/util/tasks";
@@ -8,17 +9,36 @@ import styles from "./Daily.module.scss";
 
 
 const SCALE_FACTOR = 2;
+const DEFAULT_DURATION = moment.duration("PT5M");
 
 
-function timeToOffset(time: moment.Moment): number {
+function startToOffset(time: moment.Moment, duration?: moment.Duration): number {
     return (time.hours() * 60 + time.minutes()) * SCALE_FACTOR;
+}
+
+function durationToHeight(duration: moment.Duration): number {
+    return (duration.asMinutes()) * SCALE_FACTOR;
+}
+
+function determineScheduleStart(tasks: TaskTimed[]): moment.Moment | undefined {
+    const earliest = tasks.map(task => task.time.start).sort((a, b) => a.valueOf() - b.valueOf())[0];
+
+    // Start at a whole hour, just before the earliest task
+    return earliest && earliest.clone().minute(0);
+}
+
+function determineScheduleEnd(tasks: TaskTimed[]): moment.Moment | undefined {
+    const latest = tasks.map(task => task.time.start.clone().add(task.time.duration ?? DEFAULT_DURATION)).sort((a, b) => b.valueOf() - a.valueOf())[0];
+
+    // End at a whole hour after the latest task
+    return latest && latest.clone().minute(0).add(1, "hour");
 }
 
 
 function TaskScheduleGuide({
     time,
 }: { time: moment.Moment }) {
-    const top = timeToOffset(time) + "px";
+    const top = startToOffset(time) + "px";
     return <div className={styles.guide} style={{top}}>
         {time.format("HH:mm")}
     </div>;
@@ -27,9 +47,10 @@ function TaskScheduleGuide({
 
 function TaskScheduleItem({
     task,
-}: { task: TaskTimed }) {
-    const top = timeToOffset(task.time.start) + "px";
-    const height = (task.time.duration?.asMinutes() ?? 1) * SCALE_FACTOR - 1 + "px";
+    offset,
+}: { task: TaskTimed, offset: number }) {
+    const top = startToOffset(task.time.start) - offset + "px";
+    const height = durationToHeight(task.time.duration ?? DEFAULT_DURATION) - 1 + "px";
 
     const start = <div className={styles.start}>
         {task.time.start.format("HH:mm")}
@@ -57,8 +78,9 @@ function TaskScheduleItem({
 
 function TaskScheduleNow({
     time,
-}: { time: moment.Moment }) {
-    const top = timeToOffset(time) + "px";
+    offset,
+}: { time: moment.Moment, offset: number }) {
+    const top = startToOffset(time) - offset + "px";
     return <div className={styles.now} style={{top}} data-time={time.format("HH:mm")}>
     </div>;
 }
@@ -73,17 +95,33 @@ function TaskSchedule({
     now: moment.Moment,
     tasks: TaskTimed[],
 }) {
-    const guides = [];
-    for (let i = 0; i < 25; i++) {
-        const guideTime = today.clone().hours(i);
-        guides.push(<TaskScheduleGuide key={i} time={guideTime}/>)
-    }
+    const scheduleStart = determineScheduleStart(tasks);
+    const scheduleEnd = determineScheduleEnd(tasks);
 
-    return <div className={styles.taskSchedule}>
-        {guides}
-        {tasks.map((t, i) => <TaskScheduleItem key={i} task={t}/>)}
-        <TaskScheduleNow time={now}/>
-    </div>;
+    if (scheduleStart && scheduleEnd) {
+        const startOffset = startToOffset(scheduleStart);
+
+        const scheduleCounter = scheduleStart.clone();
+        const guides = [];
+        while (scheduleCounter.valueOf() <= scheduleEnd.valueOf()) {
+            guides.push(<TaskScheduleGuide key={guides.length} time={scheduleCounter.clone()}/>);
+            scheduleCounter.add(1, "hour");
+        }
+
+        const guideNow = (scheduleStart.valueOf() < now.valueOf() && now.valueOf() < scheduleEnd.valueOf())
+            ? <TaskScheduleNow time={now} offset={startOffset}/>
+            : undefined;
+
+        return <div className={styles.taskSchedule}>
+            {guides}
+            {tasks.map((t, i) => <TaskScheduleItem key={i} task={t} offset={startOffset}/>)}
+            {guideNow}
+        </div>;
+    } else {
+        return <div className={styles.taskSchedule}>
+            No scheduled tasks today.
+        </div>;
+    }
 }
 
 
@@ -138,7 +176,7 @@ export default function Daily({
 
     return <div className={styles.daily}>
         {now.format("YYYY-MM-DD, [W]w ddd, HH:mm")}
-        <TaskList tasks={todayTasks.filter(t => !t.time)}/>
         <TaskSchedule today={today} now={now} tasks={todayTasks.filter(t => t.time) as TaskTimed[]}/>
+        <TaskList tasks={todayTasks.filter(t => !t.time)}/>
     </div>;
 }
