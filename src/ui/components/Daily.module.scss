@@ -33,6 +33,7 @@
         z-index: 100;
         left: 7ch;
         width: calc(100% - 6ch - vars.$pad);
+        min-height: 1px;
 
         background: var(--background-primary);
         border-left: 2px solid var(--color-accent);
@@ -59,26 +60,25 @@
 
             display: grid;
             grid-template-columns: auto 1fr;
-            grid-template-areas:
-                "start text"
-                "end   text";
+            grid-template-rows: repeat(2, auto);
 
             column-gap: vars.$gap;
 
             .start {
-                grid-area: "start";
+                grid-area: 1 / 1;
             }
 
             .end {
-                grid-area: "end";
+                grid-area: 2 / 1;
                 align-self: end;
             }
 
             .text {
-                grid-area: "text";
-                display: flex;
-                flex-direction: row;
-                align-items: center;
+                grid-area: 1 / 2 / 3;
+
+                .icon {
+                    float: right;
+                }
             }
         }
     }
@@ -89,6 +89,8 @@
 
         width: 100%;
         border-top: 1px dashed var(--color-accent);
+
+        pointer-events: none;
 
         &::before {
             content: attr(data-time);

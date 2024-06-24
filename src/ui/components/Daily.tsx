@@ -29,7 +29,7 @@ function TaskScheduleItem({
     task,
 }: { task: TaskTimed }) {
     const top = timeToOffset(task.time.start) + "px";
-    const height = (task.time.duration?.asMinutes() ?? 1) * SCALE_FACTOR + "px";
+    const height = (task.time.duration?.asMinutes() ?? 1) * SCALE_FACTOR - 1 + "px";
 
     const start = <div className={styles.start}>
         {task.time.start.format("HH:mm")}
@@ -37,7 +37,7 @@ function TaskScheduleItem({
 
     const icon = iconForTaskStatus(task.status);
     const text = <div className={styles.text}>
-        <Icon icon={icon}/>
+        <Icon icon={icon} className={styles.icon}/>
         {task.text}
     </div>;
 
