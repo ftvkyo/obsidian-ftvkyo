@@ -2,8 +2,8 @@ import {useEffect, useState} from "react";
 import {moment} from "obsidian";
 
 import {NotesTakerProps, equalUpTo} from "@/util/date";
-import { iconForTaskStatus, parseTask, Task, TaskTimed } from "@/util/tasks";
 import Icon from "./controls/Icon";
+import {iconForTaskStatus, Task, TaskTimed} from "@/api/source";
 
 import styles from "./Daily.module.scss";
 
@@ -156,23 +156,17 @@ export default function Daily({
         return np === "date" && equalUpTo(nd, today, "date");
     });
 
-    const [todayText, setTodayText] = useState<string | undefined>();
+    const [todayTasks, setTodayTasks] = useState<Task[]>([]);
 
     useEffect(() => {
         // TODO: Make sure there is no update spam?
         //       Maybe acquire today's note in an outer component and only update it when we receive
         //       an update event for it?
-        async function updateTodayText() {
-            setTodayText(await todayNote?.text());
+        async function updateTodayTasks() {
+            setTodayTasks(await todayNote?.tasks() ?? []);
         }
-        updateTodayText();
+        updateTodayTasks();
     });
-
-    const todayTasks = todayNote?.tasks.map(t => {
-        const { start, end } = t.position;
-        const taskText = todayText?.slice(start.offset, end.offset);
-        return taskText && parseTask(taskText);
-    }).filter(t => t) as Task[] ?? [];
 
     return <div className={styles.daily}>
         {now.format("YYYY-MM-DD, [W]w ddd, HH:mm")}

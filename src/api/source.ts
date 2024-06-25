@@ -16,6 +16,48 @@ export type ApiFileKind = {
 };
 
 
+const statuses = [
+    " ",
+    "x",
+    "-",
+] as const;
+
+export type TaskStatus = typeof statuses[number];
+
+function isValidStatus(status: string): asserts status is TaskStatus {
+    if (!(statuses as unknown as string[]).includes(status)) {
+        throw new Error(`Unknown task status "${status}"`);
+    }
+}
+
+export function iconForTaskStatus(status: TaskStatus): string {
+    switch (status) {
+        case " ":
+            return "dot";
+        case "x":
+            return "check";
+        case "-":
+            return "x";
+    }
+}
+
+
+export type TaskTime = {
+    start: moment.Moment,
+    duration?: moment.Duration,
+};
+
+
+export interface Task {
+    status: TaskStatus;
+    text: string;
+    time?: TaskTime;
+}
+
+
+export type TaskTimed = Required<Task>;
+
+
 const FMT_Basenames: Record<NoteType, string> = {
     date: "YYYYMMDD",
     week: "gggg-[W]ww",
@@ -31,7 +73,12 @@ const FMT_YearGrouping: { [key in NoteType]?: string } & { default: string } = {
 };
 
 
+const RE_TASK = /^\s*- \[(?<status>.)\]\s+(?<rest>.*)$/u;
+const RE_TASK_TIME = /\[time::\s*(?<start>\d?\d:\d\d)(?:\s+(?<duration>.*))?\s*\]/u;
+
+
 export class ApiFile<Kind extends ApiFileKind> {
+
     constructor(
         readonly tf: TFile,
         readonly kind: Kind,
@@ -49,12 +96,18 @@ export class ApiFile<Kind extends ApiFileKind> {
         return this.fc?.frontmatter ?? null;
     }
 
-    get tasks() {
-        return this.fc?.listItems?.filter(val => val.task !== undefined) ?? [];
-    }
-
     async text() {
         return await app.vault.cachedRead(this.tf);
+    }
+
+    async tasks() {
+        const text = await this.text();
+
+        return this.fc?.listItems?.filter(val => val.task !== undefined).map(task => {
+            const { start, end } = task.position;
+            const taskText = text.slice(start.offset, end.offset);
+            return taskText && ApiFile.parseTask(taskText);
+        }).filter(t => t) as Task[] ?? [];
     }
 
     async reveal(
@@ -81,6 +134,58 @@ export class ApiFile<Kind extends ApiFileKind> {
         });
 
         return leaf;
+    }
+
+    private static parseTask(task: string): Task | undefined {
+        const match = task.match(RE_TASK);
+
+        const { status, rest } = match?.groups ?? {};
+
+        if (!status || !rest) {
+            return undefined;
+        }
+
+        isValidStatus(status);
+
+        const time = ApiFile.parseTaskTime(rest);
+        const text = rest.replace(RE_TASK_TIME, "");
+
+        return {
+            status,
+            text,
+            time,
+        }
+    }
+
+    private static parseTaskTime(taskText: string): TaskTime | undefined {
+        const match = taskText.match(RE_TASK_TIME);
+
+        const { start, duration } = match?.groups ?? {};
+
+        if (!start) {
+            return undefined;
+        }
+
+        const mStart = ftvkyo.momentParse(start, "HH:mm");
+
+        if (!mStart.isValid()) {
+            return undefined;
+        }
+
+        if (duration) {
+            const mDuration = ftvkyo.momentParseDuration(duration);
+
+            if (mDuration.isValid()) {
+                return {
+                    start: mStart,
+                    duration: mDuration,
+                };
+            }
+        }
+
+        return {
+            start: mStart,
+        };
     }
 }
 
