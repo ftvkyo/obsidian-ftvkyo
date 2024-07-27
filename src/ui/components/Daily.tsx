@@ -158,6 +158,20 @@ function TaskList({
 }
 
 
+function Clock({
+    now,
+}: { now: moment.Moment }) {
+    return <div className={styles.clock}>
+        <time className={styles.date} dateTime={now.format("YYYY-MM-DD")}>
+            {now.format("YYYY-MM-DD")}
+        </time>
+        <time className={styles.time} dateTime={now.format("HH:mm")}>
+            {now.format("HH:mm")}
+        </time>
+    </div>;
+}
+
+
 export default function Daily({
     notes,
     today,
@@ -181,7 +195,7 @@ export default function Daily({
     });
 
     return <div className={styles.daily}>
-        {now.format("YYYY-MM-DD, [W]w ddd, HH:mm")}
+        <Clock now={now}/>
         <TaskSchedule today={today} now={now} tasks={todayTasks.filter(t => t.time) as TaskTimed[]}/>
         <TaskList tasks={todayTasks.filter(t => !t.time)}/>
     </div>;

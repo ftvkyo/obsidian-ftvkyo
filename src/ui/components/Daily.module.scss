@@ -9,11 +9,21 @@
 
     overflow-y: scroll;
 
-    .time {
+    .clock {
         display: flex;
         flex-direction: row;
-        align-items: center;
-        gap: vars.$gap * 0.5;
+        gap: vars.$gap;
+
+        font-size: 1.2em;
+        font-weight: bold;
+
+        time.date {
+            flex: 1;
+        }
+
+        time.time {
+            color: var(--color-accent);
+        }
     }
 }
 
