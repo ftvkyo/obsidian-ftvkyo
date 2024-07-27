@@ -27,6 +27,7 @@ function determineScheduleStart(tasks: TaskTimed[]): moment.Moment | undefined {
     return earliest && earliest.clone().minute(0);
 }
 
+// Note: returns the start of the last hour block
 function determineScheduleEnd(tasks: TaskTimed[]): moment.Moment | undefined {
     const latest = tasks.map(task => task.time.start.clone().add(task.time.duration ?? DEFAULT_DURATION)).sort((a, b) => b.valueOf() - a.valueOf())[0];
 
@@ -120,6 +121,8 @@ function TaskSchedule({
             scheduleCounter.add(1, "hour");
         }
 
+        // We receive the start of the last hour, but the last hour lasts another hour...
+        scheduleEnd.add(1, "hour");
         const guideNow = (scheduleStart.valueOf() < now.valueOf() && now.valueOf() < scheduleEnd.valueOf())
             ? <TaskScheduleNow time={now} offset={startOffset}/>
             : undefined;
