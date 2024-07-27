@@ -1,4 +1,4 @@
-import { TFile, TFolder } from "obsidian";
+import { ListItemCache, TFile, TFolder } from "obsidian";
 import { MomentPeriods } from "../util/date";
 import { replaceTemplates } from "../util/templates";
 
@@ -52,6 +52,7 @@ export interface Task {
     status: TaskStatus;
     text: string;
     time?: TaskTime;
+    parent?: Task;
 }
 
 
@@ -102,12 +103,40 @@ export class ApiFile<Kind extends ApiFileKind> {
 
     async tasks() {
         const text = await this.text();
+        const tasks = this.fc?.listItems?.filter(val => val.task !== undefined) ?? [];
 
-        return this.fc?.listItems?.filter(val => val.task !== undefined).map(task => {
+        const getTaskText = (task: ListItemCache) => {
             const { start, end } = task.position;
-            const taskText = text.slice(start.offset, end.offset);
-            return taskText && ApiFile.parseTask(taskText);
-        }).filter(t => t) as Task[] ?? [];
+            return text.slice(start.offset, end.offset);
+        };
+
+        const findParentTask = (task: ListItemCache) => {
+            const parentLine = task.parent;
+            return tasks.find(task => task.position.start.line === parentLine);
+        };
+
+        return tasks.map(task => {
+            const taskText = getTaskText(task);
+            const thisTask = taskText && ApiFile.parseTask(taskText);
+
+            if (thisTask) {
+                let current = thisTask;
+                let parent = findParentTask(task);
+                while (parent) {
+                    const parentText = getTaskText(parent);
+                    const parentTask = parentText && ApiFile.parseTask(parentText);
+                    if (parentTask) {
+                        current.parent = parentTask;
+                        current = parentTask;
+                    }
+                    parent = findParentTask(parent);
+                }
+
+                return thisTask;
+            }
+
+            return null;
+        }).filter(t => t) as Task[];
     }
 
     async reveal(

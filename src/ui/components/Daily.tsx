@@ -34,6 +34,18 @@ function determineScheduleEnd(tasks: TaskTimed[]): moment.Moment | undefined {
     return latest && latest.clone().minute(0).add(1, "hour");
 }
 
+function fullTaskText(task: Task): string {
+    let text = task.text;
+
+    let parent = task.parent;
+    while(parent) {
+        text = `${parent.text} → ${text}`;
+        parent = parent.parent;
+    }
+
+    return text;
+}
+
 
 function TaskScheduleGuide({
     time,
@@ -59,7 +71,7 @@ function TaskScheduleItem({
     const icon = iconForTaskStatus(task.status);
     const text = <div className={styles.text}>
         <Icon icon={icon} className={styles.icon}/>
-        {task.text}
+        {fullTaskText(task)}
     </div>;
 
     const end = task.time.duration
@@ -132,7 +144,7 @@ function TaskListItem({
 
     return <div className={styles.task}>
         <Icon icon={icon}/>
-        {task.text}
+        {fullTaskText(task)}
     </div>;
 }
 
