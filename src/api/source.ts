@@ -76,6 +76,7 @@ const FMT_YearGrouping: { [key in NoteType]?: string } & { default: string } = {
 
 const RE_TASK = /^\s*- \[(?<status>.)\]\s+(?<rest>.*)$/u;
 const RE_TASK_TIME = /\[time::\s*(?<start>\d?\d:\d\d)(?:\s+(?<duration>.*))?\s*\]/u;
+const RE_LINK = /\[\[(.*?)\]\]/ug;
 
 
 export class ApiFile<Kind extends ApiFileKind> {
@@ -107,7 +108,8 @@ export class ApiFile<Kind extends ApiFileKind> {
 
         const getTaskText = (task: ListItemCache) => {
             const { start, end } = task.position;
-            return text.slice(start.offset, end.offset);
+            const taskText = text.slice(start.offset, end.offset);
+            return taskText.replace(RE_LINK, "$1");
         };
 
         const findParentTask = (task: ListItemCache) => {
