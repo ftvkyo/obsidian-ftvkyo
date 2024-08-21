@@ -61,6 +61,10 @@
 
             border: none;
             border-left: 4px solid var(--text-error);
+
+            .contents {
+                border: 1px solid var(--text-normal);
+            }
         }
 
         .contents {
@@ -76,10 +80,6 @@
             grid-template-rows: repeat(2, auto);
 
             column-gap: vars.$gap;
-
-            &:hover {
-                border: 1px solid var(--text-normal);
-            }
 
             .start {
                 grid-area: 1 / 1;
