@@ -45,20 +45,22 @@
 
     .task {
         position: absolute;
-        z-index: 100;
+        z-index: attr(data-z);
         left: 7ch;
         width: calc(100% - 6ch - vars.$pad);
         min-height: 1px;
 
-        background: var(--background-primary);
-        border-left: 2px solid var(--color-accent);
+        border: 1px solid var(--text-normal);
+        border-left: 4px solid var(--color-accent);
 
         overflow-y: hidden;
 
         &:hover {
-            z-index: 300;
+            z-index: 1000;
             overflow-y: visible;
-            border-left: 2px solid var(--text-error);
+
+            border: none;
+            border-left: 4px solid var(--text-error);
         }
 
         .contents {
@@ -67,17 +69,17 @@
             padding: vars.$pad * 0.25;
 
             background: var(--background-primary);
-            border: 1px solid var(--background-primary);
-
-            &:hover {
-                border: 1px solid var(--background-modifier-border);
-            }
+            border-left: 1px solid var(--background-primary);
 
             display: grid;
             grid-template-columns: auto 1fr;
             grid-template-rows: repeat(2, auto);
 
             column-gap: vars.$gap;
+
+            &:hover {
+                border: 1px solid var(--text-normal);
+            }
 
             .start {
                 grid-area: 1 / 1;
@@ -102,7 +104,7 @@
 
     .now {
         position: absolute;
-        z-index: 200;
+        z-index: 1001;
 
         width: 100%;
         border-top: 1px dashed var(--color-accent);

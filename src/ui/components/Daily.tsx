@@ -60,8 +60,7 @@ function TaskText({
 function TaskScheduleGuide({
     time,
 }: { time: moment.Moment }) {
-    const top = startToOffset(time) + "px";
-    return <div className={styles.guide} style={{top}}>
+    return <div className={styles.guide}>
         {time.format("HH:mm")}
     </div>;
 }
@@ -73,6 +72,7 @@ function TaskScheduleItem({
 }: { task: TaskTimed, offset: number }) {
     const top = startToOffset(task.time.start) - offset + "px";
     const height = durationToHeight(task.time.duration ?? DEFAULT_DURATION) - 1 + "px";
+    const z = task.time.start.format("HHmm");
 
     const start = <div className={styles.start}>
         {task.time.start.format("HH:mm")}
@@ -88,7 +88,7 @@ function TaskScheduleItem({
         ? <div className={styles.end}>{task.time.start.clone().add(task.time.duration).format("HH:mm")}</div>
         : undefined;
 
-    return <div className={styles.task} style={{top, height}}>
+    return <div className={styles.task} style={{top, height}} data-z={z}>
         <div className={styles.contents}>
             {start}
             {text}
