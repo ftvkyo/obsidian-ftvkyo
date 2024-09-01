@@ -149,27 +149,6 @@ function TaskSchedule({
 }
 
 
-function TaskListItem({
-    task,
-}: { task: Task }) {
-    const icon = iconForTaskStatus(task.status);
-
-    return <div className={styles.task}>
-        <Icon icon={icon}/>
-        <TaskText task={task}/>
-    </div>;
-}
-
-
-function TaskList({
-    tasks,
-}: { tasks: Task[] }) {
-    return <div className={styles.taskList}>
-        {tasks.map((t, i) => <TaskListItem key={i} task={t} />)}
-    </div>;
-}
-
-
 function Clock({
     now,
 }: { now: moment.Moment }) {
@@ -209,6 +188,5 @@ export default function Daily({
     return <div className={styles.daily}>
         <Clock now={now}/>
         <TaskSchedule today={today} now={now} tasks={todayTasks.filter(t => t.time) as TaskTimed[]}/>
-        <TaskList tasks={todayTasks.filter(t => !t.time)}/>
     </div>;
 }

@@ -126,15 +126,3 @@
         }
     }
 }
-
-
-.taskList {
-    display: flex;
-    flex-direction: column;
-
-    .task {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
-}
