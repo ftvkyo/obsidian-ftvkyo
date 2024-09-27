@@ -21,6 +21,11 @@ export default class ApiView {
         }
     }
 
+    exists(viewType: string) {
+        const instances = app.workspace.getLeavesOfType(viewType);
+        return instances.length > 0;
+    }
+
     // Get the reference to the view
     get(viewType: string) {
         const instances = app.workspace.getLeavesOfType(viewType);

@@ -148,6 +148,7 @@ export default class ObsidianFtvkyo extends Plugin {
             const slg = lg.subSame(view.short);
 
             const t = view.viewType;
+            const exists = this.api.view.exists(t);
 
             this.registerView(t, (leaf) => ObsidianFtvkyoView.create(
                 leaf,
@@ -163,8 +164,10 @@ export default class ObsidianFtvkyo extends Plugin {
             });
             slg.info(`Added reveal command`);
 
-            this.api.view.place(t);
-            slg.info(`Placed`);
+            if (!exists) {
+                this.api.view.place(t);
+                slg.info(`Placed`);
+            }
         }
     }
 
