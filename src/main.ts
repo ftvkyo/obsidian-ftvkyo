@@ -61,6 +61,10 @@ export default class ObsidianFtvkyo extends Plugin {
         return moment().locale(this.#momentLocale);
     }
 
+    #tick = new EventTarget();
+    #tickIntervalMs = 15 * 1000; // 15 seconds
+    #tickInterval: NodeJS.Timeout | undefined;
+
     /* ======== *
      * Settings *
      * ======== */
@@ -78,6 +82,8 @@ export default class ObsidianFtvkyo extends Plugin {
         this.lg.important(`Loading obsidian-ftvkyo`);
 
         await this.loadSettings();
+
+        this.#tickInterval = setInterval(() => this.#tick.dispatchEvent(new Event("tick")), this.#tickIntervalMs);
 
         // May depend on the plugin being global
         // May depend on settings
@@ -97,6 +103,8 @@ export default class ObsidianFtvkyo extends Plugin {
     }
 
     onunload() {
+        this.#tickInterval && clearInterval(this.#tickInterval);
+
         // Don't detach leaves on unload:
         // https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Don't+detach+leaves+in+`onunload`
     }
@@ -173,8 +181,22 @@ export default class ObsidianFtvkyo extends Plugin {
      * Events *
      * ====== */
 
-    on(_e: "metadata", cb: () => void) {
-        const event = this.app.metadataCache.on("resolved", cb);
-        this.registerEvent(event);
+    on(e: "metadata" | "tick", cb: () => void) {
+        switch (e) {
+            case "metadata":
+                const event = this.app.metadataCache.on("resolved", cb);
+                this.registerEvent(event);
+                break;
+
+            case "tick":
+                this.#tick.addEventListener(e, cb);
+
+            default:
+                break;
+        }
+    }
+
+    off(e: "tick", cb: () => void) {
+        this.#tick.removeEventListener(e, cb);
     }
 }

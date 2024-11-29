@@ -77,10 +77,12 @@ export default class ObsidianFtvkyoView<State extends Record<string, unknown>> e
     onload(): void {
         this.updateCallback = () => this.render();
         ftvkyo.api.source.on("updated", this.updateCallback);
+        ftvkyo.on("tick", this.updateCallback);
     }
 
     onunload(): void {
         ftvkyo.api.source.off("updated", this.updateCallback);
+        ftvkyo.off("tick", this.updateCallback);
     }
 
     getViewType() {

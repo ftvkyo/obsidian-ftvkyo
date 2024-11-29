@@ -21,18 +21,8 @@ const ExploreView: ViewElement<ExploreViewState> = {
 
         const periodic = ftvkyo.api.source.periodic;
 
-        const [now, setNow] = useState(dateNow());
-        const [today, setToday] = useState(dateToday());
-
-        const UPDATE_MS = 15 * 1000; // 10 seconds
-
-        useEffect(() => {
-            const interval = setInterval(() => {
-                setNow(dateNow());
-                setToday(dateToday());
-            }, UPDATE_MS);
-            return () => clearInterval(interval);
-        });
+        const now = dateNow();
+        const today = dateToday();
 
         return <>
             <Calendar
