@@ -136,6 +136,38 @@ function TaskSchedule({
             ? <TaskScheduleNow time={now} offset={startOffset}/>
             : undefined;
 
+        const taskTracks: TaskTimed[][] = [];
+
+        for (const t of tasks) {
+            let trackReused = false;
+
+            for (const track of taskTracks) {
+                let conflicts = false;
+
+                for (const tt of track) {
+                    const tStart = t.time.start;
+                    const tEnd = t.time.start.clone().add(t.time.duration ?? DEFAULT_DURATION);
+                    const ttStart = tt.time.start;
+                    const ttEnd = tt.time.start.clone().add(t.time.duration ?? DEFAULT_DURATION);
+
+                    if (tStart.isBetween(ttStart, ttEnd) || tEnd.isBetween(ttStart, ttEnd)) {
+                        conflicts = true;
+                        break;
+                    }
+                }
+
+                if (!conflicts) {
+                    track.push(t);
+                    trackReused = true;
+                    break;
+                }
+            }
+
+            if (!trackReused) {
+                taskTracks.push([t]);
+            }
+        }
+
         return <div className={styles.taskSchedule}>
             {guides}
             {tasks.map((t, i) => <TaskScheduleItem key={i} task={t} offset={startOffset}/>)}
