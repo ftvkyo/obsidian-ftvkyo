@@ -84,7 +84,7 @@ async function prompt(
 
     return new Promise((resolve: Resolve, reject: Reject) => {
         const modal = new PrompterModal(
-            app,
+            ftvkyo.app,
             prompt,
             value_initial,
             allow_empty,

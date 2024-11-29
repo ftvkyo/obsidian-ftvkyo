@@ -327,12 +327,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/codemirror@npm:0.0.108":
-  version: 0.0.108
-  resolution: "@types/codemirror@npm:0.0.108"
+"@types/codemirror@npm:5.60.8":
+  version: 5.60.8
+  resolution: "@types/codemirror@npm:5.60.8"
   dependencies:
     "@types/tern": "npm:*"
-  checksum: 10/5ddca7f43d03fc5deaf38790a20dd51cfe8343dc5c2221a62ae0ea890d7fdb673c3cbb56a1622678ce254f7c05ee18380117c74255b6b26f722d50af8de134a2
+  checksum: 10/1c5431cacc97a4c4a4b12a484b6d3bf32f745ffa444095087437204395e239b26b44903706ab29ff413759ea17e3be9a12caf399db09e34a359b2e4f99fce785
   languageName: node
   linkType: hard
 
@@ -2041,15 +2041,15 @@ __metadata:
   linkType: soft
 
 "obsidian@npm:latest":
-  version: 1.2.8
-  resolution: "obsidian@npm:1.2.8"
+  version: 1.7.2
+  resolution: "obsidian@npm:1.7.2"
   dependencies:
-    "@types/codemirror": "npm:0.0.108"
+    "@types/codemirror": "npm:5.60.8"
     moment: "npm:2.29.4"
   peerDependencies:
     "@codemirror/state": ^6.0.0
     "@codemirror/view": ^6.0.0
-  checksum: 10/e5fb863d29174d52462188633ff07887bb3ff879572de6aab64b65e16ccc9dcf3cf8397f2d483c2def7d1378432f5e7ec0a03c042fc1228485e28f36d429b5ba
+  checksum: 10/48a0aaa1414e282538b85a50a5d2acf105b2dd6f6751a343fbaa93ca909464334d9a9c8af191b37c75270d680fddbde230c449fe3689fe66154e1fc5a9b237e3
   languageName: node
   linkType: hard
 

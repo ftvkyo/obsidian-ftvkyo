@@ -84,7 +84,7 @@ async function suggest(
 
     return new Promise((resolve: Resolve, reject: Reject) => {
         const modal = new SuggesterModal(
-            app,
+            ftvkyo.app,
             items_text,
             items,
         );

@@ -28,12 +28,12 @@ export type ViewElement<State> = {
 };
 
 
-export default class ObsidianFtvkyoView<State> extends View {
+export default class ObsidianFtvkyoView<State extends Record<string, unknown>> extends View {
     root: Root | undefined;
 
     state: State;
 
-    static create<State>(
+    static create<State extends Record<string, unknown>>(
         leaf: WorkspaceLeaf,
         plugin: ObsidianFtvkyo,
 
@@ -105,7 +105,7 @@ export default class ObsidianFtvkyoView<State> extends View {
         return ret;
     }
 
-    getState(): State {
+    getState(): Record<string, unknown> {
         return this.state;
     }
 
@@ -129,7 +129,7 @@ export default class ObsidianFtvkyoView<State> extends View {
                         }}
                     >
                         <this.Element
-                            state={this.getState()}
+                            state={this.state}
                             setState={setState}
                         />
                     </ErrorBoundary>

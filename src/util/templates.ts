@@ -12,7 +12,7 @@ const RE_TEMPLATE = /{{(?<what>.+?):(?<fmt>.+?)(?<flags>:.+?)?}}/gm;
 
 export async function replaceTemplates(noteType: NoteType, date: moment.Moment, note: TFile) {
     // 1. Read the file
-    const content = await app.vault.read(note);
+    const content = await ftvkyo.app.vault.read(note);
 
     // 2. Find and replace all the templates in the file
     const newContent = content.replace(RE_TEMPLATE, (_, what: string, fmt: string, flags: string | undefined) => {
@@ -20,7 +20,7 @@ export async function replaceTemplates(noteType: NoteType, date: moment.Moment, 
     });
 
     // 3. Update the file with the new content
-    await app.vault.modify(note, newContent);
+    await ftvkyo.app.vault.modify(note, newContent);
 }
 
 

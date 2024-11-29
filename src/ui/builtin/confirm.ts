@@ -64,7 +64,7 @@ async function confirm(question: string) {
     }
 
     return new Promise((resolve: Resolve, reject: Reject) => {
-        const modal = new ConfirmerModal(app, question);
+        const modal = new ConfirmerModal(ftvkyo.app, question);
 
         modal.work(resolve, reject);
     });

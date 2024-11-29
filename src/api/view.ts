@@ -5,10 +5,10 @@ export default class ApiView {
 
     // Add the view to the workspace if it's not there yet.
     async place(viewType: string) {
-        const instances = app.workspace.getLeavesOfType(viewType);
+        const instances = ftvkyo.app.workspace.getLeavesOfType(viewType);
         if (instances.length < 1) {
             // Need to place the view.
-            await app.workspace.getLeftLeaf(false).setViewState({
+            await ftvkyo.app.workspace.getLeftLeaf(false)!.setViewState({
                 type: viewType,
                 active: true,
             });
@@ -22,13 +22,13 @@ export default class ApiView {
     }
 
     exists(viewType: string) {
-        const instances = app.workspace.getLeavesOfType(viewType);
+        const instances = ftvkyo.app.workspace.getLeavesOfType(viewType);
         return instances.length > 0;
     }
 
     // Get the reference to the view
     get(viewType: string) {
-        const instances = app.workspace.getLeavesOfType(viewType);
+        const instances = ftvkyo.app.workspace.getLeavesOfType(viewType);
 
         if (instances.length !== 1) {
             throw `Expected exactly one instance of the ${viewType} view`;
@@ -40,14 +40,14 @@ export default class ApiView {
     reveal(viewType: string) {
         const view = this.get(viewType);
         if (view) {
-            app.workspace.revealLeaf(view);
+            ftvkyo.app.workspace.revealLeaf(view);
         }
     }
 
     // Detach all views
     detachAll() {
         for (const view of this.loadedViews) {
-            app.workspace.detachLeavesOfType(view);
+            ftvkyo.app.workspace.detachLeavesOfType(view);
         }
     }
 }

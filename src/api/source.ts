@@ -91,7 +91,7 @@ export class ApiFile<Kind extends ApiFileKind> {
     }
 
     get fc() {
-        return app.metadataCache.getFileCache(this.tf);
+        return ftvkyo.app.metadataCache.getFileCache(this.tf);
     }
 
     get fm() {
@@ -99,7 +99,7 @@ export class ApiFile<Kind extends ApiFileKind> {
     }
 
     async text() {
-        return await app.vault.cachedRead(this.tf);
+        return await ftvkyo.app.vault.cachedRead(this.tf);
     }
 
     async tasks() {
@@ -155,10 +155,10 @@ export class ApiFile<Kind extends ApiFileKind> {
             rename?: "end",
         } = {},
     ) {
-        const current = app.workspace.getActiveFile();
+        const current = ftvkyo.app.workspace.getActiveFile();
         const shouldReplace = replace || current === null;
 
-        const leaf = app.workspace.getLeaf(!shouldReplace);
+        const leaf = ftvkyo.app.workspace.getLeaf(!shouldReplace);
         await leaf.openFile(this.tf, {
             state: { mode },
             eState: { rename },
@@ -240,7 +240,7 @@ export default class ApiSource {
     update() {
         this.periodic = [];
 
-        const mdfs = app.vault.getMarkdownFiles();
+        const mdfs = ftvkyo.app.vault.getMarkdownFiles();
 
         for (const mdf of mdfs) {
             // A note is supposedly periodic if it's in the right directory.
@@ -334,14 +334,14 @@ export default class ApiSource {
         await this.ensureFolder(folderPath);
 
         // Check if the file already exists
-        const existing = app.vault.getAbstractFileByPath(path);
+        const existing = ftvkyo.app.vault.getAbstractFileByPath(path);
 
         if (existing) {
             throw Error(`Tried to create a file "${path}", but it already exists.`);
         }
 
         // Create the note
-        const newNote = await app.vault.copy(template, path);
+        const newNote = await ftvkyo.app.vault.copy(template, path);
 
         // Process the templates inside
         await replaceTemplates(period, date, newNote);
@@ -359,7 +359,7 @@ export default class ApiSource {
         lg?.debug(`Ensuring folder '${path}' exists...`);
 
         // Check if it exists.
-        const existing = app.vault.getAbstractFileByPath(path);
+        const existing = ftvkyo.app.vault.getAbstractFileByPath(path);
 
         if (existing) {
             if (existing instanceof TFolder) {
@@ -369,6 +369,6 @@ export default class ApiSource {
         }
 
         // Does create folders recursively
-        return app.vault.createFolder(path);
+        return ftvkyo.app.vault.createFolder(path);
     }
 }

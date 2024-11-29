@@ -83,7 +83,7 @@ export default class ObsidianFtvkyo extends Plugin {
         // May depend on settings
         this.api = new Api();
 
-        this.addSettingTab(new OFSettingTab(app, this));
+        this.addSettingTab(new OFSettingTab(this.app, this));
 
         this.app.workspace.onLayoutReady(() => {
             try {
