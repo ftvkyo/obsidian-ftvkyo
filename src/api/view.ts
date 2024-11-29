@@ -1,8 +1,5 @@
 export default class ApiView {
 
-    // List of views that have been loaded.
-    loadedViews: string[] = [];
-
     // Add the view to the workspace if it's not there yet.
     async place(viewType: string) {
         const instances = ftvkyo.app.workspace.getLeavesOfType(viewType);
@@ -13,11 +10,6 @@ export default class ApiView {
                 active: true,
             });
             // Otherwise we just keep the view where it was.
-        }
-
-        // Save the view for the unlikely event we'd want to detach it later.
-        if (!this.loadedViews.includes(viewType)) {
-            this.loadedViews.push(viewType);
         }
     }
 
@@ -41,13 +33,6 @@ export default class ApiView {
         const view = this.get(viewType);
         if (view) {
             ftvkyo.app.workspace.revealLeaf(view);
-        }
-    }
-
-    // Detach all views
-    detachAll() {
-        for (const view of this.loadedViews) {
-            ftvkyo.app.workspace.detachLeavesOfType(view);
         }
     }
 }

@@ -99,8 +99,6 @@ export default class ObsidianFtvkyo extends Plugin {
     onunload() {
         // Don't detach leaves on unload:
         // https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Don't+detach+leaves+in+`onunload`
-
-        // this.api.view.detachAll();
     }
 
     private async loadSettings() {
