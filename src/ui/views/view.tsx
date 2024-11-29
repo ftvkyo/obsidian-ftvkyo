@@ -99,7 +99,10 @@ export default class ObsidianFtvkyoView<State> extends View {
 
     async setState(state: State, result: ViewStateResult): Promise<void> {
         this.state = state;
-        return super.setState(state, result);
+        let ret = super.setState(state, result);
+        // Trigger a re-render with the new state.
+        this.render();
+        return ret;
     }
 
     getState(): State {
