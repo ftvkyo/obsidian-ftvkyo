@@ -33,6 +33,8 @@ export default class ObsidianFtvkyoView<State extends Record<string, unknown>> e
 
     state: State;
 
+    updateCallback: () => void;
+
     static create<State extends Record<string, unknown>>(
         leaf: WorkspaceLeaf,
         plugin: ObsidianFtvkyo,
@@ -70,10 +72,15 @@ export default class ObsidianFtvkyoView<State extends Record<string, unknown>> e
 
         // TODO: figure out if I can do it in a built-in way.
         this.containerEl.setAttribute("data-type", this.viewType);
+    }
 
-        ftvkyo.api.source.on("updated", () => {
-            this.render();
-        });
+    onload(): void {
+        this.updateCallback = () => this.render();
+        ftvkyo.api.source.on("updated", this.updateCallback);
+    }
+
+    onunload(): void {
+        ftvkyo.api.source.off("updated", this.updateCallback);
     }
 
     getViewType() {

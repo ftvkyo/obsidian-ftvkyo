@@ -262,7 +262,11 @@ export default class ApiSource {
     }
 
     on(e: "updated", cb: () => void) {
-        this.#et.addEventListener("updated", cb);
+        this.#et.addEventListener(e, cb);
+    }
+
+    off(e: "updated", cb: () => void) {
+        this.#et.removeEventListener(e, cb);
     }
 
     /* ======================= *
