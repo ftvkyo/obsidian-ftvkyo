@@ -127,10 +127,7 @@ function NoteWeek({
     week,
     today,
     notes,
-    extended,
-}: NoteDateProps & NotesTakerProps & {
-    extended?: boolean,
-}) {
+}: NoteDateProps & NotesTakerProps) {
     const current = equalUpTo(week, today, "week");
 
     return <NoteAny
@@ -139,8 +136,7 @@ function NoteWeek({
         date={week}
         notes={notes}
     >
-        {extended && "W"}
-        {week.format("w")}
+        {week.format("W")}
     </NoteAny>;
 }
 

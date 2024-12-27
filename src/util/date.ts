@@ -30,7 +30,7 @@ export function equalUpTo(
     // - Year -> Week
 
     if (upTo === "week") {
-        return equalUpTo(date1, date2, "year") && date1.week() === date2.week();
+        return date1.isoWeekYear() === date2.isoWeekYear() && date1.isoWeek() === date2.isoWeek();
     }
 
     if (upTo === "date") {

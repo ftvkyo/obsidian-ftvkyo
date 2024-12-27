@@ -61,7 +61,7 @@ export type TaskTimed = Required<Task>;
 
 const FMT_Basenames: Record<NoteType, string> = {
     date: "YYYYMMDD",
-    week: "gggg-[W]ww",
+    week: "GGGG-[W]WW",
     month: "YYYYMM",
     quarter: "YYYY-[Q]Q",
     year: "YYYY",
@@ -70,7 +70,7 @@ const FMT_Basenames: Record<NoteType, string> = {
 
 const FMT_YearGrouping: { [key in NoteType]?: string } & { default: string } = {
     default: "YYYY",
-    week: "gggg",
+    week: "GGGG",
 };
 
 
